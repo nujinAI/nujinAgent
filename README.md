@@ -33,9 +33,16 @@
   </p>
 </div>
 
-# nujinagent
+# ⚡ NujinAgent
 
-🐈 **nujinagent** is an ultra-lightweight, open-source, self-hosted personal AI agent framework written in Python. Use it in a browser, terminal, or chat app to work with files, remember preferences, and schedule tasks. Connect a supported model provider or local model server to supply the AI.
+**NujinAgent** is the autonomous execution and runtime agent of the **NujinAI** stack—a lightweight, open-source, self-hosted AI agent framework built in Python and specifically designed to host, run, and operate **NujinSkill**.
+
+## 🌐 The NujinAI Stack
+
+**NujinAI** is a complete, end-to-end technology stack for autonomous quantitative research, systematic strategy engineering, and live execution:
+
+- **NujinSkill** — The **quantitative brain**: an open-source, CPU-native mathematical discovery and systematic execution framework (130-coordinate basis grid, 5-slice sub-era invariance, MFE/MAE plateau optimization, and 8-gate cynic auditing).
+- **NujinAgent** — The **autonomous runtime**: the always-on agentic operating layer that connects NujinSkill to your terminal, browser WebUI, chat apps, long-term memory, scheduled automations, and MCP tools—turning quantitative research, strategy generation, and live bot supervision into an autonomous workflow.
 
 ## Start Here
 
@@ -470,18 +477,15 @@ Back up the stopped instance and upgrade through its original installation metho
 
 For other changes, see [GitHub releases](https://github.com/HKUDS/nujinagent/releases) and the [release archive](./docs/release-archive.md).
 
-## Open Source Partners
-
-<p align="center">
-  <a href="https://platform.kimi.com?aff=nujinagent"><picture><source media="(prefers-color-scheme: dark)" srcset="https://kimi-file.moonshot.cn/prod-chat-kimi/kfs/4/1/2026-06-05/1d8h69mt3v89kkekg24gg"><img alt="Kimi Open Source Friends" height="44" src="https://kimi-file.moonshot.cn/prod-chat-kimi/kfs/4/1/2026-06-05/1d8h69fudcmosb3pipls0"></picture></a>
-  <a href="https://platform.minimaxi.com/subscribe/token-plan?code=GILTJpMTqZ&source=link"><img alt="MiniMax" height="40" src="https://mintcdn.com/minimax-zh/1UjvBcdoC6r0UeyA/logo/light.svg?fit=max&auto=format&n=1UjvBcdoC6r0UeyA&q=85&s=672d724b639b2d88d0702fae329ea4f8"></a>
-</p>
-
 ## 🤝 Contribute
 
 Everyone is welcome to [open an issue](https://github.com/HKUDS/nujinagent/issues) with a bug, reproduction, use case, or suggestion. Discuss the problem first; pull requests are currently limited to repository collaborators. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contribution process and recognition.
 
-## Maintainers
+## 🙏 Maintainers & Upstream Attribution
+
+**NujinAgent** is maintained as part of the **NujinAI** ecosystem.
+
+This project is a thankful fork of [**HKUDS/nanobot**](https://github.com/HKUDS/nanobot). We are deeply grateful to the upstream maintainers and the entire `nanobot` contributor community for building such a clean, lightweight, and extensible agent core.
 
 <table>
   <tr>
