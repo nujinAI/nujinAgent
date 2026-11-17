@@ -23,14 +23,15 @@ class TestBuildDreamPrompt:
     def test_returns_none_when_no_history(self, store):
         assert store.build_dream_prompt() is None
 
-    def test_returns_prompt_with_history(self, store):
+    def test_returns_prompt_with_history_location_and_range(self, store):
         store.append_history("hello")
         result = store.build_dream_prompt()
         assert result is not None
         prompt, cursor = result
-        assert cursor > 0
-        assert "## Conversation History" in prompt
-        assert "hello" in prompt
+        assert cursor == 1
+        assert f"History file: {store.history_file.resolve()}" in prompt
+        assert "Read lines 1-1 (inclusive): 1 pending records" in prompt
+        assert "0 < cursor <= 1" in prompt
 
     def test_cursor_advances_only_new_entries(self, store):
         store.append_history("first")
@@ -79,7 +80,8 @@ class TestBuildDreamPrompt:
         prompt, _ = result
         assert prompt.startswith("Custom Dream prompt.")
         assert "## Conversation History" in prompt
-        assert "keep this fact" in prompt
+        assert f"History file: {store.history_file.resolve()}" in prompt
+        assert "Read lines 1-1" in prompt
 
     def test_workspace_dream_prompt_override_is_capped(self, store):
         store.dream_prompt_file.parent.mkdir(parents=True)
@@ -93,7 +95,7 @@ class TestBuildDreamPrompt:
         assert "x" * 40_000 not in prompt
         assert "... (truncated)" in prompt
         assert "## Conversation History" in prompt
-        assert "keep this fact" in prompt
+        assert "Read lines 1-1" in prompt
 
     def test_empty_workspace_dream_prompt_uses_default(self, store):
         store.dream_prompt_file.parent.mkdir(parents=True)
@@ -106,40 +108,28 @@ class TestBuildDreamPrompt:
         prompt, _ = result
         assert prompt.startswith(store.default_dream_prompt() + "\n\n## Conversation History\n")
 
-    def test_truncates_long_entries_at_1000_chars(self, store):
-        long_content = "x" * 2000
-        store.append_history(long_content)
-        result = store.build_dream_prompt()
-        assert result is not None
-        prompt, _ = result
-        assert long_content not in prompt
-        assert "x" * 1000 in prompt
-        assert "x" * 1001 not in prompt
-
-    def test_batches_oldest_unprocessed_entries_first(self, store):
-        for i in range(25):
+    def test_range_covers_all_pending_records_after_history_retention(self, store):
+        for i in range(35):
             store.append_history(f"entry-{i + 1:02d}")
+        store.set_last_dream_cursor(10)
+        store.max_history_entries = 30
+        store.compact_history()
 
-        result = store.build_dream_prompt(max_entries=20)
+        result = store.build_dream_prompt()
         assert result is not None
         prompt, cursor = result
 
-        assert cursor == 20
-        assert "entry-01" in prompt
-        assert "entry-20" in prompt
-        assert "entry-21" not in prompt
-
+        assert cursor == 35
+        assert "Read lines 6-30 (inclusive): 25 pending records" in prompt
+        assert "10 < cursor <= 35" in prompt
+        assert store.get_last_dream_cursor() == 10
         store.set_last_dream_cursor(cursor)
-        next_result = store.build_dream_prompt(max_entries=20)
-        assert next_result is not None
-        next_prompt, next_cursor = next_result
-        assert next_cursor == 25
-        assert "entry-21" in next_prompt
-        assert "entry-25" in next_prompt
+        assert store.build_dream_prompt() is None
 
     def test_skips_malformed_history_entries(self, store):
         store.history_file.write_text(
             '{"cursor": 1, "timestamp": "2026-04-01 10:00"}\n'
+            '\nnot-json\n'
             '{"cursor": 2, "timestamp": "2026-04-01 10:01", "content": "usable memory"}\n',
             encoding="utf-8",
         )
@@ -149,7 +139,23 @@ class TestBuildDreamPrompt:
         assert result is not None
         prompt, cursor = result
         assert cursor == 2
-        assert "usable memory" in prompt
+        assert "Read lines 4-4 (inclusive): 1 pending records" in prompt
+
+    @pytest.mark.parametrize("separator", ["\n", "\u2028"])
+    async def test_history_range_uses_read_file_line_numbers(self, store, separator):
+        store.append_history(f"old{separator}record")
+        store.set_last_dream_cursor(1)
+        store.append_history(f"new{separator}record")
+        prompt, cursor = store.build_dream_prompt()
+        start, end = (2, 2) if separator == "\n" else (3, 4)
+        assert f"Read lines {start}-{end}" in prompt
+        assert cursor == 2
+        result = await store.build_dream_tools().execute("read_file", {
+            "path": str(store.history_file), "offset": start, "limit": end - start + 1,
+        })
+        assert '"cursor": 2' in result
+        assert "new" in result and 'record"}' in result
+        assert f"{end}| " in result
 
     def test_dream_prompt_consumes_consolidator_attribute_tags(self):
         prompt = render_template(
@@ -242,6 +248,23 @@ class TestDreamTools:
         assert "Project Y active" in store.memory_file.read_text(encoding="utf-8")
         assert "Precise" in store.soul_file.read_text(encoding="utf-8")
         assert "**Name**: Ada" in store.user_file.read_text(encoding="utf-8")
+
+    @pytest.mark.asyncio
+    async def test_dream_can_create_and_update_wiki_pages(self, store):
+        tools = store.build_dream_tools()
+        path = "memory/wiki/projects/example.md"
+        assert "Successfully wrote" in await tools.execute(
+            "write_file", {"path": path, "content": "# Example\nRegion east\n"},
+        )
+        assert "Region east" in await tools.execute("read_file", {"path": path})
+        assert "Patch applied" in await tools.execute("apply_patch", {"edits": [{
+            "path": path, "action": "replace", "old_text": "Region east", "new_text": "Region west",
+        }]})
+        await tools.execute("read_file", {"path": path})
+        assert "Patch applied" in await tools.execute("edit_file", {
+            "path": path, "old_text": "Region west", "new_text": "Region north",
+        })
+        assert "Region north" in (store.workspace / path).read_text(encoding="utf-8")
 
     @pytest.mark.asyncio
     async def test_dream_can_write_workspace_skills(self, store):
@@ -420,6 +443,24 @@ class TestEphemeralDirect:
         assert loop.model == "test-model"
         assert loop.model_preset is None
 
+    async def test_dream_stays_pending_when_initial_request_cannot_fit(self, _make_loop):
+        from nanobot.agent.dream import run_dream
+
+        loop, _ = _make_loop
+        store = loop.context.memory
+        checkpoint = "[durable] Project knowledge.\n" * 500 + "TAIL: current decision"
+        cursor = store.append_history(checkpoint)
+        loop.provider.estimate_prompt_tokens.return_value = (100_000, "test-provider")
+
+        result = await run_dream(loop, commit_prefix="dream: manual run")
+
+        assert result.error and "context budget" in result.error
+        assert store.get_last_dream_cursor() == 0
+        assert store.read_unprocessed_history(0)[0]["cursor"] == cursor
+        measured = loop.provider.estimate_prompt_tokens.call_args.args[0]
+        assert any("Read lines 1-1" in str(message.get("content")) for message in measured)
+        loop.provider.chat_stream_with_retry.assert_not_awaited()
+
     async def test_ephemeral_skips_raw_archive(self, tmp_path, _make_loop):
         from unittest.mock import patch
 
@@ -574,7 +615,7 @@ class TestEphemeralDirect:
         tool_result = next(message for message in second_request if message["role"] == "tool")
         assert "Error" in tool_result["content"]
 
-    async def test_dream_turn_can_skip_unbatched_recent_history(self, tmp_path):
+    async def test_dream_turn_requests_file_range_without_inlining_recent_history(self, tmp_path):
         from unittest.mock import MagicMock
 
         from nanobot.agent.loop import AgentLoop
@@ -584,10 +625,10 @@ class TestEphemeralDirect:
         for i in range(60):
             store.append_history(f"entry-{i + 1:02d}")
 
-        result = store.build_dream_prompt(max_entries=20)
+        result = store.build_dream_prompt()
         assert result is not None
         prompt, cursor = result
-        assert cursor == 20
+        assert cursor == 60
 
         captured: dict[str, list[dict]] = {}
         provider = MagicMock()
@@ -618,9 +659,9 @@ class TestEphemeralDirect:
         system_prompt = messages[0]["content"]
         request_text = "\n".join(str(message.get("content", "")) for message in messages)
         assert "# Recent History" not in system_prompt
-        assert "entry-01" in request_text
-        assert "entry-20" in request_text
-        assert "entry-21" not in request_text
+        assert f"History file: {store.history_file.resolve()}" in request_text
+        assert "Read lines 1-60" in request_text
+        assert "entry-01" not in request_text
         assert "entry-60" not in request_text
 
     async def test_dream_turn_injects_memory_files_once_and_persists_session(self, tmp_path):
@@ -873,3 +914,17 @@ class TestDreamContentDiff:
         store.git.auto_commit("initial")
         store.set_last_dream_cursor(99)
         assert store.dream_content_diff() == ""
+
+    def test_wiki_changes_are_in_dream_diff_and_version_history(self, store):
+        store.git.init()
+        store.wiki_dir.mkdir()
+        (store.wiki_dir / "index.md").write_text("# Wiki\nDeployment details\n", encoding="utf-8")
+        store.set_last_dream_cursor(7)
+        diff = store.dream_content_diff()
+        assert "memory/wiki/index.md" in diff
+        assert "Deployment details" in diff
+        assert ".dream_cursor" not in diff
+        sha = store.git.auto_commit(store.build_dream_commit_message("dream: test", diff))
+        commit, saved_diff = store.git.show_commit_diff(sha)
+        assert "memory/wiki/index.md" in saved_diff
+        assert "Deployment details" in commit.message
