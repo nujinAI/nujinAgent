@@ -19,7 +19,7 @@ import {
 } from "@opentui/core"
 
 import {
-  NanobotClient,
+  NujinAgentClient,
   connectionEndpoint,
   fetchAvailableSkills,
   fetchGatewayHealth,
@@ -129,7 +129,7 @@ import {
 import type { AppOptions, ChatClient } from "./types"
 
 const SESSION_REFRESH_INTERVAL_MS = 1_000
-export class NanobotTui {
+export class NujinAgentTui {
   private readonly renderer: CliRenderer
   private readonly transcript: Transcript
   private readonly commandMenu: CommandMenu
@@ -290,13 +290,13 @@ export class NanobotTui {
         onDismiss: () => void this.updateRecovery("dismiss"),
       },
     )
-    this.client = client || new NanobotClient({
+    this.client = client || new NujinAgentClient({
       ...(options.resolveConnection ? {
         resolveConnection: options.resolveConnection,
         onConnection: (connection: GatewayConnection) => this.useGatewayConnection(connection.apiUrl, connection.apiToken),
         expectedGatewayId: options.desktopGatewayId,
         reconnect: false,
-        targetEndpoint: "Nanobot Desktop",
+        targetEndpoint: "NujinAgent Desktop",
       } : options.bootstrapUrl
         ? {
             resolveConnection: () => fetchGatewayConnection(
@@ -431,7 +431,7 @@ export class NanobotTui {
     this.transcript.header({ workspace: options.workspace, version: options.version })
   }
 
-  static async create(options: AppOptions): Promise<NanobotTui> {
+  static async create(options: AppOptions): Promise<NujinAgentTui> {
     configureOpenTuiEnvironment()
     const host = createTuiHost()
     const renderer = await createCliRenderer({
@@ -442,7 +442,7 @@ export class NanobotTui {
       externalOutputMode: "passthrough",
       consoleMode: "disabled",
     })
-    return NanobotTui.mount(renderer, options, undefined, undefined, host)
+    return NujinAgentTui.mount(renderer, options, undefined, undefined, host)
   }
 
   static mount(
@@ -452,8 +452,8 @@ export class NanobotTui {
     treeSitterClient?: TreeSitterClient,
     host?: TuiHost,
     clipboardImageReader?: ClipboardImageReader,
-  ): NanobotTui {
-    return new NanobotTui(
+  ): NujinAgentTui {
+    return new NujinAgentTui(
       renderer,
       options,
       client,
@@ -1110,7 +1110,7 @@ export class NanobotTui {
   private applyStatus(status: ConnectionStatus, info?: ConnectionStatusInfo): void {
     this.connectionMessage = connectionStatusText(status, info)
     if (this.options.desktopGatewayId && status === "error") {
-      this.connectionMessage = "Desktop disconnected or incompatible. Exit and run nanobot to reconnect."
+      this.connectionMessage = "Desktop disconnected or incompatible. Exit and run nujinagent to reconnect."
     }
     if (status === "connected") {
       this.ready = false

@@ -9,7 +9,7 @@ import {
 import { createSystemSettingsActions } from "@/components/settings/system/createSystemSettingsActions";
 import { useSystemSettingsState } from "@/components/settings/system/useSystemSettingsState";
 import i18n from "@/i18n";
-import { NanobotClient } from "@/lib/nanobot-client";
+import { NujinAgentClient } from "@/lib/nujinagent-client";
 import { getToolsCatalog } from "@/lib/tools-catalog-cache";
 import type { McpPresetInfo, McpPresetsPayload } from "@/lib/types";
 import {
@@ -488,7 +488,7 @@ describe("MCP connection draft lifecycle", () => {
 });
 
 function renderMcpActions() {
-  const client = new NanobotClient({ url: "ws://example.test" });
+  const client = new NujinAgentClient({ url: "ws://example.test" });
   client.requestMutation = requestMutationMock;
   return renderHook(() => {
     const state = useSystemSettingsState(getToolsCatalog(client, "tok"));

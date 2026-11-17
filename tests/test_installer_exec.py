@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.data_access import data_access
-from nanobot.installation_lock import InstallationBusyError, installation_access
+from nujinagent.data_access import data_access
+from nujinagent.installation_lock import InstallationBusyError, installation_access
 
 pytestmark = pytest.mark.skipif(os.name != "posix", reason="POSIX exec handoff only")
 
@@ -15,8 +15,8 @@ _PROGRAM = "import os,sys; print(os.getpid(), flush=True); sys.stdin.read(1)"
 _EXEC = """
 import os,sys
 from pathlib import Path
-from nanobot.data_access import data_access
-from nanobot.installation_lock import installation_access
+from nujinagent.data_access import data_access
+from nujinagent.installation_lock import installation_access
 Path.home = classmethod(lambda cls: Path(sys.argv[1]))
 with installation_access(updating=True, environment=sys.argv[2]) as installation:
     with data_access([sys.argv[3]], updating=True) as data:

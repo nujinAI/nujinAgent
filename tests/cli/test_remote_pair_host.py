@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from nanobot.cli import remote
+from nujinagent.cli import remote
 
 
 @pytest.fixture

@@ -4,7 +4,7 @@ for (const width of [1280, 390]) {
   test(`invitation follows the app theme without losing its artwork or layout at ${width}px`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
-    await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+    await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
     await page.goto("/browser/fixture.html?case=theme-toggle&star");
     await page.getByRole("button", { name: "Open invitation", exact: true }).click();
     const dialog = page.getByRole("dialog");

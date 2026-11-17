@@ -5,7 +5,7 @@ import { projectThreadEvents } from "@/lib/thread-event-projection";
 import { historyContentSnapshot, projectWebuiThreadMessages, sameHistoryContent } from "@/lib/thread-display-projection";
 import { joinThreadFragments } from "@/lib/thread-page-fragments";
 import { isModelCommandText } from "@/lib/format";
-import { isSystemCommandTurnId } from "@/lib/nanobot-client";
+import { isSystemCommandTurnId } from "@/lib/nujinagent-client";
 import type { PromptIndex, ThreadProjectionEvent, UIMessage, WebuiThreadPersistedPayload } from "@/lib/types";
 import { type PromptAnchor, userPromptAnchors } from "@/components/thread/promptNavigation";
 

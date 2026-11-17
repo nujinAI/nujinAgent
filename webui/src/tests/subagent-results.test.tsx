@@ -112,7 +112,7 @@ describe("subagent result archives", () => {
     emitTask(task({ revision: 2, result: "Full findings stay in details" }));
     const archive = screen.getByRole("region", { name: "Subtasks" });
     expect(summary(archive)).toHaveTextContent("Completed: 1");
-    expect(summary(archive).querySelector("img")).toHaveAttribute("src", "/brand/nanobot_mark.svg");
+    expect(summary(archive).querySelector("img")).toHaveAttribute("src", "/brand/nujinagent_mark.svg");
     expect(summary(archive).querySelector("img")).toHaveAttribute("alt", "");
     expect(summary(archive)).toHaveAttribute("aria-expanded", "false");
     await user.click(summary(archive));
@@ -191,7 +191,7 @@ describe("subagent result archives", () => {
     expect(summary(archive)).toHaveAttribute("aria-expanded", "true");
     const outgoingPrompt = screen.getByText("Inspect config");
 
-    // The selected session changes before useNanobotStream hands over its messages.
+    // The selected session changes before useNujinAgentStream hands over its messages.
     view.rerender(layout({ sessionKey: "websocket:b" }));
     expect(screen.getByText("Inspect config")).toBe(outgoingPrompt);
     const other = await screen.findByRole("region", { name: "Subtasks" });

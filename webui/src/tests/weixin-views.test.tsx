@@ -2,10 +2,10 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import QRCode from "qrcode";
 
-import type { NanobotFeatureInfo } from "@/lib/types";
-import { WeixinConnectFlow } from "../../../nanobot/channels/weixin/webui/WeixinConnectFlow";
-import { WeixinConnectFlowView, type WeixinConnectFlowViewProps } from "../../../nanobot/channels/weixin/webui/WeixinConnectFlowView";
-import type { WeixinVerificationPayload } from "../../../nanobot/channels/weixin/webui/presentation";
+import type { NujinAgentFeatureInfo } from "@/lib/types";
+import { WeixinConnectFlow } from "../../../nujinagent/channels/weixin/webui/WeixinConnectFlow";
+import { WeixinConnectFlowView, type WeixinConnectFlowViewProps } from "../../../nujinagent/channels/weixin/webui/WeixinConnectFlowView";
+import type { WeixinVerificationPayload } from "../../../nujinagent/channels/weixin/webui/presentation";
 
 const { requestMutation, useClientMock } = vi.hoisted(() => ({
   requestMutation: vi.fn(), useClientMock: vi.fn(),
@@ -17,7 +17,7 @@ const challenge = {
   qr_url: "https://example.com/weixin", challenge: "verify_code",
 } satisfies WeixinVerificationPayload;
 const rejectedChallenge = { ...challenge, verification_failed: true } satisfies WeixinVerificationPayload;
-const feature: NanobotFeatureInfo = {
+const feature: NujinAgentFeatureInfo = {
   name: "weixin", display_name: "WeChat", type: "channel", webui: "webui/index.tsx",
   enabled: false, configured: false, installed: true, ready: true, status: "not_enabled",
   install_supported: true, requires_restart: false,
@@ -71,7 +71,7 @@ describe("WeChat verification views", () => {
     expect(code).toHaveAttribute("aria-invalid", "true");
 
     const features = { features: [{ ...feature, configured: true }], enabled_count: 0 };
-    requestMutation.mockResolvedValueOnce({ ...challenge, status: "succeeded", nanobot_features: features });
+    requestMutation.mockResolvedValueOnce({ ...challenge, status: "succeeded", nujinagent_features: features });
     await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Verify" })); });
     expect(onFeaturesUpdate).toHaveBeenCalledWith(features);
     expect(screen.getByText("WeChat is connected.")).toBeVisible();

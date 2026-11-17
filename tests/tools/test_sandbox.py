@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.execution.sandbox import _sbpl_quote, _seatbelt_is_within, build_sandbox_argv
+from nujinagent.execution.sandbox import _sbpl_quote, _seatbelt_is_within, build_sandbox_argv
 
 
 @pytest.fixture(autouse=True)
@@ -12,7 +12,7 @@ def portable_launcher(monkeypatch):
     def resolve(backend, *_args, **_kwargs):
         return "bwrap" if backend == "bwrap" else "/usr/bin/sandbox-exec"
 
-    monkeypatch.setattr("nanobot.execution.sandbox.resolve_sandbox_launcher", resolve)
+    monkeypatch.setattr("nujinagent.execution.sandbox.resolve_sandbox_launcher", resolve)
 
 
 class TestBwrapBackend:
@@ -130,7 +130,7 @@ class TestBwrapBackend:
         fake_media = tmp_path / "media"
         fake_media.mkdir()
         monkeypatch.setattr(
-            "nanobot.execution.sandbox.get_media_dir",
+            "nujinagent.execution.sandbox.get_media_dir",
             lambda: fake_media,
         )
         ws = str(tmp_path / "project")
@@ -325,7 +325,7 @@ class TestSeatbeltBackend:
         fake_media = (tmp_path / "media").resolve()
         fake_media.mkdir()
         monkeypatch.setattr(
-            "nanobot.execution.sandbox.get_media_dir",
+            "nujinagent.execution.sandbox.get_media_dir",
             lambda: fake_media,
         )
         ws = (tmp_path / "project").resolve()
@@ -377,7 +377,7 @@ class TestSeatbeltBackend:
         ws = (tmp_path / "workspace").resolve()
         ro = ws / 'tree with "quotes' / "branch" / "readonly"
         media = ro if source == "media" else tmp_path / "media"
-        monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+        monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
         profile = self._profile(build_sandbox_argv(
             "seatbelt", "ls", str(ws), str(ws),
             sandbox_ro_binds=[str(ro)] if source == "bind" else [],
@@ -394,7 +394,7 @@ class TestSeatbeltBackend:
         ws = (tmp_path / "workspace").resolve()
         ro = ws / "tree" / "readonly"
         rw = {"root": ro, "parent": ro.parent, "child": ro / "cache"}[override]
-        monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: ro)
+        monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: ro)
         profile = self._profile(build_sandbox_argv(
             "seatbelt", "ls", str(ws), str(ws),
             sandbox_ro_binds=[str(ro)], sandbox_rw_binds=[str(rw)],

@@ -16,7 +16,7 @@ pytestmark = pytest.mark.skipif(
 )
 SCRIPT = Path(__file__).with_name("test_docker.sh")
 STATUS_OUTPUT = (
-    "nanobot Status\nConfig: configured\nWorkspace: ready\nModel: test\n"
+    "nujinagent Status\nConfig: configured\nWorkspace: ready\nModel: test\n"
     "OpenRouter API: unset\nAnthropic API: unset\nOpenAI API: unset"
 )
 
@@ -64,10 +64,10 @@ def docker_boundary(tmp_path):
 
 def _assert_owned_cleanup(calls):
     image = calls[0][2]
-    suffix = image.removeprefix("nanobot-test-")
+    suffix = image.removeprefix("nujinagent-test-")
     assert suffix and suffix != image
-    container = f"nanobot-test-run-{suffix}"
-    onboarded = f"nanobot-test-onboarded-{suffix}"
+    container = f"nujinagent-test-run-{suffix}"
+    onboarded = f"nujinagent-test-onboarded-{suffix}"
     assert calls[-2:] == [["rm", "-f", container], ["rmi", "-f", onboarded, image]]
     for call in calls:
         if call[0] == "run" and call[-1] == "onboard":
@@ -86,7 +86,7 @@ def test_smoke_failure_preserves_exit_and_cleans_only_owned_resources(docker_bou
     assert "All checks passed" not in result.stdout
     _assert_owned_cleanup(calls)
     if stage == "status":
-        assert "nanobot Status" in result.stdout
+        assert "nujinagent Status" in result.stdout
 
 
 def test_concurrent_smoke_runs_use_distinct_resources_and_cleanup(docker_boundary):

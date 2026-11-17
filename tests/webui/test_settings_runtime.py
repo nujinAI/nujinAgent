@@ -6,15 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.config.loader import load_config, save_config
-from nanobot.config.schema import Config
-from nanobot.webui.settings_api import update_runtime_config_settings
-from nanobot.webui.settings_contracts import WebUISettingsError
-from nanobot.webui.settings_runtime import (
+from nujinagent.config.loader import load_config, save_config
+from nujinagent.config.schema import Config
+from nujinagent.webui.settings_api import update_runtime_config_settings
+from nujinagent.webui.settings_contracts import WebUISettingsError
+from nujinagent.webui.settings_runtime import (
     runtime_config_payload,
     update_runtime_config,
 )
-from nanobot.webui.settings_services import WebUISettingsServices
+from nujinagent.webui.settings_services import WebUISettingsServices
 
 
 def test_shared_proxy_roundtrip_preserves_independent_feature_switches(tmp_path):

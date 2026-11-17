@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
 
-from nanobot.gateway.runtime import (
+from nujinagent.gateway.runtime import (
     GatewayHealthIdentity,
     GatewayRuntime,
     GatewayRuntimePaths,

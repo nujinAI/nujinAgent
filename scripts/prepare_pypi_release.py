@@ -8,8 +8,8 @@ import re
 import shutil
 from pathlib import Path
 
-from nanobot.release_trust import verify_release_approval
-from nanobot.releases import ReleaseManifest
+from nujinagent.release_trust import verify_release_approval
+from nujinagent.releases import ReleaseManifest
 
 
 def stage_release(release_dir: Path, output: Path, *, version: str, tag_commit: str) -> None:

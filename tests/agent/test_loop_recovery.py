@@ -8,24 +8,24 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.session_helpers import save_completed_subagent
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.turn_delivery import TurnDeliveryFactory
-from nanobot.bus.events import InboundMessage, OutboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.runtime_context import public_history_message
-from nanobot.session.manager import SessionManager
-from nanobot.session.recovery import (
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.turn_delivery import TurnDeliveryFactory
+from nujinagent.bus.events import InboundMessage, OutboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.runtime_context import public_history_message
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.recovery import (
     PENDING_USER_TURN_KEY,
     RECOVERY_METADATA_KEY,
     REQUEST_ORIGIN_METADATA_KEY,
     RUNTIME_CHECKPOINT_KEY,
 )
-from nanobot.session.turn_continuation import INTERNAL_CONTINUATION_META
-from nanobot.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
-from nanobot.webui.recovery import RecoveryCoordinator
-from nanobot.webui.transcript import WebUITranscriptRecorder
+from nujinagent.session.turn_continuation import INTERNAL_CONTINUATION_META
+from nujinagent.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
+from nujinagent.webui.recovery import RecoveryCoordinator
+from nujinagent.webui.transcript import WebUITranscriptRecorder
 
 
 @pytest.mark.asyncio
@@ -158,7 +158,7 @@ async def test_recovery_continuation_runs_without_a_sustained_goal(
 async def test_recovery_preserves_turn_origin_until_the_next_user_turn(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, late_result: bool,
 ) -> None:
-    monkeypatch.setattr("nanobot.webui.history.get_webui_dir", lambda: tmp_path / "webui")
+    monkeypatch.setattr("nujinagent.webui.history.get_webui_dir", lambda: tmp_path / "webui")
     bus = MessageBus()
     provider = MagicMock(aclose=AsyncMock())
     provider.get_default_model.return_value = "test-model"
@@ -390,7 +390,7 @@ def _recovery_loop(tmp_path, provider, sessions=None):
 async def test_multiround_recovery_keeps_completed_work_and_consumed_followup(
     tmp_path, monkeypatch, boundary, gateway_shutdown,
 ):
-    from nanobot.session.recovery import pending_followups
+    from nujinagent.session.recovery import pending_followups
 
     provider = MagicMock(aclose=AsyncMock())
     provider.get_default_model.return_value = "test-model"
@@ -612,8 +612,8 @@ async def test_length_recovery_retains_original_prompt_attribution(tmp_path: Pat
 
 
 def test_persisted_automation_input_blocks_prior_prompt_attribution(tmp_path: Path) -> None:
-    from nanobot.agent.runner import AgentRunner
-    from nanobot.session.automation_turns import AUTOMATION_HISTORY_META
+    from nujinagent.agent.runner import AgentRunner
+    from nujinagent.session.automation_turns import AUTOMATION_HISTORY_META
 
     sessions = SessionManager(tmp_path)
     session = sessions.get_or_create("websocket:chat")

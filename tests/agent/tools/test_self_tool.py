@@ -7,13 +7,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.runtime_control import AgentRuntimeControl
-from nanobot.agent.tools.self import MyTool
-from nanobot.agent.tools.shell import ExecToolConfig
-from nanobot.agent.tools.web import WebSearchConfig, WebToolsConfig
-from nanobot.config.schema import ModelPresetConfig
-from nanobot.providers.base import LLMUsage
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.runtime_control import AgentRuntimeControl
+from nujinagent.agent.tools.self import MyTool
+from nujinagent.agent.tools.shell import ExecToolConfig
+from nujinagent.agent.tools.web import WebSearchConfig, WebToolsConfig
+from nujinagent.config.schema import ModelPresetConfig
+from nujinagent.providers.base import LLMUsage
 
 
 def _make_mock_loop(**overrides):
@@ -501,8 +501,8 @@ class TestSubagentHookStatus:
 
     @pytest.mark.asyncio
     async def test_after_iteration_updates_status(self):
-        from nanobot.agent.hook import AgentHookContext
-        from nanobot.agent.subagent import SubagentStatus, _SubagentHook
+        from nujinagent.agent.hook import AgentHookContext
+        from nujinagent.agent.subagent import SubagentStatus, _SubagentHook
 
         status = SubagentStatus(
             task_id="test",
@@ -527,8 +527,8 @@ class TestSubagentHookStatus:
 
     @pytest.mark.asyncio
     async def test_after_iteration_with_error(self):
-        from nanobot.agent.hook import AgentHookContext
-        from nanobot.agent.subagent import SubagentStatus, _SubagentHook
+        from nujinagent.agent.hook import AgentHookContext
+        from nujinagent.agent.subagent import SubagentStatus, _SubagentHook
 
         status = SubagentStatus(
             task_id="test",
@@ -586,9 +586,9 @@ class TestScratchpadInspection:
     @pytest.mark.asyncio
     async def test_inspect_scratchpad_string(self):
         tool = _make_tool()
-        await tool.execute(action="set", key="current_project", value="nanobot")
+        await tool.execute(action="set", key="current_project", value="nujinagent")
         result = await tool.execute(action="check", key="current_project")
-        assert "nanobot" in result
+        assert "nujinagent" in result
 
     @pytest.mark.asyncio
     async def test_inspect_scratchpad_dict(self):
@@ -783,7 +783,7 @@ class TestRequestContext:
             session_key="feishu:oc_abc123",
         )
 
-        with patch("nanobot.agent.tools.self.logger.info") as info:
+        with patch("nujinagent.agent.tools.self.logger.info") as info:
             with request_context(ctx):
                 tool._audit("modify", "temperature = 0.2")
 

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 async function installPreview(page: Page) {
-  await page.addInitScript(() => { localStorage.setItem("nanobot.locale", "en"); });
+  await page.addInitScript(() => { localStorage.setItem("nujinagent.locale", "en"); });
   const cdp = await page.context().newCDPSession(page);
   await cdp.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-transparency", value: "no-preference" }] });
   await page.route("**/api/commands", route => route.fulfill({ json: { commands: [] } }));

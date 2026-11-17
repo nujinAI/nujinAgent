@@ -3,8 +3,8 @@
 Surrogate characters in CLI input must not crash history file writes.
 """
 
-from nanobot.cli.commands import SafeFileHistory as LegacySafeFileHistory
-from nanobot.cli.terminal import SafeFileHistory, _sanitize_surrogates
+from nujinagent.cli.commands import SafeFileHistory as LegacySafeFileHistory
+from nujinagent.cli.terminal import SafeFileHistory, _sanitize_surrogates
 
 
 def test_commands_keeps_safe_file_history_import_compatible() -> None:
@@ -22,7 +22,7 @@ class TestSanitizeSurrogates:
         assert _sanitize_surrogates("normal ascii text") == "normal ascii text"
 
     def test_emoji_already_correct(self):
-        assert _sanitize_surrogates("hello 🐈 nanobot") == "hello 🐈 nanobot"
+        assert _sanitize_surrogates("hello 🐈 nujinagent") == "hello 🐈 nujinagent"
 
     def test_mixed_unicode_preserved(self):
         assert _sanitize_surrogates("你好 hello こんにちは 🎉") == "你好 hello こんにちは 🎉"
@@ -53,11 +53,11 @@ class TestSafeFileHistory:
     def test_windows_surrogate_pair_round_trips_as_emoji(self, tmp_path):
         history_path = tmp_path / "history"
         hist = SafeFileHistory(str(history_path))
-        hist.store_string("hello \ud83d\udc08 nanobot")
+        hist.store_string("hello \ud83d\udc08 nujinagent")
 
         history_path.read_bytes().decode("utf-8")
         reloaded = SafeFileHistory(str(history_path))
-        assert list(reloaded.load_history_strings()) == ["hello 🐈 nanobot"]
+        assert list(reloaded.load_history_strings()) == ["hello 🐈 nujinagent"]
 
     def test_mixed_unicode_preserved(self, tmp_path):
         hist = SafeFileHistory(str(tmp_path / "history"))

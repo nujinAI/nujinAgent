@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import {
   installSettingsViewTestHooks,
   jsonResponse,
@@ -46,7 +46,7 @@ describe("Apps default filter", () => {
   });
 
   it("preserves a manual choice while MCP loads, then defaults to the cached Ready items on re-entry", async () => {
-    const client = { status: "open", onStatus: () => () => {} } as unknown as NanobotClient;
+    const client = { status: "open", onStatus: () => () => {} } as unknown as NujinAgentClient;
     const pending = deferred<Response>();
     vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => {
       if (String(input) === "/api/settings/cli-apps") return Promise.resolve(jsonResponse({ apps: [app], installed_count: 0 }));

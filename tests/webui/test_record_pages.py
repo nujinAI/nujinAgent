@@ -6,13 +6,13 @@ import pytest
 from websockets.datastructures import Headers
 from websockets.http11 import Request
 
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket.runtime import WebSocketConfig
-from nanobot.session.display_history import HistoryFact
-from nanobot.session.history_graph import history_record_size
-from nanobot.webui import transcript
-from nanobot.webui.gateway_services import build_gateway_services
-from nanobot.webui.history import fact_from_record
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket.runtime import WebSocketConfig
+from nujinagent.session.display_history import HistoryFact
+from nujinagent.session.history_graph import history_record_size
+from nujinagent.webui import transcript
+from nujinagent.webui.gateway_services import build_gateway_services
+from nujinagent.webui.history import fact_from_record
 
 
 def _legacy_cursor(turn):

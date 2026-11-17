@@ -17,7 +17,7 @@ for (const locale of locales) {
   test(`gallery switches to ${locale.code} without replacing preview state`, async ({ page }) => {
     await page.setViewportSize({ width: locale.code === "en" || locale.code.startsWith("zh") ? 1280 : 390, height: 960 });
     let inventoryRequests = 0;
-    page.on("request", (request) => { if (new URL(request.url()).pathname === "/__nanobot_components") inventoryRequests += 1; });
+    page.on("request", (request) => { if (new URL(request.url()).pathname === "/__nujinagent_components") inventoryRequests += 1; });
     await page.goto("/gallery.html#component=webui%2Fsrc%2Fcomponents%2Fui%2Finput.tsx");
     const input = page.getByRole("region", { name: "Component preview", exact: true }).getByRole("textbox").first();
     await input.fill("Keep this draft 中文");
@@ -36,7 +36,7 @@ for (const locale of locales) {
     await expect(page.locator(".gallery-code").first()).toHaveText(code);
     expect(inventoryRequests).toBe(1);
     await expect(page.locator("html")).toHaveAttribute("lang", locale.code);
-    expect(await page.evaluate(() => localStorage.getItem("nanobot.locale"))).toBe(locale.code);
+    expect(await page.evaluate(() => localStorage.getItem("nujinagent.locale"))).toBe(locale.code);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 
     await page.reload();
@@ -48,12 +48,12 @@ for (const locale of locales) {
 for (const key of ["Enter", "Space"]) {
   test(`reselecting the detected language with ${key} saves it`, async ({ page }) => {
     await page.goto("/gallery.html");
-    expect(await page.evaluate(() => localStorage.getItem("nanobot.locale"))).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem("nujinagent.locale"))).toBeNull();
     const switcher = page.locator(".gallery-header").getByRole("combobox");
     await switcher.focus();
     await page.keyboard.press("Enter");
     await page.keyboard.press(key);
-    await expect.poll(() => page.evaluate(() => localStorage.getItem("nanobot.locale"))).toBe("en");
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("nujinagent.locale"))).toBe("en");
     await page.reload();
     await expect(switcher).toHaveText("English");
   });
@@ -66,7 +66,7 @@ test.describe("touch language selection", () => {
     await page.goto("/gallery.html");
     await page.locator(".gallery-header").getByRole("combobox").tap();
     await page.getByRole("option", { name: "English", exact: true }).tap();
-    await expect.poll(() => page.evaluate(() => localStorage.getItem("nanobot.locale"))).toBe("en");
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("nujinagent.locale"))).toBe("en");
   });
 });
 
@@ -76,18 +76,18 @@ test("typing a space in the language picker does not save a preference", async (
   await switcher.focus();
   await page.keyboard.press("Enter");
   await page.keyboard.type("e ");
-  expect(await page.evaluate(() => localStorage.getItem("nanobot.locale"))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem("nujinagent.locale"))).toBeNull();
 });
 
 test("gallery localizes an existing error and retries in the selected language", async ({ page }) => {
-  await page.route("**/__nanobot_components", (route) => route.fulfill({ status: 503, body: "unavailable" }));
+  await page.route("**/__nujinagent_components", (route) => route.fulfill({ status: 503, body: "unavailable" }));
   await page.goto("/gallery.html");
   await expect(page.getByRole("alert")).toContainText("Could not load the inventory");
   await page.locator(".gallery-header").getByRole("combobox").click();
   await page.getByRole("option", { name: "简体中文", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("无法加载组件目录");
 
-  await page.unroute("**/__nanobot_components");
+  await page.unroute("**/__nujinagent_components");
   await page.getByRole("button", { name: "刷新目录" }).click();
   await expect(page.getByRole("region", { name: "组件预览", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "全部源码", exact: true }).click();

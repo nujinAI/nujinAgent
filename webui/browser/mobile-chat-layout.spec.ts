@@ -21,7 +21,7 @@ for (const { width, dark } of [{ width: 360, dark: false }, { width: 314, dark: 
   test.describe(`mobile transcript at ${width}px`, () => {
     test.use({ viewport: { width, height: 740 }, hasTouch: true, reducedMotion: "reduce" });
     test("keeps metadata tappable on one row and the top fade fixed while scrolling", async ({ page }) => {
-      await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+      await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
       await page.route("**/api/**", route => route.fulfill({ json: {} }));
       await page.goto(`/browser/fixture.html?case=mobile-chat-layout&project&long-project${dark ? "&dark" : ""}`);
       const workspace = page.getByRole("button", { name: "Switch directory" });
@@ -71,7 +71,7 @@ for (const { width, dark } of [{ width: 360, dark: false }, { width: 314, dark: 
 test.describe("desktop transcript spacing", () => {
   test.use({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
   test("preserves desktop footer spacing and the bottom-only fade", async ({ page }) => {
-    await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+    await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
     await page.route("**/api/**", route => route.fulfill({ json: {} }));
     await page.goto("/browser/fixture.html?case=mobile-chat-layout&project");
     const access = page.getByRole("button", { name: "Workspace access mode: Full Access" });
@@ -88,7 +88,7 @@ test.describe("desktop transcript spacing", () => {
 
 test("bottom button stays hidden throughout smooth navigation", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   await page.route("**/api/**", route => route.fulfill({ json: {} }));
   await page.goto("/browser/fixture.html?case=mobile-chat-layout&project");
   const scroller = page.locator(".thread-message-viewport");
@@ -120,7 +120,7 @@ test("bottom button stays hidden throughout smooth navigation", async ({ page })
 
 test("bottom button stays hidden after focus scrolls a following thread", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 740 });
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   await page.route("**/api/sessions/**", route => route.fulfill({ json: { prompts: [] } }));
   await page.goto("/browser/fixture.html?case=rail&workbench=1&focus-links=1");
   const scroller = page.locator(".thread-message-viewport");

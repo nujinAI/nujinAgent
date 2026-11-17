@@ -1,4 +1,4 @@
-from nanobot.session.manager import Session, SessionManager
+from nujinagent.session.manager import Session, SessionManager
 
 
 def test_colliding_display_names_roundtrip_independently(tmp_path):

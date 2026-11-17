@@ -7,11 +7,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from agent.session_helpers import mock_session_manager, run_session
-from nanobot.agent.memory import Consolidator
-from nanobot.bus.outbound_events import StreamDeltaEvent, StreamEndEvent
-from nanobot.config.schema import AgentDefaults
-from nanobot.providers.base import GenerationSettings
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.memory import Consolidator
+from nujinagent.bus.outbound_events import StreamDeltaEvent, StreamEndEvent
+from nujinagent.config.schema import AgentDefaults
+from nujinagent.providers.base import GenerationSettings
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 _MAX_TOOL_RESULT_CHARS = AgentDefaults().max_tool_result_chars
 
@@ -24,8 +24,8 @@ def _runtime(provider: MagicMock | None = None) -> LLMRuntime:
 
 def _make_loop(*, tools_config=None):
     """Create a minimal AgentLoop with mocked dependencies."""
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     provider = MagicMock(aclose=AsyncMock())
@@ -33,9 +33,9 @@ def _make_loop(*, tools_config=None):
     workspace = MagicMock()
     workspace.__truediv__ = MagicMock(return_value=MagicMock())
 
-    with patch("nanobot.agent.loop.ContextBuilder"), \
-         patch("nanobot.agent.loop.SessionManager", side_effect=mock_session_manager), \
-         patch("nanobot.agent.loop.SubagentManager") as mock_sub_mgr:
+    with patch("nujinagent.agent.loop.ContextBuilder"), \
+         patch("nujinagent.agent.loop.SessionManager", side_effect=mock_session_manager), \
+         patch("nujinagent.agent.loop.SubagentManager") as mock_sub_mgr:
         mock_sub_mgr.return_value.cancel_by_session = AsyncMock(return_value=0)
         loop = AgentLoop(bus=bus, provider=provider, workspace=workspace, tools_config=tools_config)
     return loop, bus
@@ -113,7 +113,7 @@ class TestBackgroundTaskTracking:
     async def test_successful_background_task_is_removed(self, monkeypatch):
         loop, _bus = _make_loop()
         mock_logger = MagicMock()
-        monkeypatch.setattr("nanobot.agent.loop.logger", mock_logger)
+        monkeypatch.setattr("nujinagent.agent.loop.logger", mock_logger)
 
         loop.schedule_background(asyncio.sleep(0))
         await _wait_for_background_callbacks(loop)
@@ -125,7 +125,7 @@ class TestBackgroundTaskTracking:
     async def test_failed_background_task_is_retrieved_and_logged(self, monkeypatch):
         loop, _bus = _make_loop()
         mock_logger = MagicMock()
-        monkeypatch.setattr("nanobot.agent.loop.logger", mock_logger)
+        monkeypatch.setattr("nujinagent.agent.loop.logger", mock_logger)
         failure = RuntimeError("background failure")
         loop_errors: list[dict[str, object]] = []
         event_loop = asyncio.get_running_loop()
@@ -154,7 +154,7 @@ class TestBackgroundTaskTracking:
     async def test_cancelled_background_task_is_removed_without_error(self, monkeypatch):
         loop, _bus = _make_loop()
         mock_logger = MagicMock()
-        monkeypatch.setattr("nanobot.agent.loop.logger", mock_logger)
+        monkeypatch.setattr("nujinagent.agent.loop.logger", mock_logger)
         started = asyncio.Event()
         release = asyncio.Event()
 
@@ -180,7 +180,7 @@ class TestBackgroundTaskTracking:
         loop.subagents.close = AsyncMock()
         loop._exec_session_manager.close_all = AsyncMock()
         mock_logger = MagicMock()
-        monkeypatch.setattr("nanobot.agent.loop.logger", mock_logger)
+        monkeypatch.setattr("nujinagent.agent.loop.logger", mock_logger)
         started = asyncio.Event()
         release = asyncio.Event()
         failure = RuntimeError("failure while draining")
@@ -211,9 +211,9 @@ class TestBackgroundTaskTracking:
 class TestHandleStop:
     @pytest.mark.asyncio
     async def test_stop_no_active_task(self):
-        from nanobot.bus.events import InboundMessage
-        from nanobot.command.builtin import cmd_stop
-        from nanobot.command.router import CommandContext
+        from nujinagent.bus.events import InboundMessage
+        from nujinagent.command.builtin import cmd_stop
+        from nujinagent.command.router import CommandContext
 
         loop, bus = _make_loop()
         msg = InboundMessage(channel="test", sender_id="u1", chat_id="c1", content="/stop")
@@ -277,9 +277,9 @@ class TestHandleStop:
 
     @pytest.mark.asyncio
     async def test_stop_cancels_active_task(self):
-        from nanobot.bus.events import InboundMessage
-        from nanobot.command.builtin import cmd_stop
-        from nanobot.command.router import CommandContext
+        from nujinagent.bus.events import InboundMessage
+        from nujinagent.command.builtin import cmd_stop
+        from nujinagent.command.router import CommandContext
 
         loop, bus = _make_loop()
         cancelled = asyncio.Event()
@@ -306,9 +306,9 @@ class TestHandleStop:
 
     @pytest.mark.asyncio
     async def test_stop_cancels_multiple_tasks(self):
-        from nanobot.bus.events import InboundMessage
-        from nanobot.command.builtin import cmd_stop
-        from nanobot.command.router import CommandContext
+        from nujinagent.bus.events import InboundMessage
+        from nujinagent.command.builtin import cmd_stop
+        from nujinagent.command.router import CommandContext
 
         loop, bus = _make_loop()
         events = [asyncio.Event(), asyncio.Event()]
@@ -351,7 +351,7 @@ class TestDispatch:
 
         monkeypatch.setattr(bus, "consume_inbound", consume_once_then_stop)
         monkeypatch.setattr(
-            "nanobot.agent.loop.logger.warning",
+            "nujinagent.agent.loop.logger.warning",
             lambda message, *args, **kwargs: warnings.append(message),
         )
 
@@ -361,8 +361,8 @@ class TestDispatch:
         assert any("Ignoring leaked CancelledError" in warning for warning in warnings)
 
     def test_exec_tool_not_registered_when_disabled(self):
-        from nanobot.agent.tools.shell import ExecToolConfig
-        from nanobot.config.schema import ToolsConfig
+        from nujinagent.agent.tools.shell import ExecToolConfig
+        from nujinagent.config.schema import ToolsConfig
 
         loop, _bus = _make_loop(tools_config=ToolsConfig(exec=ExecToolConfig(enable=False)))
 
@@ -370,7 +370,7 @@ class TestDispatch:
 
     @pytest.mark.asyncio
     async def test_dispatch_processes_and_publishes(self):
-        from nanobot.bus.events import InboundMessage, OutboundMessage
+        from nujinagent.bus.events import InboundMessage, OutboundMessage
 
         loop, bus = _make_loop()
         msg = InboundMessage(channel="test", sender_id="u1", chat_id="c1", content="hello")
@@ -383,7 +383,7 @@ class TestDispatch:
 
     @pytest.mark.asyncio
     async def test_dispatch_streaming_preserves_message_metadata(self):
-        from nanobot.bus.events import InboundMessage
+        from nujinagent.bus.events import InboundMessage
 
         loop, bus = _make_loop()
         msg = InboundMessage(
@@ -419,7 +419,7 @@ class TestDispatch:
 
     @pytest.mark.asyncio
     async def test_same_session_dispatches_serialize(self):
-        from nanobot.bus.events import InboundMessage, OutboundMessage
+        from nujinagent.bus.events import InboundMessage, OutboundMessage
 
         loop, bus = _make_loop()
         order = []
@@ -452,8 +452,8 @@ class TestDispatch:
 class TestSubagentCancellation:
     @pytest.mark.asyncio
     async def test_cancel_by_session(self, tmp_path):
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.bus.queue import MessageBus
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.bus.queue import MessageBus
 
         bus = MessageBus()
         mgr = SubagentManager(
@@ -485,8 +485,8 @@ class TestSubagentCancellation:
 
     @pytest.mark.asyncio
     async def test_cancel_by_session_no_tasks(self):
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.bus.queue import MessageBus
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.bus.queue import MessageBus
 
         bus = MessageBus()
         mgr = SubagentManager(
@@ -499,9 +499,9 @@ class TestSubagentCancellation:
 
     @pytest.mark.asyncio
     async def test_cancel_by_session_does_not_terminate_parent_exec_sessions(self):
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.agent.tools.exec_session import ExecSessionManager
-        from nanobot.bus.queue import MessageBus
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.agent.tools.exec_session import ExecSessionManager
+        from nujinagent.bus.queue import MessageBus
 
         bus = MessageBus()
         mgr = SubagentManager(
@@ -520,9 +520,9 @@ class TestSubagentCancellation:
 
     @pytest.mark.asyncio
     async def test_subagent_preserves_reasoning_fields_in_tool_turn(self, monkeypatch, tmp_path):
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.bus.queue import MessageBus
-        from nanobot.providers.base import LLMResponse, ToolCallRequest
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.providers.base import LLMResponse, ToolCallRequest
 
         bus = MessageBus()
         provider = MagicMock()
@@ -554,7 +554,7 @@ class TestSubagentCancellation:
         async def fake_execute(self, **kwargs):
             return "tool result"
 
-        monkeypatch.setattr("nanobot.agent.tools.filesystem.ListDirTool.execute", fake_execute)
+        monkeypatch.setattr("nujinagent.agent.tools.filesystem.ListDirTool.execute", fake_execute)
 
         await mgr.spawn(
             task="do task",
@@ -575,10 +575,10 @@ class TestSubagentCancellation:
 
     @pytest.mark.asyncio
     async def test_subagent_exec_tool_not_registered_when_disabled(self, tmp_path):
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.agent.tools.shell import ExecToolConfig
-        from nanobot.bus.queue import MessageBus
-        from nanobot.config.schema import ToolsConfig
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.agent.tools.shell import ExecToolConfig
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.config.schema import ToolsConfig
 
         bus = MessageBus()
         provider = MagicMock()
@@ -619,9 +619,9 @@ class TestSubagentCancellation:
     async def test_subagent_announces_success_after_recovering_from_tool_failure(
         self, monkeypatch, tmp_path
     ):
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.bus.queue import MessageBus
-        from nanobot.providers.base import LLMResponse, ToolCallRequest
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.providers.base import LLMResponse, ToolCallRequest
 
         bus = MessageBus()
         provider = MagicMock()
@@ -657,7 +657,7 @@ class TestSubagentCancellation:
                 return "first result"
             raise RuntimeError("boom")
 
-        monkeypatch.setattr("nanobot.agent.tools.filesystem.ListDirTool.execute", fake_execute)
+        monkeypatch.setattr("nujinagent.agent.tools.filesystem.ListDirTool.execute", fake_execute)
 
         await mgr.spawn(
             task="do task",
@@ -677,9 +677,9 @@ class TestSubagentCancellation:
 
     @pytest.mark.asyncio
     async def test_cancel_by_session_cancels_running_subagent_tool(self, monkeypatch, tmp_path):
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.bus.queue import MessageBus
-        from nanobot.providers.base import LLMResponse, ToolCallRequest
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.providers.base import LLMResponse, ToolCallRequest
 
         bus = MessageBus()
         provider = MagicMock()
@@ -707,7 +707,7 @@ class TestSubagentCancellation:
                 cancelled.set()
                 raise
 
-        monkeypatch.setattr("nanobot.agent.tools.filesystem.ListDirTool.execute", fake_execute)
+        monkeypatch.setattr("nujinagent.agent.tools.filesystem.ListDirTool.execute", fake_execute)
 
         await mgr.spawn("do task", label="label", runtime=_runtime(provider), session_key="test:c1")
         task = next(iter(mgr._running_tasks.values()))
@@ -726,8 +726,8 @@ class TestSubagentAnnounceSessionKey:
 
     def _make_mgr(self):
         """Create a SubagentManager with mocked deps and its bus."""
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.bus.queue import MessageBus
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.bus.queue import MessageBus
 
         bus = MessageBus()
         mgr = SubagentManager(

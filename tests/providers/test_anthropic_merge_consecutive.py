@@ -1,4 +1,4 @@
-from nanobot.providers.anthropic_provider import AnthropicProvider
+from nujinagent.providers.anthropic_provider import AnthropicProvider
 
 
 class TestMergeConsecutive:

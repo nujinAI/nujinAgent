@@ -8,7 +8,7 @@ import {
 import type { SystemSettingsState } from "@/components/settings/system/useSystemSettingsState";
 import {
   fetchAutomations,
-  fetchNanobotFeatures,
+  fetchNujinAgentFeatures,
 } from "@/lib/api";
 
 interface SystemSettingsEffectsOptions {
@@ -36,9 +36,9 @@ export function useSystemSettingsEffects({
     setCliAppsLoading,
     setMcpError,
     setMcpPresetsLoading,
-    setNanobotFeatures,
-    setNanobotFeaturesError,
-    setNanobotFeaturesLoading,
+    setNujinAgentFeatures,
+    setNujinAgentFeaturesError,
+    setNujinAgentFeaturesLoading,
   } = state;
 
   useEffect(() => {
@@ -98,19 +98,19 @@ export function useSystemSettingsEffects({
     const refresh = async (showLoading = false): Promise<void> => {
       if (refreshing) return;
       refreshing = true;
-      if (showLoading) setNanobotFeaturesLoading(true);
+      if (showLoading) setNujinAgentFeaturesLoading(true);
       try {
-        const payload = await fetchNanobotFeatures(getToken());
+        const payload = await fetchNujinAgentFeatures(getToken());
         if (!cancelled) {
-          setNanobotFeatures(payload);
-          setNanobotFeaturesError(null);
+          setNujinAgentFeatures(payload);
+          setNujinAgentFeaturesError(null);
         }
       } catch (err) {
         const message = (err as Error).message;
-        if (!cancelled && message !== "HTTP 404") setNanobotFeaturesError(message);
+        if (!cancelled && message !== "HTTP 404") setNujinAgentFeaturesError(message);
       } finally {
         refreshing = false;
-        if (!cancelled && showLoading) setNanobotFeaturesLoading(false);
+        if (!cancelled && showLoading) setNujinAgentFeaturesLoading(false);
       }
     };
     void refresh(true);

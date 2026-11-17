@@ -12,15 +12,15 @@ from unittest.mock import Mock
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.exec_session import (
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.exec_session import (
     ExecSessionManager,
     ExecSessionTool,
     ListExecSessionsTool,
 )
-from nanobot.agent.tools.registry import is_tool_error_result
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.execution import processes
+from nujinagent.agent.tools.registry import is_tool_error_result
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.execution import processes
 
 
 def _python(code: str) -> list[str]:

@@ -9,14 +9,14 @@ import pytest
 from websockets.datastructures import Headers
 from websockets.http11 import Request
 
-from nanobot.bus.events import OutboundMessage
-from nanobot.bus.outbound_events import ProgressEvent, TurnEndEvent
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
-from nanobot.session.manager import SessionManager
-from nanobot.webui import transcript
-from nanobot.webui.gateway_services import build_gateway_services
-from nanobot.webui.metadata import WEBUI_TURN_METADATA_KEY
+from nujinagent.bus.events import OutboundMessage
+from nujinagent.bus.outbound_events import ProgressEvent, TurnEndEvent
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
+from nujinagent.session.manager import SessionManager
+from nujinagent.webui import transcript
+from nujinagent.webui.gateway_services import build_gateway_services
+from nujinagent.webui.metadata import WEBUI_TURN_METADATA_KEY
 
 
 def _gateway(history, tmp_path, monkeypatch):
@@ -25,8 +25,8 @@ def _gateway(history, tmp_path, monkeypatch):
         path.mkdir(parents=True, exist_ok=True)
         return path
 
-    monkeypatch.setattr("nanobot.webui.media_gateway.get_media_dir", media_dir)
-    monkeypatch.setattr("nanobot.webui.gateway_services.get_media_dir", media_dir)
+    monkeypatch.setattr("nujinagent.webui.media_gateway.get_media_dir", media_dir)
+    monkeypatch.setattr("nujinagent.webui.gateway_services.get_media_dir", media_dir)
     bus = MessageBus()
     gateway = build_gateway_services(
         config=WebSocketConfig(), bus=bus, session_manager=history.sessions,

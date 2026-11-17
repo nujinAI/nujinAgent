@@ -11,16 +11,16 @@ from types import SimpleNamespace
 import httpx
 import pytest
 
-from nanobot.providers.oauth_model_catalog import (
+from nujinagent.providers.oauth_model_catalog import (
     OAuthCatalogAuthRequiredError,
     OAuthModelCatalog,
     get_oauth_model_catalog,
     invalidate_oauth_model_catalog,
 )
-from nanobot.providers.openai_codex_provider import DEFAULT_OPENAI_CODEX_MODELS_URL
-from nanobot.providers.registry import ProviderModelSpec
-from nanobot.providers.xai_grok_provider import DEFAULT_XAI_GROK_MODELS_URL
-from nanobot.providers.xai_oauth import XAIToken
+from nujinagent.providers.openai_codex_provider import DEFAULT_OPENAI_CODEX_MODELS_URL
+from nujinagent.providers.registry import ProviderModelSpec
+from nujinagent.providers.xai_grok_provider import DEFAULT_XAI_GROK_MODELS_URL
+from nujinagent.providers.xai_oauth import XAIToken
 
 
 @pytest.fixture(autouse=True)
@@ -97,18 +97,18 @@ def test_xai_catalog_fetches_remote_models_and_reuses_capability_metadata(
         )
 
     monkeypatch.setattr(
-        "nanobot.providers.xai_grok_provider.get_xai_oauth_storage_path",
+        "nujinagent.providers.xai_grok_provider.get_xai_oauth_storage_path",
         lambda: tmp_path / "auth" / "xai.json",
     )
     monkeypatch.setattr(
-        "nanobot.providers.xai_grok_provider.get_xai_oauth_login_status",
+        "nujinagent.providers.xai_grok_provider.get_xai_oauth_login_status",
         lambda: token,
     )
     monkeypatch.setattr(
-        "nanobot.providers.xai_grok_provider.get_xai_oauth_token",
+        "nujinagent.providers.xai_grok_provider.get_xai_oauth_token",
         lambda **_kwargs: token,
     )
-    monkeypatch.setattr("nanobot.providers.xai_grok_provider.httpx.Client", fake_client)
+    monkeypatch.setattr("nujinagent.providers.xai_grok_provider.httpx.Client", fake_client)
 
     catalog = get_oauth_model_catalog("xai_grok")
 
@@ -208,14 +208,14 @@ def test_openai_codex_catalog_uses_account_catalog_and_filters_hidden_models(
             return tmp_path / "auth" / "openai-codex.json"
 
     monkeypatch.setattr(
-        "nanobot.providers.openai_codex_provider.FileTokenStorage",
+        "nujinagent.providers.openai_codex_provider.FileTokenStorage",
         lambda **_kwargs: Storage(),
     )
     monkeypatch.setattr(
-        "nanobot.providers.openai_codex_provider.get_codex_token",
+        "nujinagent.providers.openai_codex_provider.get_codex_token",
         lambda **_kwargs: SimpleNamespace(access="secret", account_id="account-42"),
     )
-    monkeypatch.setattr("nanobot.providers.openai_codex_provider.httpx.Client", fake_client)
+    monkeypatch.setattr("nujinagent.providers.openai_codex_provider.httpx.Client", fake_client)
 
     catalog = get_oauth_model_catalog("openai_codex")
 
@@ -240,7 +240,7 @@ def test_openai_codex_catalog_uses_account_catalog_and_filters_hidden_models(
     "OAuth credentials not found. Please run the login command.",
 ])
 def test_codex_inference_classifies_sdk_reauth_without_exposing_response(detail: str) -> None:
-    from nanobot.providers.openai_codex_provider import _codex_error_response
+    from nujinagent.providers.openai_codex_provider import _codex_error_response
 
     response = _codex_error_response(RuntimeError(detail))
     assert response.error_kind == "oauth_auth_required"
@@ -249,8 +249,8 @@ def test_codex_inference_classifies_sdk_reauth_without_exposing_response(detail:
 
 
 def test_xai_inference_classifies_typed_reauth() -> None:
-    from nanobot.providers.xai_grok_provider import _xai_error_response
-    from nanobot.providers.xai_oauth import XAIOAuthReauthRequiredError
+    from nujinagent.providers.xai_grok_provider import _xai_error_response
+    from nujinagent.providers.xai_oauth import XAIOAuthReauthRequiredError
 
     response = _xai_error_response(XAIOAuthReauthRequiredError("synthetic-secret"))
     assert response.error_kind == "oauth_auth_required"
@@ -333,10 +333,10 @@ def test_github_copilot_catalog_routes_advertised_model_apis(
             return tmp_path / "auth" / "github-copilot.json"
 
     monkeypatch.setattr(
-        "nanobot.providers.github_copilot_provider.get_storage",
+        "nujinagent.providers.github_copilot_provider.get_storage",
         lambda: Storage(),
     )
-    monkeypatch.setattr("nanobot.providers.github_copilot_provider.httpx.Client", fake_client)
+    monkeypatch.setattr("nujinagent.providers.github_copilot_provider.httpx.Client", fake_client)
 
     catalog = get_oauth_model_catalog("github_copilot")
 
@@ -350,13 +350,13 @@ def test_github_copilot_catalog_routes_advertised_model_apis(
     assert catalog.models[0].reasoning_efforts == ("low", "high")
     assert catalog.models[0].api.supported_apis == ("chat_completions",)
     assert catalog.models[2].api.supported_apis == ("responses",)
-    from nanobot.providers.github_copilot_provider import GitHubCopilotProvider
+    from nujinagent.providers.github_copilot_provider import GitHubCopilotProvider
 
     provider = GitHubCopilotProvider(default_model="github-copilot/unknown-responses-only")
     assert provider._should_use_responses_api(None, None)
     assert not provider._should_use_responses_api("github-copilot/claude-sonnet", "high")
-    from nanobot.config.schema import Config, ModelPresetConfig
-    from nanobot.providers.factory import resolve_automatic_model_api
+    from nujinagent.config.schema import Config, ModelPresetConfig
+    from nujinagent.providers.factory import resolve_automatic_model_api
 
     for model, effort, expected in (
         ("github-copilot/unknown-responses-only", None, "responses"),
@@ -675,12 +675,12 @@ def test_catalog_network_errors_do_not_request_sign_in(failure: Exception) -> No
     ],
 )
 def test_codex_catalog_classifies_sdk_refresh_envelope(monkeypatch, message, reauth):
-    from nanobot.providers.openai_codex_provider import _fetch_openai_codex_models
+    from nujinagent.providers.openai_codex_provider import _fetch_openai_codex_models
 
     def fail(**_kwargs):
         raise RuntimeError(message)
 
-    monkeypatch.setattr("nanobot.providers.openai_codex_provider.get_codex_token", fail)
+    monkeypatch.setattr("nujinagent.providers.openai_codex_provider.get_codex_token", fail)
     with pytest.raises(RuntimeError) as error:
         _fetch_openai_codex_models(None)
     assert isinstance(error.value, OAuthCatalogAuthRequiredError) is reauth
@@ -689,8 +689,8 @@ def test_codex_catalog_classifies_sdk_refresh_envelope(monkeypatch, message, rea
 
 
 def test_xai_catalog_classifies_expired_refresh_credentials(monkeypatch):
-    from nanobot.providers.xai_grok_provider import _fetch_xai_grok_models
-    from nanobot.providers.xai_oauth import XAIOAuthReauthRequiredError, _oauth_http_error
+    from nujinagent.providers.xai_grok_provider import _fetch_xai_grok_models
+    from nujinagent.providers.xai_oauth import XAIOAuthReauthRequiredError, _oauth_http_error
 
     failure = _oauth_http_error(
         httpx.Response(400, json={"error": "invalid_grant", "error_description": "private"}),
@@ -702,14 +702,14 @@ def test_xai_catalog_classifies_expired_refresh_credentials(monkeypatch):
     def fail(**_kwargs):
         raise failure
 
-    monkeypatch.setattr("nanobot.providers.xai_grok_provider.get_xai_oauth_token", fail)
+    monkeypatch.setattr("nujinagent.providers.xai_grok_provider.get_xai_oauth_token", fail)
     with pytest.raises(OAuthCatalogAuthRequiredError):
         _fetch_xai_grok_models(None)
 
 
 @pytest.mark.parametrize("status", [403, 429, 503])
 def test_xai_oauth_other_failures_are_not_reauthentication(status):
-    from nanobot.providers.xai_oauth import XAIOAuthReauthRequiredError, _oauth_http_error
+    from nujinagent.providers.xai_oauth import XAIOAuthReauthRequiredError, _oauth_http_error
 
     failure = _oauth_http_error(httpx.Response(status, json={}), "token refresh")
     assert not isinstance(failure, XAIOAuthReauthRequiredError)

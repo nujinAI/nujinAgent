@@ -7,8 +7,8 @@ from unittest.mock import patch
 import httpx
 import pytest
 
-from nanobot.agent.tools import web as web_module
-from nanobot.agent.tools.web import (
+from nujinagent.agent.tools import web as web_module
+from nujinagent.agent.tools.web import (
     WebFetchTool,
     _redact_url_for_log,
     _url_carries_credentials,
@@ -51,7 +51,7 @@ class _RecordingJinaClient:
 @pytest.fixture
 def jina_client():
     _RecordingJinaClient.requested = []
-    with patch("nanobot.agent.tools.web.httpx.AsyncClient", _RecordingJinaClient):
+    with patch("nujinagent.agent.tools.web.httpx.AsyncClient", _RecordingJinaClient):
         yield _RecordingJinaClient
 
 
@@ -172,9 +172,9 @@ async def test_execute_keeps_unverified_or_credentialed_urls_local(monkeypatch, 
     monkeypatch.setattr(httpx.AsyncClient, "get", unexpected_jina)
     monkeypatch.setattr(tool, "_extract_readable_html", lambda html, mode: "ok")
     monkeypatch.setattr(web_module, "PinnedDNSAsyncTransport", lambda: httpx.MockTransport(handler))
-    monkeypatch.setattr("nanobot.security.network.getproxies", lambda: {})
+    monkeypatch.setattr("nujinagent.security.network.getproxies", lambda: {})
 
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_public):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_public):
         result = await tool.execute(url=chain[0])
 
     data = json.loads(result)

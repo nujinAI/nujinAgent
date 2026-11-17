@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from nanobot.agent.tools.base import Tool, ToolResult
-from nanobot.agent.tools.filesystem import ReadFileTool
-from nanobot.agent.tools.registry import ToolRegistry, is_tool_error_result
+from nujinagent.agent.tools.base import Tool, ToolResult
+from nujinagent.agent.tools.filesystem import ReadFileTool
+from nujinagent.agent.tools.registry import ToolRegistry, is_tool_error_result
 
 
 class _FakeTool(Tool):
@@ -173,7 +173,7 @@ def test_prepare_call_reports_json_string_for_nested_object_schema() -> None:
     tool, params, error = registry.prepare_call(
         "read_note",
         {
-            "target": '{"type":"path","path":"Projects/nanobot.md"}',
+            "target": '{"type":"path","path":"Projects/nujinagent.md"}',
             "format": "content",
         },
     )
@@ -183,7 +183,7 @@ def test_prepare_call_reports_json_string_for_nested_object_schema() -> None:
     assert "target:" in error
     assert "is not of type 'object'" in error
     assert params == {
-        "target": '{"type":"path","path":"Projects/nanobot.md"}',
+        "target": '{"type":"path","path":"Projects/nujinagent.md"}',
         "format": "content",
     }
 

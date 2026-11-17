@@ -66,7 +66,7 @@ export class CommandMenu {
     theme: CommandMenuTheme,
   ) {
     this.picker = new PickerMenu(renderer, theme, {
-      id: "nanobot-tui-command-menu",
+      id: "nujinagent-tui-command-menu",
       searchText: (choice) => {
         const command = descriptor(choice)
         return `${command.command} ${command.title}`

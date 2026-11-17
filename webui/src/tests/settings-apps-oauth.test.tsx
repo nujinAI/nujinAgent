@@ -266,7 +266,7 @@ describe("SettingsView Apps catalog", () => {
 
     expect(open).toHaveBeenCalledWith(
       "about:blank",
-      "nanobot-mcp-oauth",
+      "nujinagent-mcp-oauth",
       "popup,width=560,height=720,resizable=yes,scrollbars=yes",
     );
     await waitFor(() => expect(replace).toHaveBeenCalledWith(
@@ -478,7 +478,7 @@ describe("SettingsView Apps catalog", () => {
       requires_restart: false,
       hot_reload: {
         ok: true,
-        message: "MCP connections refreshed without restarting nanobot.",
+        message: "MCP connections refreshed without restarting nujinagent.",
         connected: ["team-docs"],
         failed: [],
       },
@@ -679,7 +679,7 @@ describe("SettingsView Apps catalog", () => {
     const callbackInput = await screen.findByRole("textbox", { name: "Callback URL" });
     expect(screen.getByText(/localhost page will not load/i)).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent(
-      "Finish signing in, then paste the callback URL into nanobot.",
+      "Finish signing in, then paste the callback URL into nujinagent.",
     );
 
     fireEvent.change(callbackInput, { target: { value: callbackUrl } });
@@ -786,11 +786,11 @@ describe("SettingsView Apps catalog", () => {
       requires_restart: false,
       hot_reload: {
         ok: true,
-        message: "MCP config reloaded without restarting nanobot.",
+        message: "MCP config reloaded without restarting nujinagent.",
       },
       last_action: {
         ok: true,
-        message: "Removed MCP preset for Xmind. MCP config reloaded without restarting nanobot.",
+        message: "Removed MCP preset for Xmind. MCP config reloaded without restarting nujinagent.",
         removed: true,
       },
     });
@@ -855,7 +855,7 @@ describe("SettingsView Apps catalog", () => {
     fireEvent.click(continueButton);
     expect(open).toHaveBeenLastCalledWith(
       "https://accounts.xmind.test/authorize?state=blocked",
-      "nanobot-mcp-oauth",
+      "nujinagent-mcp-oauth",
       "popup,width=560,height=720,resizable=yes,scrollbars=yes",
     );
     expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();

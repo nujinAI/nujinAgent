@@ -2,9 +2,9 @@ import { act, renderHook } from "@testing-library/react";
 import { useEffect, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useNanobotStream } from "@/hooks/useNanobotStream";
+import { useNujinAgentStream } from "@/hooks/useNujinAgentStream";
 import { useReconnectRuns } from "@/hooks/useReconnectRuns";
-import { NanobotClient } from "@/lib/nanobot-client";
+import { NujinAgentClient } from "@/lib/nujinagent-client";
 import { ThreadMessageCache } from "@/lib/thread-message-cache";
 import type { WebuiThreadPersistedPayload } from "@/lib/types";
 import { webuiThreadCache } from "@/lib/webui-thread-cache";
@@ -62,7 +62,7 @@ function harness() {
     });
   }));
   const sockets: Socket[] = [];
-  const client = new NanobotClient({ url: "ws://test", reconnect: true, maxBackoffMs: 10,
+  const client = new NujinAgentClient({ url: "ws://test", reconnect: true, maxBackoffMs: 10,
     socketFactory: () => { const socket = new Socket(); sockets.push(socket); return socket as unknown as WebSocket; } });
   client.connect();
   sockets[0].open();
@@ -82,7 +82,7 @@ function harness() {
     <ClientProvider client={client} token="synthetic-token">{children}</ClientProvider>
   );
   const mount = (initialChat: string) => renderHook(({ chat }) => {
-    const stream = useNanobotStream(chat, [], false, undefined, undefined, [], { key: `websocket:${chat}`, cache });
+    const stream = useNujinAgentStream(chat, [], false, undefined, undefined, [], { key: `websocket:${chat}`, cache });
     useEffect(() => {
       let refreshOnNextOpen = client.status !== "open";
       return client.onStatus((status) => {

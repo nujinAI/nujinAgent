@@ -4,9 +4,9 @@ import threading
 
 import pytest
 
-from nanobot.bus.events import InboundMessage
-from nanobot.session.manager import SessionManager
-from nanobot.session.sqlite_store import SessionConflictError
+from nujinagent.bus.events import InboundMessage
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.sqlite_store import SessionConflictError
 
 
 async def test_append_does_not_resubmit_committed_rows(tmp_path):

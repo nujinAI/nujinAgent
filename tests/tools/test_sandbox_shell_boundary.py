@@ -8,8 +8,8 @@ import sys
 
 import pytest
 
-from nanobot.agent.tools.exec_session import ExecSessionManager, ExecSessionTool
-from nanobot.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.exec_session import ExecSessionManager, ExecSessionTool
+from nujinagent.agent.tools.shell import ExecTool
 
 BACKEND = "seatbelt" if sys.platform == "darwin" else "bwrap"
 pytestmark = pytest.mark.skipif(
@@ -29,7 +29,7 @@ async def test_selected_shell_runs_inside_sandbox(tmp_path, monkeypatch, session
     outside.write_text("unchanged")
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     script = workspace / ("interpreter" if symlink else shell_name)
     script.write_text(
         "#!/bin/sh\n"
@@ -67,7 +67,7 @@ async def test_selected_shell_runs_inside_sandbox(tmp_path, monkeypatch, session
 async def test_sandboxed_shell_preserves_ordinary_bash_commands(tmp_path, monkeypatch):
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     tool = ExecTool(working_dir=str(tmp_path), sandbox=BACKEND)
     result = await tool.execute(command="items=(hello world); printf '%s' \"${items[1]}\"", shell="bash")
     assert result.startswith("world\nExit code: 0\n"), result
@@ -76,7 +76,7 @@ async def test_sandboxed_shell_preserves_ordinary_bash_commands(tmp_path, monkey
 async def test_configured_path_cannot_replace_sandbox_launcher(tmp_path, monkeypatch):
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     impostor = tmp_path / ("sandbox-exec" if BACKEND == "seatbelt" else "bwrap")
     impostor.write_text("#!/bin/sh\nprintf shadowed-launcher")
     impostor.chmod(0o700)
@@ -92,7 +92,7 @@ async def test_login_profile_runs_inside_sandbox(tmp_path, monkeypatch):
     outside.write_text("unchanged")
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     (workspace / ".bash_profile").write_text(
         f"printf escaped > {shlex.quote(str(outside))}\n"
         "export SANDBOX_PROFILE_LOADED=yes\n"
@@ -110,7 +110,7 @@ async def test_parent_path_cannot_replace_sandbox_launcher(tmp_path, monkeypatch
     outside.write_text("unchanged")
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     impostor = workspace / ("sandbox-exec" if BACKEND == "seatbelt" else "bwrap")
     impostor.write_text(
         "#!/bin/sh\n"
@@ -130,11 +130,11 @@ async def test_parent_path_cannot_replace_sandbox_launcher(tmp_path, monkeypatch
 async def test_missing_launcher_does_not_run_command_unsandboxed(tmp_path, monkeypatch):
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     original_which = shutil.which
     launcher = "/usr/bin/sandbox-exec" if BACKEND == "seatbelt" else "bwrap"
     monkeypatch.setattr(
-        "nanobot.agent.tools.shell.shutil.which",
+        "nujinagent.agent.tools.shell.shutil.which",
         lambda name, **kwargs: None if name == launcher else original_which(name, **kwargs),
     )
     tool = ExecTool(working_dir=str(tmp_path), sandbox=BACKEND)
@@ -150,7 +150,7 @@ async def test_trusted_shell_completion_preserves_sandbox(tmp_path, monkeypatch)
     workspace.mkdir()
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     tool = ExecTool(working_dir=str(workspace), sandbox=BACKEND)
 
     result = await tool.execute_to_completion("printf complete > result", str(workspace))
@@ -162,7 +162,7 @@ async def test_trusted_shell_completion_preserves_sandbox(tmp_path, monkeypatch)
 async def test_sandbox_preserves_literal_argument_vector(tmp_path, monkeypatch):
     media = tmp_path / "media"
     media.mkdir()
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: media)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: media)
     tool = ExecTool(working_dir=str(tmp_path), sandbox=BACKEND)
     literal = "hello | $HOME; 'world'"
 

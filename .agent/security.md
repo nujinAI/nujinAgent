@@ -4,7 +4,7 @@ Consult this document when changing path access, outbound HTTP/MCP, or shell exe
 
 ## Workspace Restriction
 
-Filesystem tools and native file search use scoped operations in `nanobot/execution/files.py`. Those operations apply `nanobot/security/workspace_policy.py` to the effective request workspace before opening a file, listing a directory, or writing a patch. Edit activity snapshots use the same authorized write target, not a path from tool arguments. The media upload directory is an internal extra read root while restricted. These are application-level checks, not OS confinement against a process that can concurrently replace ancestor directories.
+Filesystem tools and native file search use scoped operations in `nujinagent/execution/files.py`. Those operations apply `nujinagent/security/workspace_policy.py` to the effective request workspace before opening a file, listing a directory, or writing a patch. Edit activity snapshots use the same authorized write target, not a path from tool arguments. The media upload directory is an internal extra read root while restricted. These are application-level checks, not OS confinement against a process that can concurrently replace ancestor directories.
 
 Additional filesystem roots must be capability-specific. `extra_allowed_dirs` is a legacy read-only alias. Use `extra_read_allowed_dirs` for read-only roots, `extra_write_allowed_dirs` only when a write-capable tool is intentionally allowed to modify an extra directory, and exact file allowlists when a tool may modify only specific files.
 
@@ -26,4 +26,4 @@ HTTP/SSE MCP transports are part of this boundary: validate configured MCP URLs 
 
 `execution/sandbox.py` builds the sandbox argument vector for both shell execution and the settings probe. `security/sandbox_launcher.py` resolves the trusted host launcher. Backends are `bwrap` (bubblewrap) on Linux and `seatbelt` (`sandbox-exec`) on macOS. Seatbelt must not expose shared host temporary directories; scratch stays in the workspace. On Windows a configured backend warns and leaves only the application guard. On Unix a configured backend that cannot start must fail, not silently execute without isolation.
 
-**Rule**: If adding a sandbox backend, match the backend callable contract in `nanobot/execution/sandbox.py` and register it in `_BACKENDS`. Preserve read/write root handling and the configured backend's failure behavior.
+**Rule**: If adding a sandbox backend, match the backend callable contract in `nujinagent/execution/sandbox.py` and register it in `_BACKENDS`. Preserve read/write root handling and the configured backend's failure behavior.

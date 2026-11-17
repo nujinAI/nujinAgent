@@ -9,18 +9,18 @@ from unittest.mock import AsyncMock, patch
 import httpx
 import pytest
 
-from nanobot.audio.transcription import (
+from nujinagent.audio.transcription import (
     EffectiveTranscriptionConfig,
     resolve_transcription_config,
     transcribe_audio_file,
 )
-from nanobot.audio.transcription_registry import (
+from nujinagent.audio.transcription_registry import (
     get_transcription_provider,
     resolve_transcription_provider,
     transcription_provider_names,
 )
-from nanobot.config.schema import Config
-from nanobot.providers.transcription import (
+from nujinagent.config.schema import Config
+from nujinagent.providers.transcription import (
     AssemblyAITranscriptionProvider,
     GroqTranscriptionProvider,
     OpenAITranscriptionProvider,
@@ -250,7 +250,7 @@ def test_resolver_accepts_legacy_xiaomi_transcription_alias() -> None:
 def test_transcription_registry_lists_providers_and_aliases() -> None:
     siliconflow = get_transcription_provider("siliconflow")
     assert siliconflow is not None
-    assert siliconflow.adapter == "nanobot.providers.transcription:OpenAITranscriptionProvider"
+    assert siliconflow.adapter == "nujinagent.providers.transcription:OpenAITranscriptionProvider"
     assert siliconflow.load_adapter() is OpenAITranscriptionProvider
     assert siliconflow.default_model == "FunAudioLLM/SenseVoiceSmall"
     assert resolve_transcription_provider("silicon").name == "siliconflow"
@@ -300,7 +300,7 @@ async def test_transcribe_audio_file_routes_openrouter_provider(audio_file: Path
         max_upload_mb=25,
     )
 
-    with patch("nanobot.providers.transcription.OpenRouterTranscriptionProvider", StubOpenRouter):
+    with patch("nujinagent.providers.transcription.OpenRouterTranscriptionProvider", StubOpenRouter):
         result = await transcribe_audio_file(audio_file, config)
 
     assert result == "openrouter ok"
@@ -336,7 +336,7 @@ async def test_transcribe_audio_file_routes_xiaomi_mimo_provider(audio_file: Pat
         max_upload_mb=25,
     )
 
-    with patch("nanobot.providers.transcription.XiaomiMiMoTranscriptionProvider", StubXiaomiMiMo):
+    with patch("nujinagent.providers.transcription.XiaomiMiMoTranscriptionProvider", StubXiaomiMiMo):
         result = await transcribe_audio_file(audio_file, config)
 
     assert result == "mimo ok"
@@ -372,7 +372,7 @@ async def test_transcribe_audio_file_routes_assemblyai_provider(audio_file: Path
         max_upload_mb=25,
     )
 
-    with patch("nanobot.providers.transcription.AssemblyAITranscriptionProvider", StubAssemblyAI):
+    with patch("nujinagent.providers.transcription.AssemblyAITranscriptionProvider", StubAssemblyAI):
         result = await transcribe_audio_file(audio_file, config)
 
     assert result == "assembly ok"
@@ -950,8 +950,8 @@ async def test_transcription_cancellation_releases_client(monkeypatch, audio_fil
         entered.set()
         await blocked.wait()
 
-    monkeypatch.setattr("nanobot.providers.transcription.httpx.AsyncClient", lambda: client)
-    monkeypatch.setattr("nanobot.providers.transcription.asyncio.sleep", sleep)
+    monkeypatch.setattr("nujinagent.providers.transcription.httpx.AsyncClient", lambda: client)
+    monkeypatch.setattr("nujinagent.providers.transcription.asyncio.sleep", sleep)
     task = asyncio.create_task(provider_cls(api_key="sk-test").transcribe(audio_file))
     try:
         await asyncio.wait_for(entered.wait(), timeout=5)

@@ -8,7 +8,7 @@ permissions: {}
 
 jobs:
   release:
-    if: github.repository == 'HKUDS/nanobot' && !github.event.release.prerelease
+    if: github.repository == 'HKUDS/nujinagent' && !github.event.release.prerelease
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from nanobot.nanobot import Nanobot
-from nanobot.providers.base import LLMProvider, LLMResponse
+from nujinagent.nujinagent import NujinAgent
+from nujinagent.providers.base import LLMProvider, LLMResponse
 
 
 class ControlledProvider(LLMProvider):
@@ -39,7 +39,7 @@ class ControlledProvider(LLMProvider):
 @pytest.fixture
 async def bot(loop_factory):
     provider = ControlledProvider()
-    bot = Nanobot(loop_factory(provider=provider, session_ttl_minutes=1))
+    bot = NujinAgent(loop_factory(provider=provider, session_ttl_minutes=1))
     try:
         yield bot, provider
     finally:
@@ -57,7 +57,7 @@ async def seed_history(bot, key):
 
 async def schedule_idle_archive(bot):
     scheduled = []
-    with patch("nanobot.agent.autocompact.datetime") as clock:
+    with patch("nujinagent.agent.autocompact.datetime") as clock:
         clock.now.return_value = datetime.now() + timedelta(minutes=30)
         clock.fromisoformat.side_effect = datetime.fromisoformat
         await bot._loop.auto_compact.check_expired(scheduled.append, bot._loop.runtime_for_session)
@@ -121,7 +121,7 @@ async def test_compaction_waits_for_active_sdk_turn_and_preserves_reply(
             assert key not in bot._loop.auto_compact._archiving
 
             scheduled = []
-            with patch("nanobot.agent.autocompact.datetime") as clock:
+            with patch("nujinagent.agent.autocompact.datetime") as clock:
                 clock.now.return_value = datetime.now() + timedelta(minutes=30)
                 clock.fromisoformat.side_effect = datetime.fromisoformat
                 await bot._loop.auto_compact.check_expired(
@@ -146,7 +146,7 @@ async def test_compaction_waits_for_active_sdk_turn_and_preserves_reply(
             assert compacted == "Shared transcript summary."
 
         await bot.aclose()
-        async with Nanobot(loop_factory(provider=ControlledProvider())) as restarted:
+        async with NujinAgent(loop_factory(provider=ControlledProvider())) as restarted:
             await assert_reply_and_summary(restarted, key)
     finally:
         provider.release_turn.set()
@@ -168,7 +168,7 @@ async def test_sdk_turn_waits_for_running_idle_archive_and_uses_its_summary(bot)
 
     tasks = []
     try:
-        with patch("nanobot.agent.autocompact.datetime") as clock:
+        with patch("nujinagent.agent.autocompact.datetime") as clock:
             clock.now.return_value = datetime.now() + timedelta(minutes=30)
             clock.fromisoformat.side_effect = datetime.fromisoformat
             archive = asyncio.create_task(await schedule_idle_archive(bot))

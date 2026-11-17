@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.agent.memory import _HISTORY_ENTRY_HARD_CAP, MemoryStore
+from nujinagent.agent.memory import _HISTORY_ENTRY_HARD_CAP, MemoryStore
 
 
 @pytest.fixture
@@ -210,7 +210,7 @@ class TestHistoryWithCursor:
         def failing_replace(*args, **kwargs):
             raise RuntimeError("Simulated failure")
 
-        monkeypatch.setattr('nanobot.utils.atomic_file.replace_atomic', failing_replace)
+        monkeypatch.setattr('nujinagent.utils.atomic_file.replace_atomic', failing_replace)
 
         with pytest.raises(RuntimeError):
             store._write_entries(entries)
@@ -234,7 +234,7 @@ class TestAppendHistoryHardCap:
     def test_oversize_warning_is_emitted_once(self, store, monkeypatch):
         records: list[str] = []
         monkeypatch.setattr(
-            "nanobot.agent.memory.logger.warning",
+            "nujinagent.agent.memory.logger.warning",
             lambda message, *args: records.append(message.format(*args)),
         )
         huge = "x" * (_HISTORY_ENTRY_HARD_CAP + 1)

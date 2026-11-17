@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.utils.prompt_templates import render_template
+from nujinagent.utils.prompt_templates import render_template
 
 _ARCHIVE_PROMPT = render_template("agent/consolidator_archive.md", strip=True)
 
@@ -15,9 +15,9 @@ class TestNewCommandArchival:
 
     @staticmethod
     def _make_loop(tmp_path: Path):
-        from nanobot.agent.loop import AgentLoop
-        from nanobot.bus.queue import MessageBus
-        from nanobot.providers.base import GenerationSettings, LLMResponse
+        from nujinagent.agent.loop import AgentLoop
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.providers.base import GenerationSettings, LLMResponse
 
         bus = MessageBus()
         provider = MagicMock(aclose=AsyncMock())
@@ -42,7 +42,7 @@ class TestNewCommandArchival:
         self,
         tmp_path: Path,
     ) -> None:
-        from nanobot.bus.events import InboundMessage
+        from nujinagent.bus.events import InboundMessage
 
         loop = self._make_loop(tmp_path)
         session = loop.sessions.get_or_create("cli:test")
@@ -80,7 +80,7 @@ class TestNewCommandArchival:
         self,
         tmp_path: Path,
     ) -> None:
-        from nanobot.bus.events import InboundMessage
+        from nujinagent.bus.events import InboundMessage
 
         loop = self._make_loop(tmp_path)
         loop.set_runtime_context_window(128_000)
@@ -115,7 +115,7 @@ class TestNewCommandArchival:
 
     @pytest.mark.asyncio
     async def test_new_clears_session_and_responds(self, tmp_path: Path) -> None:
-        from nanobot.bus.events import InboundMessage
+        from nujinagent.bus.events import InboundMessage
 
         loop = self._make_loop(tmp_path)
         session = loop.sessions.get_or_create("cli:test")
@@ -142,7 +142,7 @@ class TestNewCommandArchival:
 
     @pytest.mark.asyncio
     async def test_aclose_drains_background_tasks(self, tmp_path: Path) -> None:
-        from nanobot.bus.events import InboundMessage
+        from nujinagent.bus.events import InboundMessage
 
         loop = self._make_loop(tmp_path)
         session = loop.sessions.get_or_create("cli:test")

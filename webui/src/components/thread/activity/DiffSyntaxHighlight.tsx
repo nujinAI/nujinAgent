@@ -28,7 +28,7 @@ export function DiffSyntaxHighlight(props: DiffSyntaxHighlightProps) {
 export function DiffHunkGap({ lineCount }: { lineCount: number }) {
   const { t } = useTranslation();
   return (
-    <div className="nanobot-diff-gap flex items-center gap-2 bg-muted/35 px-2 text-[11px] text-muted-foreground" data-testid="file-edit-diff-hunk-gap">
+    <div className="nujinagent-diff-gap flex items-center gap-2 bg-muted/35 px-2 text-[11px] text-muted-foreground" data-testid="file-edit-diff-hunk-gap">
       <span className="select-none rounded border border-border/45 bg-background/70 px-1 font-mono text-muted-foreground/70" aria-hidden>...</span>
       <span>{t("message.fileEditUnchangedLinesHidden", { count: lineCount, defaultValue: "{{count}} unchanged lines hidden" })}</span>
     </div>

@@ -5,10 +5,10 @@ from types import SimpleNamespace
 
 import pytest
 
-from nanobot.bus.events import InboundMessage
-from nanobot.command.application import build_help_text, register_builtin_commands
-from nanobot.command.router import CommandContext, CommandRouter
-from nanobot.triggers.local_store import LocalTriggerStore
+from nujinagent.bus.events import InboundMessage
+from nujinagent.command.application import build_help_text, register_builtin_commands
+from nujinagent.command.router import CommandContext, CommandRouter
+from nujinagent.triggers.local_store import LocalTriggerStore
 
 
 @pytest.mark.asyncio
@@ -21,18 +21,18 @@ async def test_trigger_command_creates_session_bound_local_trigger(tmp_path: Pat
         channel="websocket",
         sender_id="user",
         chat_id="chat-1",
-        content="/trigger@nanobot_bot PR review",
+        content="/trigger@nujinagent_bot PR review",
         metadata={"webui": True},
     )
     ctx = CommandContext(
         msg=msg,
         session=None,
         key="websocket:chat-1",
-        raw="/trigger@nanobot_bot PR review",
+        raw="/trigger@nujinagent_bot PR review",
         loop=loop,
     )
 
-    assert router.is_dispatchable_command("/trigger@nanobot_bot PR review") is True
+    assert router.is_dispatchable_command("/trigger@nujinagent_bot PR review") is True
     response = await router.dispatch(ctx)
 
     assert response is not None
@@ -42,7 +42,7 @@ async def test_trigger_command_creates_session_bound_local_trigger(tmp_path: Pat
     assert trigger.channel == "websocket"
     assert trigger.chat_id == "chat-1"
     assert trigger.session_key == "websocket:chat-1"
-    assert f"nanobot trigger {trigger.id} \"message\"" in response.content
+    assert f"nujinagent trigger {trigger.id} \"message\"" in response.content
 
 
 @pytest.mark.asyncio
@@ -86,14 +86,14 @@ async def test_trigger_command_without_name_returns_usage_only(tmp_path: Path) -
         channel="websocket",
         sender_id="user",
         chat_id="chat-1",
-        content="/trigger@nanobot_bot",
+        content="/trigger@nujinagent_bot",
         metadata={"webui": True},
     )
     ctx = CommandContext(
         msg=msg,
         session=None,
         key="websocket:chat-1",
-        raw="/trigger@nanobot_bot",
+        raw="/trigger@nujinagent_bot",
         loop=loop,
     )
 

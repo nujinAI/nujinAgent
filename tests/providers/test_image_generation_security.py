@@ -6,8 +6,8 @@ import socket
 import httpx
 import pytest
 
-from nanobot.providers import image_generation
-from nanobot.providers.image_generation import ImageGenerationError, _download_image_data_url
+from nujinagent.providers import image_generation
+from nujinagent.providers.image_generation import ImageGenerationError, _download_image_data_url
 
 PNG_BYTES = (
     b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01"
@@ -71,7 +71,7 @@ async def test_generated_image_download_revalidates_redirects(monkeypatch, statu
             return _resolve_public(host, port, *args, **kwargs)
         return original_getaddrinfo(host, port, *args, **kwargs)
 
-    monkeypatch.setattr("nanobot.security.network.socket.getaddrinfo", resolve_test_hosts)
+    monkeypatch.setattr("nujinagent.security.network.socket.getaddrinfo", resolve_test_hosts)
     requested: list[str] = []
 
     async def handler(request: httpx.Request) -> httpx.Response:
@@ -105,7 +105,7 @@ class _ImageStream(httpx.AsyncByteStream):
 @pytest.mark.asyncio
 async def test_generated_image_download_returns_valid_data_url(monkeypatch) -> None:
     monkeypatch.setattr(
-        "nanobot.security.network.socket.getaddrinfo",
+        "nujinagent.security.network.socket.getaddrinfo",
         _resolve_public,
     )
 
@@ -129,7 +129,7 @@ async def test_generated_image_download_enforces_streaming_size_limit(
     monkeypatch, declared_length: str | None,
 ) -> None:
     monkeypatch.setattr(
-        "nanobot.security.network.socket.getaddrinfo",
+        "nujinagent.security.network.socket.getaddrinfo",
         _resolve_public,
     )
     monkeypatch.setattr(image_generation, "_IMAGE_DOWNLOAD_MAX_BYTES", 8)
@@ -167,7 +167,7 @@ async def test_generated_image_download_delegates_unresolved_host_to_provider_pr
     def fail_local_dns(host: str, port: int | None, *args, **kwargs):
         raise socket.gaierror(f"cannot resolve {host}")
 
-    monkeypatch.setattr("nanobot.security.network.socket.getaddrinfo", fail_local_dns)
+    monkeypatch.setattr("nujinagent.security.network.socket.getaddrinfo", fail_local_dns)
     captured: dict[str, object] = {}
 
     class FakeAsyncClient:
@@ -216,7 +216,7 @@ async def test_proxied_generated_image_download_revalidates_redirects(
             return _resolve_public(host, port, *args, **kwargs)
         return original_getaddrinfo(host, port, *args, **kwargs)
 
-    monkeypatch.setattr("nanobot.security.network.socket.getaddrinfo", resolve_test_hosts)
+    monkeypatch.setattr("nujinagent.security.network.socket.getaddrinfo", resolve_test_hosts)
     requested: list[str] = []
 
     class FakeAsyncClient:

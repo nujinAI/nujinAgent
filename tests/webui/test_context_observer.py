@@ -3,18 +3,18 @@ import threading
 
 import pytest
 
-from nanobot.agent.hook import AgentHookContext
-from nanobot.agent.progress_hook import AgentProgressHook
-from nanobot.agent.tools.filesystem import ReadFileTool
-from nanobot.context_graph import graph_from_parts, graph_from_sources
-from nanobot.context_sources import PromptSource
-from nanobot.events import EventSink
-from nanobot.file_references import REFERENCE_PARSERS, source_receipt
-from nanobot.providers.base import ToolCallRequest
-from nanobot.session.display_history import HISTORY_GENERATION_METADATA_KEY
-from nanobot.session.manager import SessionManager
-from nanobot.webui.context_observer import ContextGraphObserver, read_source
-from nanobot.webui.history import fact_from_record
+from nujinagent.agent.hook import AgentHookContext
+from nujinagent.agent.progress_hook import AgentProgressHook
+from nujinagent.agent.tools.filesystem import ReadFileTool
+from nujinagent.context_graph import graph_from_parts, graph_from_sources
+from nujinagent.context_sources import PromptSource
+from nujinagent.events import EventSink
+from nujinagent.file_references import REFERENCE_PARSERS, source_receipt
+from nujinagent.providers.base import ToolCallRequest
+from nujinagent.session.display_history import HISTORY_GENERATION_METADATA_KEY
+from nujinagent.session.manager import SessionManager
+from nujinagent.webui.context_observer import ContextGraphObserver, read_source
+from nujinagent.webui.history import fact_from_record
 
 EMPTY = {"nodes": [], "edges": []}
 

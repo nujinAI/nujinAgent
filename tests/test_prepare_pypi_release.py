@@ -2,7 +2,7 @@ import hashlib
 
 import pytest
 
-from nanobot.releases import ReleaseArtifact, ReleaseManifest, release_filenames
+from nujinagent.releases import ReleaseArtifact, ReleaseManifest, release_filenames
 from scripts import prepare_pypi_release
 
 
@@ -36,7 +36,7 @@ def test_stages_only_matching_pypi_distributions(approved_release):
 def test_refuses_unapproved_or_incomplete_release(approved_release, monkeypatch, failure):
     source, output = approved_release
     version, commit = "1.2.3", "b" * 40
-    archive = next(source.glob("nanobot-tui-*.zip"))
+    archive = next(source.glob("nujinagent-tui-*.zip"))
     if failure == "changed":
         data = archive.read_bytes()
         archive.write_bytes(b"x" * len(data))

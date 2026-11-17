@@ -6,9 +6,9 @@ from unittest.mock import patch
 import httpx
 import pytest
 
-from nanobot.agent.tools import web
-from nanobot.agent.tools.web import WebFetchTool, _validate_url
-from nanobot.agent.tools.web_config import WebFetchConfig
+from nujinagent.agent.tools import web
+from nujinagent.agent.tools.web import WebFetchTool, _validate_url
+from nujinagent.agent.tools.web_config import WebFetchConfig
 
 
 def _fake_resolve_public(hostname, port, family=0, type_=0):
@@ -53,8 +53,8 @@ async def test_execute_accepts_cleanable_http_urls(url, monkeypatch):
         return httpx.Response(200, text="page contents")
 
     monkeypatch.setattr(web, "PinnedDNSAsyncTransport", lambda: httpx.MockTransport(handler))
-    monkeypatch.setattr("nanobot.security.network.getproxies", lambda: {})
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_public):
+    monkeypatch.setattr("nujinagent.security.network.getproxies", lambda: {})
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_public):
         result = await tool.execute(url=url)
     data = json.loads(result)
     assert data["status"] == 200
@@ -79,7 +79,7 @@ async def test_execute_rejects_invalid_url_after_cleaning(url):
 
 
 async def test_web_fetch_accepts_json_integer_character_limit(monkeypatch):
-    from nanobot.agent.tools.registry import ToolRegistry
+    from nujinagent.agent.tools.registry import ToolRegistry
 
     async_client = httpx.AsyncClient
 
@@ -91,12 +91,12 @@ async def test_web_fetch_accepts_json_integer_character_limit(monkeypatch):
         return async_client(*args, **kwargs)
 
     monkeypatch.setattr(web.httpx, "AsyncClient", mock_client)
-    monkeypatch.setattr("nanobot.security.network.getproxies", lambda: {})
+    monkeypatch.setattr("nujinagent.security.network.getproxies", lambda: {})
     registry = ToolRegistry()
     registry.register(WebFetchTool(config=WebFetchConfig(use_jina_reader=False)))
     arguments = {"url": "https://example.com/page", "maxChars": 100.0}
 
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_public):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_public):
         result = await registry.execute("web_fetch", arguments)
 
     data = json.loads(result)

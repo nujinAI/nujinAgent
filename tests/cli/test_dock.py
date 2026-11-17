@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.cli import dock
-from nanobot.cli._macos_dock import _Clients, _serve, is_local_browser_url
+from nujinagent.cli import dock
+from nujinagent.cli._macos_dock import _Clients, _serve, is_local_browser_url
 
 
 @pytest.mark.parametrize("platform", ["linux", "win32"])
@@ -233,7 +233,7 @@ def test_bundle_uses_current_python_and_never_contains_the_login_url(tmp_path):
     assert executable.is_symlink()
     assert os.readlink(executable) == sys.executable
     info = plistlib.loads((executable.parent.parent / "Info.plist").read_bytes())
-    assert info["CFBundleDisplayName"] == "nanobot"
+    assert info["CFBundleDisplayName"] == "nujinagent"
     assert (executable.parent.parent / "Resources" / "dock-icon.png").read_bytes() == dock._ICON.read_bytes()
     assert len([path for path in tmp_path.rglob("*") if path.is_file()]) == 3
 

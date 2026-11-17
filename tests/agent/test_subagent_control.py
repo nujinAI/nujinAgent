@@ -11,24 +11,24 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from loguru import logger
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.memory import Consolidator
-from nanobot.agent.runner import AgentRunResult
-from nanobot.agent.subagent import SubagentManager
-from nanobot.agent.tools.base import Tool
-from nanobot.agent.tools.context import RequestContext, current_request_context, request_context
-from nanobot.agent.tools.registry import ToolRegistry, is_tool_error_result
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.agent.tools.subagent import SubagentTool
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.bus.runtime_events import TurnRunStatusChanged
-from nanobot.config import Config
-from nanobot.nanobot import Nanobot
-from nanobot.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
-from nanobot.session.manager import SESSION_CACHE_MAX_SIZE, SessionManager
-from nanobot.session.webui_turns import WebuiTurnRoutePolicy
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.memory import Consolidator
+from nujinagent.agent.runner import AgentRunResult
+from nujinagent.agent.subagent import SubagentManager
+from nujinagent.agent.tools.base import Tool
+from nujinagent.agent.tools.context import RequestContext, current_request_context, request_context
+from nujinagent.agent.tools.registry import ToolRegistry, is_tool_error_result
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.subagent import SubagentTool
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.bus.runtime_events import TurnRunStatusChanged
+from nujinagent.config import Config
+from nujinagent.nujinagent import NujinAgent
+from nujinagent.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.session.manager import SESSION_CACHE_MAX_SIZE, SessionManager
+from nujinagent.session.webui_turns import WebuiTurnRoutePolicy
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 def setup(tmp_path, **kwargs):
@@ -93,7 +93,7 @@ async def test_sdk_ephemeral_delegation_never_persists_on_later_flush(
     loop_factory, existing_parent, streamed,
 ):
     loop = loop_factory()
-    bot = Nanobot(loop)
+    bot = NujinAgent(loop)
     key = "sdk:ephemeral-delegation"
     parent = loop.sessions.get_or_create(key)
     if existing_parent:
@@ -138,7 +138,7 @@ async def test_sdk_ephemeral_delegation_never_persists_on_later_flush(
         assert secret not in "\n".join(logs)
         assert loop.sessions.read_session_file(key) == before
         assert not list(loop.sessions.sessions_dir.glob("*.checkpoint.json"))
-        assert not (loop.workspace / ".nanobot" / "tool-results").exists()
+        assert not (loop.workspace / ".nujinagent" / "tool-results").exists()
         assert loop.bus.inbound_size == 0
 
         loop.provider.chat_stream_with_retry = AsyncMock(return_value=LLMResponse(content="Durable answer"))
@@ -185,7 +185,7 @@ async def test_child_origin_uses_the_channel_turn_identity(loop_factory):
 async def test_default_loop_keeps_slack_thread_for_late_subagent_result(
     tmp_path, monkeypatch, cache_invalidation,
 ):
-    monkeypatch.setattr("nanobot.agent.loop._SUBAGENT_TERMINAL_WAIT_SECONDS", 0.01)
+    monkeypatch.setattr("nujinagent.agent.loop._SUBAGENT_TERMINAL_WAIT_SECONDS", 0.01)
     # This checks real default-runtime routing and persistence, not disk latency.
     # Keep bounded waits without treating a loaded Windows runner as a routing failure.
     timeout = 30

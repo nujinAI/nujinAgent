@@ -7,15 +7,15 @@ from pathlib import Path
 import httpx
 import pytest
 
-from nanobot.agent.skills import SkillsLoader
-from nanobot.config.loader import save_config
-from nanobot.config.schema import Config
-from nanobot.webui.skills_api import (
+from nujinagent.agent.skills import SkillsLoader
+from nujinagent.config.loader import save_config
+from nujinagent.config.schema import Config
+from nujinagent.webui.skills_api import (
     delete_webui_skill,
     webui_skill_detail_payload,
     webui_skills_payload,
 )
-from nanobot.webui.skills_marketplace import (
+from nujinagent.webui.skills_marketplace import (
     SkillsMarketplaceError,
     install_marketplace_skill,
     search_marketplace_skills,
@@ -42,7 +42,7 @@ def catalog(monkeypatch: pytest.MonkeyPatch) -> None:
 
     for client in ("_skills_client", "_skillhub_client"):
         monkeypatch.setattr(
-            f"nanobot.webui.skills_marketplace.{client}",
+            f"nujinagent.webui.skills_marketplace.{client}",
             lambda: httpx.AsyncClient(transport=httpx.MockTransport(respond)),
         )
 
@@ -68,8 +68,8 @@ def installer(monkeypatch: pytest.MonkeyPatch) -> list[Path]:
 
         return Process()
 
-    monkeypatch.setattr("nanobot.webui.skills_marketplace.shutil.which", lambda _: "npx")
-    monkeypatch.setattr("nanobot.webui.skills_marketplace.asyncio.create_subprocess_exec", launch)
+    monkeypatch.setattr("nujinagent.webui.skills_marketplace.shutil.which", lambda _: "npx")
+    monkeypatch.setattr("nujinagent.webui.skills_marketplace.asyncio.create_subprocess_exec", launch)
     return stages
 
 
@@ -105,7 +105,7 @@ async def test_source_identity_survives_restart_move_delete_and_reinstall(
     # The original loader ignores the receipt: skill content and model-visible summary stay stable.
     loader = SkillsLoader(moved)
     summary = loader.build_skills_summary()
-    receipt = moved / "skills" / NAME / ".nanobot-origin.json"
+    receipt = moved / "skills" / NAME / ".nujinagent-origin.json"
     saved_receipt = receipt.read_bytes()
     receipt.unlink()
     assert SkillsLoader(moved).build_skills_summary() == summary
@@ -132,7 +132,7 @@ async def test_legacy_or_damaged_receipt_preserves_skill_without_claiming_origin
     content = "---\nname: agent-browser\n---\nLocal instructions\n"
     (directory / "SKILL.md").write_text(content, encoding="utf-8")
     if receipt is not None:
-        (directory / ".nanobot-origin.json").write_text(receipt, encoding="utf-8")
+        (directory / ".nujinagent-origin.json").write_text(receipt, encoding="utf-8")
     for _ in range(2):
         rows = (await search_marketplace_skills(NAME, tmp_path))["skills"]
         assert all(row["installation_status"] == "unknown" and not row["installed"] for row in rows)
@@ -151,7 +151,7 @@ async def test_skillhub_receipt_does_not_mark_same_name_github_skill_installed(
     directory = tmp_path / "skills" / NAME
     directory.mkdir(parents=True)
     (directory / "SKILL.md").write_text("---\nname: agent-browser\n---\n", encoding="utf-8")
-    (directory / ".nanobot-origin.json").write_text(json.dumps({
+    (directory / ".nujinagent-origin.json").write_text(json.dumps({
         "provider": "skillhub", "source": "", "skill_id": NAME,
     }), encoding="utf-8")
     assert (await install_marketplace_skill("", NAME, tmp_path, provider="skillhub"))["already_installed"]
@@ -184,8 +184,8 @@ async def test_two_installers_cannot_replace_the_winning_source(
 
         return Process()
 
-    monkeypatch.setattr("nanobot.webui.skills_marketplace.shutil.which", lambda _: "npx")
-    monkeypatch.setattr("nanobot.webui.skills_marketplace.asyncio.create_subprocess_exec", launch)
+    monkeypatch.setattr("nujinagent.webui.skills_marketplace.shutil.which", lambda _: "npx")
+    monkeypatch.setattr("nujinagent.webui.skills_marketplace.asyncio.create_subprocess_exec", launch)
     results = await asyncio.gather(
         install_marketplace_skill(SOURCE, NAME, tmp_path),
         install_marketplace_skill("101-skills/superpowers", NAME, tmp_path),
@@ -207,7 +207,7 @@ async def test_receipt_write_failure_leaves_no_partial_install_and_retry_works(
         def fail_write(*_args: object) -> None:
             raise OSError("disk full")
 
-        failure.setattr("nanobot.webui.skills_marketplace.atomic_write_text", fail_write)
+        failure.setattr("nujinagent.webui.skills_marketplace.atomic_write_text", fail_write)
         with pytest.raises(OSError, match="disk full"):
             await install_marketplace_skill(SOURCE, NAME, tmp_path)
     assert list((tmp_path / "skills").iterdir()) == []

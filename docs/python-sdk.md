@@ -1,17 +1,17 @@
-# Nanobot Python SDK: Run an AI Agent from Python
+# NujinAgent Python SDK: Run an AI Agent from Python
 
-Use nanobot as a Python library. The SDK gives you the same agent runtime used by the CLI, but from code: model routing, tools, workspace access, conversation history, memory, streaming events, and runtime helpers.
+Use nujinagent as a Python library. The SDK gives you the same agent runtime used by the CLI, but from code: model routing, tools, workspace access, conversation history, memory, streaming events, and runtime helpers.
 
 If you have used the OpenAI SDK before, the most important difference is this:
 
 - OpenAI SDK calls a model.
-- nanobot SDK runs an agent around a model.
+- nujinagent SDK runs an agent around a model.
 
 That means one SDK call can read files, call tools, keep session history, use memory, stream progress, and return structured runtime information.
 
 ```text
 your Python code
-  -> Nanobot SDK
+  -> NujinAgent SDK
     -> agent runtime
       -> configured model provider
       -> tools
@@ -22,15 +22,15 @@ your Python code
 
 ## Before You Start
 
-Install and configure nanobot first. If you have not done that yet, follow the [Quick Start](quick-start.md) and complete the setup wizard. For SDK-only Python environments, install the package with:
+Install and configure nujinagent first. If you have not done that yet, follow the [Quick Start](quick-start.md) and complete the setup wizard. For SDK-only Python environments, install the package with:
 
 ```bash
-python -m pip install nanobot-ai
+python -m pip install nujinagent
 ```
 
-`Nanobot.from_config()` reuses your normal `~/.nanobot/config.json` and `~/.nanobot/workspace/`. Provider, model, tools, memory, and session behavior match the CLI unless you override them. For the difference between config and workspace, see [Concepts: Config vs Workspace](concepts.md#config-vs-workspace).
+`NujinAgent.from_config()` reuses your normal `~/.nujinagent/config.json` and `~/.nujinagent/workspace/`. Provider, model, tools, memory, and session behavior match the CLI unless you override them. For the difference between config and workspace, see [Concepts: Config vs Workspace](concepts.md#config-vs-workspace).
 
-If you have already received a normal reply in the WebUI, use that saved configuration directly. For a separate Python environment, `nanobot status` shows which config, workspace, and model the SDK will load.
+If you have already received a normal reply in the WebUI, use that saved configuration directly. For a separate Python environment, `nujinagent status` shows which config, workspace, and model the SDK will load.
 
 ## 5-Minute Quick Start
 
@@ -39,11 +39,11 @@ If you have already received a normal reply in the WebUI, use that saved configu
 ```python
 import asyncio
 
-from nanobot import Nanobot
+from nujinagent import NujinAgent
 
 
 async def main() -> None:
-    async with Nanobot.from_config() as bot:
+    async with NujinAgent.from_config() as bot:
         result = await bot.run("What time is it in Tokyo?")
     print(result.content)
 
@@ -60,7 +60,7 @@ The default agent workspace comes from config, not the notebook's current direct
 ```python
 from pathlib import Path
 
-async with Nanobot.from_config(workspace=Path.cwd()) as bot:
+async with NujinAgent.from_config(workspace=Path.cwd()) as bot:
     result = await bot.run("List the files in this workspace.")
 ```
 
@@ -97,7 +97,7 @@ This gives each task or workflow its own conversation thread. Keys do not isolat
 For live output, use `bot.stream(...)`:
 
 ```python
-from nanobot import STREAM_EVENT_TEXT_DELTA
+from nujinagent import STREAM_EVENT_TEXT_DELTA
 
 async for event in bot.stream("Write a migration plan"):
     if event.type == STREAM_EVENT_TEXT_DELTA:
@@ -114,20 +114,20 @@ Save this as `sdk_demo.py` after your configured model has returned a normal rep
 import asyncio
 import sys
 
-from nanobot import (
+from nujinagent import (
     STREAM_EVENT_RUN_COMPLETED,
     STREAM_EVENT_RUN_FAILED,
     STREAM_EVENT_TEXT_DELTA,
     STREAM_EVENT_TOOL_STARTED,
-    Nanobot,
+    NujinAgent,
 )
 
 
 async def main() -> None:
-    prompt = " ".join(sys.argv[1:]) or "Explain what nanobot is in one paragraph."
+    prompt = " ".join(sys.argv[1:]) or "Explain what nujinagent is in one paragraph."
     session_key = "sdk:demo"
 
-    async with Nanobot.from_config() as bot:
+    async with NujinAgent.from_config() as bot:
         print(f"model: {bot.runtime.model}")
         print(f"workspace: {bot.runtime.workspace}")
         print()
@@ -141,7 +141,7 @@ async def main() -> None:
             elif event.type == STREAM_EVENT_RUN_COMPLETED:
                 final_result = event.result
             elif event.type == STREAM_EVENT_RUN_FAILED:
-                raise RuntimeError(event.error or "nanobot run failed")
+                raise RuntimeError(event.error or "nujinagent run failed")
 
         print()
         if final_result is not None:
@@ -164,7 +164,7 @@ You should see the configured model, workspace path, streamed assistant text, an
 
 ```text
 model: openai/gpt-4.1-mini
-workspace: /Users/alice/.nanobot/workspace
+workspace: /Users/alice/.nujinagent/workspace
 
 [tool] list_dir
 Here are the top-level files I found...
@@ -174,24 +174,24 @@ tools_used: ['list_dir']
 usage: {'prompt_tokens': ..., 'completion_tokens': ..., 'total_tokens': ...}
 ```
 
-This script shows the usual production shape: create one `Nanobot`, choose a stable `session_key`, stream events, keep the final `RunResult`, and let `async with` close runtime resources.
+This script shows the usual production shape: create one `NujinAgent`, choose a stable `session_key`, stream events, keep the final `RunResult`, and let `async with` close runtime resources.
 
 ## Core Concepts
 
 | Concept | Meaning |
 |---------|---------|
-| `Nanobot` | The SDK object that owns one configured agent runtime. |
+| `NujinAgent` | The SDK object that owns one configured agent runtime. |
 | Run | One call to `bot.run(...)`, `bot.run_streamed(...)`, or `bot.stream(...)`. |
 | `session_key` | The conversation history key. Reuse it to continue a thread; change it to isolate a thread. |
 | Workspace | The local directory where file tools and shell tools operate. |
 | Tools | Capabilities the agent may call, such as file access, shell, web, or custom tools from your config. |
-| Memory | Long-term memory files managed by nanobot. |
+| Memory | Long-term memory files managed by nujinagent. |
 | Stream event | A typed event such as `text.delta`, `tool.started`, or `run.completed`. |
 | Model override | A temporary model or model preset used for one SDK instance or one run. |
 
 For most users, the mental model is:
 
-1. Create a `Nanobot` from config.
+1. Create a `NujinAgent` from config.
 2. Pick a `session_key`.
 3. Call `run` or `stream`.
 4. Read `RunResult` or stream events.
@@ -204,30 +204,30 @@ For most users, the mental model is:
 Set the workspace when your agent should work inside a specific project:
 
 ```python
-from nanobot import Nanobot
+from nujinagent import NujinAgent
 
-async with Nanobot.from_config(workspace="/my/project") as bot:
+async with NujinAgent.from_config(workspace="/my/project") as bot:
     result = await bot.run("Explain the project structure")
 ```
 
-Use a custom config when you run multiple nanobot instances or test an isolated setup:
+Use a custom config when you run multiple nujinagent instances or test an isolated setup:
 
 ```python
-async with Nanobot.from_config(
+async with NujinAgent.from_config(
     config_path="./bot-a/config.json",
     workspace="./bot-a/workspace",
 ) as bot:
     result = await bot.run("Hello from bot A")
 ```
 
-The config controls what nanobot may use. The workspace is where nanobot keeps state for that instance. See [multiple-instances.md](multiple-instances.md) for multi-instance CLI and gateway examples.
+The config controls what nujinagent may use. The workspace is where nujinagent keeps state for that instance. See [multiple-instances.md](multiple-instances.md) for multi-instance CLI and gateway examples.
 
 ### Choose a default or per-run model
 
 Set the SDK instance default model when you create the bot:
 
 ```python
-bot = Nanobot.from_config(model="openai/gpt-4.1")
+bot = NujinAgent.from_config(model="openai/gpt-4.1")
 ```
 
 Override the model for one run without changing the instance default:
@@ -239,14 +239,14 @@ result = await bot.run("Summarize this file", model="openai/gpt-4.1-mini")
 Model presets from `config.json` work the same way:
 
 ```python
-bot = Nanobot.from_config(model_preset="fast")
+bot = NujinAgent.from_config(model_preset="fast")
 
 result = await bot.run("Think deeply about this bug", model_preset="reasoning")
 ```
 
 `model` and `model_preset` are mutually exclusive.
 
-For first setup, create named presets in **Settings → Models**; the SDK reads those saved presets from `config.json`. Mixing an API key from one provider with a model ID from another is the most common first-run failure. For the exact difference between `provider`, `model`, `apiKey`, and `apiBase`, see [Providers: Provider, Model, API Key, and Base URL](providers.md#provider-model-api-key-and-base-url). If a run fails before the SDK does anything interesting, confirm the same provider and model work with `nanobot agent -m "Hello!"` first.
+For first setup, create named presets in **Settings → Models**; the SDK reads those saved presets from `config.json`. Mixing an API key from one provider with a model ID from another is the most common first-run failure. For the exact difference between `provider`, `model`, `apiKey`, and `apiBase`, see [Providers: Provider, Model, API Key, and Base URL](providers.md#provider-model-api-key-and-base-url). If a run fails before the SDK does anything interesting, confirm the same provider and model work with `nujinagent agent -m "Hello!"` first.
 
 ### Isolate conversations with `session_key`
 
@@ -301,7 +301,7 @@ Use `await run.cancel()` when the user presses a stop button or leaves the page 
 Use `bot.stream()` when you want Cursor/OpenAI-style live events instead of waiting for the final `RunResult`:
 
 ```python
-from nanobot import (
+from nujinagent import (
     STREAM_EVENT_RUN_COMPLETED,
     STREAM_EVENT_TEXT_DELTA,
     STREAM_EVENT_TOOL_STARTED,
@@ -319,7 +319,7 @@ async for event in bot.stream("Review this repository"):
 Use `run_streamed()` when you also want a handle you can wait on:
 
 ```python
-from nanobot import STREAM_EVENT_TEXT_DELTA
+from nujinagent import STREAM_EVENT_TEXT_DELTA
 
 run = await bot.run_streamed("Write a detailed migration plan")
 
@@ -336,7 +336,7 @@ Always either consume the stream, call `await run.wait()` / `await run.text()`, 
 
 This is useful for evals, benchmark runners, migrations, and tests.
 
-Use `bot.sessions.ingest()` when you already have a transcript and want it to become nanobot session history. Ingesting a transcript does not call the model, execute tools, update memory, or compact automatically.
+Use `bot.sessions.ingest()` when you already have a transcript and want it to become nujinagent session history. Ingesting a transcript does not call the model, execute tools, update memory, or compact automatically.
 
 ```python
 await bot.sessions.ingest(
@@ -369,12 +369,12 @@ print(result.content)
 
 ### Persist memory in a short-lived script
 
-Saved session history and curated long-term memory are different. The SDK does not start the gateway scheduler, so creating or closing `Nanobot` does not schedule Dream. Compaction archives a conversation into `memory/history.jsonl`; it does not itself update `USER.md` or `memory/MEMORY.md`.
+Saved session history and curated long-term memory are different. The SDK does not start the gateway scheduler, so creating or closing `NujinAgent` does not schedule Dream. Compaction archives a conversation into `memory/history.jsonl`; it does not itself update `USER.md` or `memory/MEMORY.md`.
 
 Before closing a script that should contribute material to Dream:
 
 ```python
-async with Nanobot.from_config() as bot:
+async with NujinAgent.from_config() as bot:
     await bot.run("For release notes, use concise bullet points.", session_key="sdk:notes")
     await bot.runtime.compact_session("sdk:notes")
     print(bot.memory.read_history(session_key="sdk:notes"))
@@ -386,10 +386,10 @@ For application-owned durable text, `bot.memory.write(text)` writes `memory/MEMO
 
 ### Attach hooks for observability
 
-Hooks are an advanced escape hatch. Use them when you want custom logging, metrics, tracing, or output post-processing without modifying nanobot internals:
+Hooks are an advanced escape hatch. Use them when you want custom logging, metrics, tracing, or output post-processing without modifying nujinagent internals:
 
 ```python
-from nanobot.agent import AgentHook, AgentHookContext
+from nujinagent.agent import AgentHook, AgentHookContext
 
 
 class AuditHook(AgentHook):
@@ -417,13 +417,13 @@ The SDK page is the programming entry point. The fuller conceptual and configura
 
 ## API Reference
 
-### `Nanobot.from_config(config_path=None, *, workspace=None, model=None, model_preset=None)`
+### `NujinAgent.from_config(config_path=None, *, workspace=None, model=None, model_preset=None)`
 
-Create a `Nanobot` instance from a config file.
+Create a `NujinAgent` instance from a config file.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| `config_path` | `str \| Path \| None` | `None` | Path to `config.json`. Defaults to `~/.nanobot/config.json`. |
+| `config_path` | `str \| Path \| None` | `None` | Path to `config.json`. Defaults to `~/.nujinagent/config.json`. |
 | `workspace` | `str \| Path \| None` | `None` | Override the workspace directory from config. |
 | `model` | `str \| None` | `None` | Override the instance default model. |
 | `model_preset` | `str \| None` | `None` | Override the instance default model preset from `config.json`. |
@@ -523,7 +523,7 @@ Use the exported constants instead of hard-coded strings when possible:
 Release resources held by the SDK instance, including tool connections. The async context manager calls this automatically:
 
 ```python
-async with Nanobot.from_config() as bot:
+async with NujinAgent.from_config() as bot:
     result = await bot.run("Summarize this repo")
 ```
 
@@ -583,15 +583,15 @@ Both compaction methods serialize with turns for the same session key. Call them
 
 ### Host integration context and persisted-turn callbacks
 
-Host applications can attach external context without copying or modifying the nanobot agent loop. A context provider receives a `RequestContext` before each model turn and may return one or more `RuntimeContextBlock` values. Use `attributes` for caller-owned routing data; nanobot keeps it separate from trusted channel metadata and does not persist it in session messages.
+Host applications can attach external context without copying or modifying the nujinagent agent loop. A context provider receives a `RequestContext` before each model turn and may return one or more `RuntimeContextBlock` values. Use `attributes` for caller-owned routing data; nujinagent keeps it separate from trusted channel metadata and does not persist it in session messages.
 
 `on_session_turn_persisted()` invokes its callback after a non-ephemeral turn has been saved. The callback receives `SessionTurnPersisted` and may read the completed transcript through `bot.sessions`. Callbacks run in registration order, and async callbacks are awaited before the run continues. They are observational: callback exceptions are logged and suppressed so the completed local turn remains successful. Durable external synchronization must catch failures and persist retry work before the callback returns. During SDK runs, callbacks execute while the session is still serialized. Schedule `bot.run()`, `bot.runtime.compact_session()`, or `bot.runtime.compact_idle_session()` for the same session after the callback returns.
 
 ```python
 import json
 
-from nanobot import (
-    Nanobot,
+from nujinagent import (
+    NujinAgent,
     RequestContext,
     RuntimeContextBlock,
     SessionTurnPersisted,
@@ -614,7 +614,7 @@ def external_context_block(text: str) -> RuntimeContextBlock:
 
 
 async def run_with_external_memory(external_memory, enqueue_retry) -> None:
-    async with Nanobot.from_config() as bot:
+    async with NujinAgent.from_config() as bot:
         async def load_context(request: RequestContext):
             resource = request.attributes.get("resource")
             if not resource:
@@ -683,7 +683,7 @@ Useful fields on `AgentHookContext` include:
 ### Example: audit tool calls
 
 ```python
-from nanobot.agent import AgentHook, AgentHookContext
+from nujinagent.agent import AgentHook, AgentHookContext
 
 
 class AuditHook(AgentHook):
@@ -707,7 +707,7 @@ print(f"Tools observed: {hook.calls}")
 ### Example: receive streaming tokens
 
 ```python
-from nanobot.agent import AgentHook, AgentHookContext
+from nujinagent.agent import AgentHook, AgentHookContext
 
 
 class StreamingHook(AgentHook):
@@ -734,7 +734,7 @@ Async hook methods are fan-out with error isolation. `finalize_content` is a pip
 ### Example: post-process final content
 
 ```python
-from nanobot.agent import AgentHook
+from nujinagent.agent import AgentHook
 
 
 class Censor(AgentHook):
@@ -748,8 +748,8 @@ class Censor(AgentHook):
 import asyncio
 import time
 
-from nanobot import Nanobot
-from nanobot.agent import AgentHook, AgentHookContext
+from nujinagent import NujinAgent
+from nujinagent.agent import AgentHook, AgentHookContext
 
 
 class TimingHook(AgentHook):
@@ -766,7 +766,7 @@ class TimingHook(AgentHook):
 
 
 async def main() -> None:
-    async with Nanobot.from_config(workspace="/my/project") as bot:
+    async with NujinAgent.from_config(workspace="/my/project") as bot:
         result = await bot.run(
             "Explain the main function",
             session_key="sdk:demo",

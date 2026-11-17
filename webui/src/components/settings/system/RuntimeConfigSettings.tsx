@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { RUNTIME_CONFIG_FIELDS, RUNTIME_CONFIG_GROUPS, type RuntimeConfigField, type RuntimeConfigPage } from "@/components/settings/system/runtime-config-fields";
 import { updateRuntimeConfigSettings } from "@/lib/api";
 import { invalidateToolsCatalog } from "@/lib/tools-catalog-cache";
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import type { RuntimeConfigValue, SettingsPayload } from "@/lib/types";
 import type { ApplySettingsPayload, SettingsFocusTarget } from "@/components/settings/contracts";
 
@@ -29,7 +29,7 @@ function displayValue(value: RuntimeConfigValue | undefined): Draft {
 
 export function useRuntimeConfigSettings(
   settings: SettingsPayload | null,
-  client: NanobotClient,
+  client: NujinAgentClient,
   applyPayload: ApplySettingsPayload,
 ) {
   const { t } = useTranslation();
@@ -177,7 +177,7 @@ export function RuntimeConfigSettings({
   page: RuntimeConfigPage;
   settings: SettingsPayload;
   state: RuntimeConfigController;
-  client?: NanobotClient;
+  client?: NujinAgentClient;
   sandboxSupported?: boolean;
   focusTarget?: SettingsFocusTarget;
   onRestart?: () => void;

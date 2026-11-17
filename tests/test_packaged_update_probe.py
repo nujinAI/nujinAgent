@@ -14,7 +14,7 @@ from zipfile import ZipFile, ZipInfo
 import httpx
 import pytest
 
-from nanobot.release_feed import ReleaseFeed
+from nujinagent.release_feed import ReleaseFeed
 from scripts import verify_packaged_update as probe
 from scripts.verify_packaged_update import (
     Timings,
@@ -53,9 +53,9 @@ def test_historical_projection_defaults_do_not_mask_history_loss():
 
 
 def test_display_migration_allows_an_empty_owner_without_masking_context_loss(tmp_path):
-    from nanobot.session.display_history import HistoryFact, HistoryImport, HistoryKind
-    from nanobot.session.manager import Session
-    from nanobot.session.sqlite_store import SqliteSessionStore
+    from nujinagent.session.display_history import HistoryFact, HistoryImport, HistoryKind
+    from nujinagent.session.manager import Session
+    from nujinagent.session.sqlite_store import SqliteSessionStore
 
     store = SqliteSessionStore(tmp_path)
     store.initialize(tmp_path)
@@ -84,15 +84,15 @@ def test_display_migration_allows_an_empty_owner_without_masking_context_loss(tm
 
 def wheel(tmp_path, version, *, worker=b"# worker\n", fallback=b"# fallback\n",
           handoff=b"async def _prepare(directory):\n    try:\n        pass\n    except Exception:\n        raise\n"):
-    path = tmp_path / f"nanobot_ai-{version}-py3-none-manylinux_2_17_x86_64.whl"
+    path = tmp_path / f"nujinagent_ai-{version}-py3-none-manylinux_2_17_x86_64.whl"
     with ZipFile(path, "w") as archive:
-        archive.writestr(f"nanobot_ai-{version}.dist-info/METADATA", f"Name: nanobot-ai\nVersion: {version}\n")
-        archive.writestr("nanobot/__init__.py", "# unchanged application\n")
-        archive.writestr("nanobot/release_feed.py", "transport=transport or PinnedDNSAsyncTransport(),\n")
-        archive.writestr("nanobot/update_worker.py", worker)
-        archive.writestr("nanobot/update_handoff.py", handoff)
-        archive.writestr("nanobot/update_fallback.py", fallback)
-        binary = ZipInfo("nanobot/tui/bin/nanobot-tui")
+        archive.writestr(f"nujinagent_ai-{version}.dist-info/METADATA", f"Name: nujinagent\nVersion: {version}\n")
+        archive.writestr("nujinagent/__init__.py", "# unchanged application\n")
+        archive.writestr("nujinagent/release_feed.py", "transport=transport or PinnedDNSAsyncTransport(),\n")
+        archive.writestr("nujinagent/update_worker.py", worker)
+        archive.writestr("nujinagent/update_handoff.py", handoff)
+        archive.writestr("nujinagent/update_fallback.py", fallback)
+        binary = ZipInfo("nujinagent/tui/bin/nujinagent-tui")
         binary.external_attr = 0o100755 << 16
         archive.writestr(binary, b"native executable fixture")
     return path
@@ -104,10 +104,10 @@ def test_baseline_instrumentation_does_not_modify_the_target(tmp_path):
     baseline = fixture_wheel(source, tmp_path / "baseline", "0.3.5", feed=tmp_path / "feed.json")
     assert digest(source) == before
     with ZipFile(source) as original, ZipFile(baseline) as copied:
-        assert copied.read("nanobot/__init__.py") == original.read("nanobot/__init__.py")
-        assert "nanobot/_acceptance_feed.py" not in original.namelist()
-        assert copied.getinfo("nanobot/tui/bin/nanobot-tui").external_attr == original.getinfo("nanobot/tui/bin/nanobot-tui").external_attr
-        records = csv.reader(io.StringIO(copied.read("nanobot_ai-0.3.5.dist-info/RECORD").decode()))
+        assert copied.read("nujinagent/__init__.py") == original.read("nujinagent/__init__.py")
+        assert "nujinagent/_acceptance_feed.py" not in original.namelist()
+        assert copied.getinfo("nujinagent/tui/bin/nujinagent-tui").external_attr == original.getinfo("nujinagent/tui/bin/nujinagent-tui").external_attr
+        records = csv.reader(io.StringIO(copied.read("nujinagent_ai-0.3.5.dist-info/RECORD").decode()))
         for name, checksum, size in records:
             if checksum:
                 assert int(size) == len(copied.read(name))
@@ -148,8 +148,8 @@ def test_changed_fault_seam_is_not_silently_reported_as_fault_coverage():
 
 
 def test_consecutive_feed_advances_generation_without_rewriting_a_release(tmp_path):
-    from nanobot.release_feed import CATALOGUE_URL
-    from nanobot.releases import ReleaseCatalogue
+    from nujinagent.release_feed import CATALOGUE_URL
+    from nujinagent.releases import ReleaseCatalogue
 
     intermediate = wheel(tmp_path, "0.3.6.dev0")
     target = wheel(tmp_path, "0.3.6.dev2")
@@ -167,7 +167,7 @@ def test_consecutive_feed_advances_generation_without_rewriting_a_release(tmp_pa
     ("restore-interruption", b"Injected rename interruption"),
 ])
 def test_windows_packaged_sources_keep_fault_injection_reachable(tmp_path, scenario, marker):
-    package = Path(__file__).resolve().parents[1] / "nanobot"
+    package = Path(__file__).resolve().parents[1] / "nujinagent"
     def windows_source(name):
         return (package / name).read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
     source = wheel(tmp_path, "0.3.6", worker=windows_source("update_worker.py"),
@@ -176,7 +176,7 @@ def test_windows_packaged_sources_keep_fault_injection_reachable(tmp_path, scena
     baseline = fixture_wheel(source, tmp_path / "baseline", "0.3.5", feed=tmp_path / "feed.json", scenario=scenario)
     with ZipFile(baseline) as archive:
         name = "update_fallback.py" if scenario == "restore-interruption" else "update_worker.py"
-        content = archive.read("nanobot/" + name)
+        content = archive.read("nujinagent/" + name)
         assert content.count(marker) == 1
         if scenario != "restore-interruption":
             assert repr(str(tmp_path / "injected-fault")).encode() in content
@@ -278,7 +278,7 @@ async def _prepare(directory):
     baseline = fixture_wheel(source, tmp_path / "baseline", "0.4.0", feed=tmp_path / "feed.json")
     namespace = {}
     with ZipFile(baseline) as archive:
-        exec(compile(archive.read("nanobot/update_handoff.py"), "update_handoff.py", "exec"), namespace)
+        exec(compile(archive.read("nujinagent/update_handoff.py"), "update_handoff.py", "exec"), namespace)
     with pytest.raises(ValueError, match=secret):
         asyncio.run(namespace["_prepare"](tmp_path))
     document = (tmp_path / "acceptance-preflight.json").read_text()
@@ -518,7 +518,7 @@ def test_abnormal_lane_cleanup_does_not_depend_on_the_mutable_venv(tmp_path, mon
         port = listener.getsockname()[1]
     configs = []
     for scenario in ("upgrade", "metadata-loss"):
-        config = root / scenario / "account/.nanobot/config.json"
+        config = root / scenario / "account/.nujinagent/config.json"
         config.parent.mkdir(parents=True)
         config.write_text(json.dumps({"gateway": {"port": port}, "channels": {"websocket": {"port": port}}}))
         configs.append(config)
@@ -535,7 +535,7 @@ def test_abnormal_lane_cleanup_does_not_depend_on_the_mutable_venv(tmp_path, mon
         probe.cleanup_lane(root, ["upgrade", "worker-exit", "metadata-loss"])
     assert len(calls) == 2
     for (command, options), config in zip(calls, configs, strict=True):
-        assert command == [sys.executable, "-I", "-B", "-m", "nanobot", "gateway", "stop", "--config", str(config)]
+        assert command == [sys.executable, "-I", "-B", "-m", "nujinagent", "gateway", "stop", "--config", str(config)]
         assert options["env"]["HOME"] == str(config.parent.parent) and options["cwd"] == config.parents[2]
         assert options["check"] and options["timeout"] == 60
         assert options["stdout"] is options["stderr"]
@@ -548,7 +548,7 @@ def test_serial_dispatch_reports_one_lane_and_checks_original_hash_at_the_end(tm
 
     target = wheel(tmp_path, "0.3.6")
     monkeypatch.setattr(scripts.build_tui_wheels, "wheel_files", lambda *args, **kwargs: (
-        {"nanobot/_build_commit.txt": b"a" * 40}, None, None))
+        {"nujinagent/_build_commit.txt": b"a" * 40}, None, None))
     args = Namespace(wheel=target, baseline_wheel=None, output=tmp_path / "serial", commit="a" * 40,
                      workers=workers, dock=False, scenario=["upgrade"])
     calls = []
@@ -585,7 +585,7 @@ def test_controller_error_does_not_print_exception_values_or_commands(tmp_path):
 def test_serial_lanes_resolve_baseline_dependencies_and_keep_recovery_chains_on_the_same_venv(
     tmp_path, monkeypatch, version, baseline_version,
 ):
-    package = Path(__file__).resolve().parents[1] / "nanobot"
+    package = Path(__file__).resolve().parents[1] / "nujinagent"
     target = wheel(tmp_path, version, worker=(package / "update_worker.py").read_bytes(),
                    fallback=(package / "update_fallback.py").read_bytes())
     baseline = (wheel(tmp_path, baseline_version, worker=(package / "update_worker.py").read_bytes(),

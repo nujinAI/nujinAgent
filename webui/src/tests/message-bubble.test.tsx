@@ -1301,7 +1301,7 @@ describe("MessageBubble", () => {
       id: "a-file-path",
       role: "assistant",
       content:
-        "改动在 `webui/src/components/MarkdownTextRenderer.tsx` 和 `/Users/renxubin/.nanobot/workspace/minecraft-fps/index.html`。",
+        "改动在 `webui/src/components/MarkdownTextRenderer.tsx` 和 `/Users/renxubin/.nujinagent/workspace/minecraft-fps/index.html`。",
       createdAt: Date.now(),
     };
 
@@ -1315,11 +1315,11 @@ describe("MessageBubble", () => {
       expect(references[0].parentElement).toHaveClass("leading-[inherit]");
       expect(references[0]).toHaveClass("items-baseline");
       expect(references[0].textContent).toBe("webui/src/components/MarkdownTextRenderer.tsx");
-      expect(references[1].textContent).toBe("/Users/renxubin/.nanobot/workspace/minecraft-fps/index.html");
+      expect(references[1].textContent).toBe("/Users/renxubin/.nujinagent/workspace/minecraft-fps/index.html");
       expect(references[1]).not.toHaveAttribute("title");
       expect(references[1]).toHaveAttribute(
         "aria-label",
-        "/Users/renxubin/.nanobot/workspace/minecraft-fps/index.html",
+        "/Users/renxubin/.nujinagent/workspace/minecraft-fps/index.html",
       );
 
       vi.useFakeTimers();
@@ -1329,7 +1329,7 @@ describe("MessageBubble", () => {
       });
       const tooltip = screen.getByRole("tooltip");
       expect(tooltip).toHaveTextContent(
-        "/Users/renxubin/.nanobot/workspace/minecraft-fps/index.html",
+        "/Users/renxubin/.nujinagent/workspace/minecraft-fps/index.html",
       );
     } finally {
       vi.useRealTimers();

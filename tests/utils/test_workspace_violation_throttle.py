@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from nanobot.utils.runtime import (
+from nujinagent.utils.runtime import (
     repeated_workspace_violation_error,
     workspace_violation_signature,
 )

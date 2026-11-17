@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from nanobot.session.manager import Session, SessionManager
+from nujinagent.session.manager import Session, SessionManager
 
 
 def _seed(workspace: Path, key: str = "telegram:abc") -> SessionManager:

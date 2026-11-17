@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from "r
 
 import { isLocalAttachment } from "../../../../packages/client-events/attachments";
 import type { AttachedImage, RestoredReadyImage } from "@/hooks/useAttachedImages";
-import type { SendAttachment, SendOptions } from "@/hooks/useNanobotStream";
+import type { SendAttachment, SendOptions } from "@/hooks/useNujinAgentStream";
 import type { SessionMention } from "@/lib/types";
 
-const QUEUED_PROMPTS_STORAGE_PREFIX = "nanobot.webui.composerQueuedGuidance.v1:";
+const QUEUED_PROMPTS_STORAGE_PREFIX = "nujinagent.webui.composerQueuedGuidance.v1:";
 const EMPTY_COMPLETED_TURN_IDS: readonly string[] = [];
 const QUEUED_PROMPTS_LIMIT = 20;
 

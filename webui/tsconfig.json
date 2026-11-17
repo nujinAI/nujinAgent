@@ -34,9 +34,9 @@
   },
   "include": [
     "src",
-    "../nanobot/channels/*/webui/**/*.ts",
-    "../nanobot/channels/*/webui/**/*.tsx",
-    "../nanobot/channels/*/tests/webui/**/*.ts",
-    "../nanobot/channels/*/tests/webui/**/*.tsx"
+    "../nujinagent/channels/*/webui/**/*.ts",
+    "../nujinagent/channels/*/webui/**/*.tsx",
+    "../nujinagent/channels/*/tests/webui/**/*.ts",
+    "../nujinagent/channels/*/tests/webui/**/*.tsx"
   ]
 }

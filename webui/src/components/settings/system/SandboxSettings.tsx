@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ToggleButton } from "@/components/ui/toggle-button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { checkSandboxSettings } from "@/lib/api";
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import { sandboxLauncherDisplay } from "@/lib/sandbox-display";
 import type { SandboxCheck, SettingsPayload } from "@/lib/types";
 import type { RuntimeConfigController } from "./RuntimeConfigSettings";
@@ -20,7 +20,7 @@ import { RUNTIME_CONFIG_FIELDS } from "./runtime-config-fields";
 export function SandboxSettings({ settings, state, client, isRestarting, children, focusTarget }: {
   settings: SettingsPayload;
   state: RuntimeConfigController;
-  client: NanobotClient;
+  client: NujinAgentClient;
   isRestarting: boolean;
   children: ReactNode;
   focusTarget?: SettingsFocusTarget;

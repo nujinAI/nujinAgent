@@ -10,16 +10,16 @@ from urllib.parse import parse_qs, urlsplit
 import pytest
 from websockets.datastructures import Headers
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.bus.queue import MessageBus
-from nanobot.config.loader import load_config, save_config
-from nanobot.config.schema import Config, ModelPresetConfig, ProviderConfig
-from nanobot.providers.factory import load_provider_snapshot
-from nanobot.session.model_selection import SESSION_MODEL_PRESET_METADATA_KEY
-from nanobot.webui import settings_api
-from nanobot.webui.http_utils import http_json_response
-from nanobot.webui.settings_routes import WebUISettingsRouter
-from nanobot.webui.settings_services import WebUISettingsServices
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.loader import load_config, save_config
+from nujinagent.config.schema import Config, ModelPresetConfig, ProviderConfig
+from nujinagent.providers.factory import load_provider_snapshot
+from nujinagent.session.model_selection import SESSION_MODEL_PRESET_METADATA_KEY
+from nujinagent.webui import settings_api
+from nujinagent.webui.http_utils import http_json_response
+from nujinagent.webui.settings_routes import WebUISettingsRouter
+from nujinagent.webui.settings_services import WebUISettingsServices
 
 
 @pytest.mark.asyncio
@@ -98,9 +98,9 @@ async def test_model_save_commits_before_refreshing_next_session_admission(
 
         path = "/api/settings/model-configurations/update"
         request = SimpleNamespace(path=path, headers=Headers())
-        request._nanobot_webui_mutation_request = True
-        request._nanobot_webui_mutation_payload = draft
-        request._nanobot_trusted_proxy_authenticated = True
+        request._nujinagent_webui_mutation_request = True
+        request._nujinagent_webui_mutation_payload = draft
+        request._nujinagent_trusted_proxy_authenticated = True
         pending_save = asyncio.create_task(router.dispatch(None, request, path))
         assert await asyncio.to_thread(before_save.wait, 5)
         assert not pending_save.done()

@@ -18,7 +18,7 @@ import type {
 } from "./types"
 import { decodeInboundEvent, decodeWebUIResponse, isRecord } from "./validation"
 
-export class NanobotClient {
+export class NujinAgentClient {
   private upload: UploadCapability | null = null
   private uploadBase = ""
   private receipts = new DeliveryReceipts()

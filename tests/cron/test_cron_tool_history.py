@@ -4,11 +4,11 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from nanobot.agent.tools.cron import CronTool
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.cron import service as cron_service
-from nanobot.cron.service import CronJobSkippedError, CronService
-from nanobot.cron.types import CronSchedule
+from nujinagent.agent.tools.cron import CronTool
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.cron import service as cron_service
+from nujinagent.cron.service import CronJobSkippedError, CronService
+from nujinagent.cron.types import CronSchedule
 
 
 def _registry(service: CronService) -> ToolRegistry:

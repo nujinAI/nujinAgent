@@ -1,8 +1,8 @@
 import { act, cleanup, fireEvent, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import type { CliAppInfo, McpPresetInfo, NanobotFeatureInfo } from "@/lib/types";
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { CliAppInfo, McpPresetInfo, NujinAgentFeatureInfo } from "@/lib/types";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import { invalidateToolsCatalog, TOOLS_CATALOG_TTL_MS } from "@/lib/tools-catalog-cache";
 import { CLI_APPS_REFRESH_RETRY_MS } from "@/components/settings/system/AppsSettings";
 import {
@@ -31,7 +31,7 @@ const plugin: McpPresetInfo = {
   available: false, status: "disabled", required_fields: [], source: "agent-plugin",
   docs_url: "", note: "", connection_summary: "",
 };
-const channel: NanobotFeatureInfo = {
+const channel: NujinAgentFeatureInfo = {
   name: "discord", display_name: "Discord", type: "channel", installed: true,
   configured: false, enabled: false, ready: false, status: "not_enabled",
   install_supported: true, requires_restart: false,
@@ -41,7 +41,7 @@ describe("catalog loading", () => {
   installSettingsViewTestHooks();
 
   it("reuses both catalogs after leaving settings and keeps expired rows visible during refresh", async () => {
-    const client = { status: "open", onStatus: () => () => {} } as unknown as NanobotClient;
+    const client = { status: "open", onStatus: () => () => {} } as unknown as NujinAgentClient;
     const cli = deferred<Response>();
     const mcp = deferred<Response>();
     let refresh = false;
@@ -87,7 +87,7 @@ describe("catalog loading", () => {
   });
 
   it("refreshes an invalidated initial read immediately and ignores its superseded response", async () => {
-    const client = { status: "open", onStatus: () => () => {} } as unknown as NanobotClient;
+    const client = { status: "open", onStatus: () => () => {} } as unknown as NujinAgentClient;
     const old = deferred<Response>();
     let reads = 0;
     vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => {
@@ -108,7 +108,7 @@ describe("catalog loading", () => {
 
   it("resumes a pending CLI catalog refresh after remount", async () => {
     vi.useFakeTimers();
-    const client = { status: "open", onStatus: () => () => {} } as unknown as NanobotClient;
+    const client = { status: "open", onStatus: () => () => {} } as unknown as NujinAgentClient;
     let reads = 0;
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       if (String(input) === "/api/settings") return jsonResponse(settingsPayload());
@@ -200,7 +200,7 @@ describe("catalog loading", () => {
     const refresh = deferred<Response>();
     const fetchFeatures = vi.fn().mockReturnValueOnce(initial.promise).mockReturnValue(refresh.promise);
     vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => (
-      String(input) === "/api/settings/nanobot-features"
+      String(input) === "/api/settings/nujinagent-features"
         ? fetchFeatures() : Promise.resolve(jsonResponse(settingsPayload()))
     )));
     renderSettingsView({ initialSection: "channels", initialSettings: settingsPayload() });

@@ -40,7 +40,7 @@ import { StreamErrorNotice } from "@/components/thread/StreamErrorNotice";
 import { ThreadViewport, type ThreadViewportHandle } from "@/components/thread/ThreadViewport";
 import { ExecSessionCommandsContext } from "@/components/thread/activity/exec-session-context";
 import { execSessionCommands } from "@/components/thread/activity/exec-session-model";
-import { useNanobotStream, type SendAttachment, type SendOptions } from "@/hooks/useNanobotStream";
+import { useNujinAgentStream, type SendAttachment, type SendOptions } from "@/hooks/useNujinAgentStream";
 import { useFilePreviewState, type FilePreviewState, type FilePreviewStore } from "@/hooks/useFilePreviewState";
 import {
   ApiError,
@@ -64,7 +64,7 @@ import {
   installedMcpPresetsFromPayload,
   isMcpPresetsPayload,
 } from "@/lib/mcp-preset-events";
-import type { StreamError } from "@/lib/nanobot-client";
+import type { StreamError } from "@/lib/nujinagent-client";
 import { isLocalAttachment } from "../../../../packages/client-events/attachments";
 import type {
   ChatSummary,
@@ -604,7 +604,7 @@ export function ThreadShell({
     loadTraceDetails: loadBodyTraceDetails,
     streamError,
     dismissStreamError,
-  } = useNanobotStream(
+  } = useNujinAgentStream(
     chatId, undefined, false, handleTurnEnd, undefined, undefined,
     { key: historyKey, cache: messageCacheRef.current, temporary },
   );

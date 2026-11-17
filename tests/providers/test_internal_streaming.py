@@ -15,15 +15,15 @@ from agent.runner_helpers import failed_test_consolidator
 from loguru import logger
 from openai import AsyncOpenAI
 
-from nanobot.agent.hook import AgentHook
-from nanobot.agent.memory import MemoryArchiver, MemoryStore
-from nanobot.agent.runner import AgentRunner, AgentRunSpec
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.providers.azure_openai_provider import AzureOpenAIProvider
-from nanobot.providers.base import LLMProvider, LLMResponse, ToolCallRequest
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.providers.registry import ModelAPICapabilities, find_by_name
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.hook import AgentHook
+from nujinagent.agent.memory import MemoryArchiver, MemoryStore
+from nujinagent.agent.runner import AgentRunner, AgentRunSpec
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.providers.azure_openai_provider import AzureOpenAIProvider
+from nujinagent.providers.base import LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.registry import ModelAPICapabilities, find_by_name
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 class _EventStream(httpx.AsyncByteStream):
@@ -91,7 +91,7 @@ async def make_provider(monkeypatch):
         api: str, kind: str, *, stall_at: int | None = None,
         event_delay: float = 0, idle_timeout: float = 5,
     ):
-        monkeypatch.setenv("NANOBOT_STREAM_IDLE_TIMEOUT_S", str(idle_timeout))
+        monkeypatch.setenv("NUJINAGENT_STREAM_IDLE_TIMEOUT_S", str(idle_timeout))
         stream = _EventStream(_events(api, kind), stall_at=stall_at, event_delay=event_delay)
 
         def handler(request: httpx.Request) -> httpx.Response:
@@ -208,7 +208,7 @@ async def test_archive_preserves_raw_history_after_truncated_stream_retries(
 async def test_runner_streams_past_old_wall_limit_with_optional_ui(
     make_provider, monkeypatch, show_deltas,
 ):
-    monkeypatch.setenv("NANOBOT_LLM_TIMEOUT_S", "0.01")
+    monkeypatch.setenv("NUJINAGENT_LLM_TIMEOUT_S", "0.01")
     provider, _ = await make_provider("chat", "reasoning", event_delay=0.05)
     content_deltas = []
 
@@ -233,7 +233,7 @@ async def test_runner_streams_past_old_wall_limit_with_optional_ui(
 
 @pytest.mark.parametrize("finalize", [False, True], ids=["model-request", "finalization"])
 async def test_chat_only_provider_still_has_a_timeout(monkeypatch, finalize):
-    monkeypatch.setenv("NANOBOT_STREAM_IDLE_TIMEOUT_S", "0.05")
+    monkeypatch.setenv("NUJINAGENT_STREAM_IDLE_TIMEOUT_S", "0.05")
 
     class ChatOnlyProvider(LLMProvider):
         _CHAT_RETRY_DELAYS = ()
@@ -499,7 +499,7 @@ async def test_chat_cancel_closes_stream(chat_sdk, blocked, parse_first):
 
 
 async def test_chat_timeout_after_parse_failure_wins_and_closes(chat_sdk, monkeypatch):
-    monkeypatch.setenv("NANOBOT_STREAM_IDLE_TIMEOUT_S", "0.05")
+    monkeypatch.setenv("NUJINAGENT_STREAM_IDLE_TIMEOUT_S", "0.05")
     stream = _ControlledChatStream([
         _bad_chat_event("usage"), _chat_event({}, finish="stop"),
     ], pause_at=1)
@@ -753,7 +753,7 @@ async def test_chat_disconnect_wins_over_close_error_and_still_retries(chat_sdk,
 
 async def test_chat_timeout_wins_over_close_error(chat_sdk, cleanup_warnings, monkeypatch):
     _require_minimum_sdk_for_iterator_close_failure()
-    monkeypatch.setenv("NANOBOT_STREAM_IDLE_TIMEOUT_S", "0.05")
+    monkeypatch.setenv("NUJINAGENT_STREAM_IDLE_TIMEOUT_S", "0.05")
     stream = _ControlledChatStream([
         _bad_chat_event("usage"), _chat_event({}, finish="stop"),
     ], pause_at=1, close_error=httpx.CloseError("connection reset"))
@@ -825,8 +825,8 @@ def test_langfuse_async_openai_chat_stream(mode):
 
         import httpx
         import langfuse.openai as langfuse_openai
-        from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-        from nanobot.providers.registry import ModelAPICapabilities
+        from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+        from nujinagent.providers.registry import ModelAPICapabilities
 
         test_file = Path(sys.argv[2]).resolve()
         sys.path.insert(0, str(test_file.parent.parent))

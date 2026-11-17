@@ -5,13 +5,13 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.outbound_events import RecoveryStateEvent, SessionUpdatedEvent
-from nanobot.bus.queue import MessageBus
-from nanobot.providers.base import ProviderConversationState
-from nanobot.session.display_history import HistoryFact, HistoryKind
-from nanobot.session.manager import Session, SessionManager
-from nanobot.session.recovery import (
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.outbound_events import RecoveryStateEvent, SessionUpdatedEvent
+from nujinagent.bus.queue import MessageBus
+from nujinagent.providers.base import ProviderConversationState
+from nujinagent.session.display_history import HistoryFact, HistoryKind
+from nujinagent.session.manager import Session, SessionManager
+from nujinagent.session.recovery import (
     PENDING_FOLLOWUPS_KEY,
     PENDING_USER_TURN_KEY,
     RECOVERY_METADATA_KEY,
@@ -20,9 +20,9 @@ from nanobot.session.recovery import (
     pending_followups,
     record_pending_followup,
 )
-from nanobot.session.session_messages import SESSION_MESSAGE_METADATA_KEY
-from nanobot.webui import history as history_module
-from nanobot.webui.recovery import RecoveryActionError, RecoveryCoordinator
+from nujinagent.session.session_messages import SESSION_MESSAGE_METADATA_KEY
+from nujinagent.webui import history as history_module
+from nujinagent.webui.recovery import RecoveryActionError, RecoveryCoordinator
 
 
 @pytest.fixture(autouse=True)
@@ -116,7 +116,7 @@ async def test_materialized_interruption_can_continue_from_saved_context(
     )
     _persist(sessions, session)
     monkeypatch.setattr(
-        "nanobot.webui.transcript.has_unfinished_transcript_tail",
+        "nujinagent.webui.transcript.has_unfinished_transcript_tail",
         lambda _key, **_kwargs: True,
     )
 
@@ -211,7 +211,7 @@ async def test_scan_loads_only_sessions_that_need_webui_recovery(
 
     monkeypatch.setattr(restarted.state, "get", tracked_get_or_create)
     monkeypatch.setattr(
-        "nanobot.webui.transcript.has_unfinished_transcript_tail",
+        "nujinagent.webui.transcript.has_unfinished_transcript_tail",
         lambda _key, **_kwargs: False,
     )
 
@@ -838,7 +838,7 @@ async def test_model_failure_waits_across_restart_and_rejects_duplicate_continue
     state = sessions.get_or_create("websocket:chat").metadata[RECOVERY_METADATA_KEY]
     assert state["failure_error_kind"] == "connection"
     assert state.get("reply_preserved", False) is reply_preserved
-    from nanobot.session.recovery import recovery_state_from_metadata
+    from nujinagent.session.recovery import recovery_state_from_metadata
     public_state = recovery_state_from_metadata({RECOVERY_METADATA_KEY: state})
     assert public_state is not None
     assert public_state.get("reply_preserved", False) is reply_preserved

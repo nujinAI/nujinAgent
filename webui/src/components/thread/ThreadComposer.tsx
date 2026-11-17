@@ -104,7 +104,7 @@ import { useClipboardAndDrop } from "@/hooks/useClipboardAndDrop";
 import { useComposerMentionInput } from "@/hooks/useComposerMentionInput";
 import { useLogoFallback } from "@/hooks/useLogoFallback";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { SendAttachment, SendOptions } from "@/hooks/useNanobotStream";
+import type { SendAttachment, SendOptions } from "@/hooks/useNujinAgentStream";
 import { useVoiceRecorder, type VoiceRecorderErrorKey } from "@/hooks/useVoiceRecorder";
 import type {
   CliAppInfo,
@@ -306,7 +306,7 @@ const SLASH_PALETTE_GAP_PX = 8;
 const SLASH_PALETTE_MAX_HEIGHT_PX = 288;
 const SLASH_PALETTE_MIN_HEIGHT_PX = 144;
 const SLASH_PALETTE_CHROME_PX = 12;
-const SLASH_RECENTS_STORAGE_KEY = "nanobot.webui.slashCommandRecents";
+const SLASH_RECENTS_STORAGE_KEY = "nujinagent.webui.slashCommandRecents";
 const SLASH_RECENTS_LIMIT = 5;
 const SESSION_MENTIONS_LIMIT = 8;
 

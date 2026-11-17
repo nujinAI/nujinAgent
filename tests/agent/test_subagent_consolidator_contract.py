@@ -5,13 +5,13 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.agent.memory import Consolidator, MemoryStore
-from nanobot.agent.subagent import SubagentManager
-from nanobot.bus.queue import MessageBus
-from nanobot.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
-from nanobot.session.manager import SessionManager
-from nanobot.utils.helpers import estimate_prompt_tokens_chain
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.memory import Consolidator, MemoryStore
+from nujinagent.agent.subagent import SubagentManager
+from nujinagent.bus.queue import MessageBus
+from nujinagent.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.session.manager import SessionManager
+from nujinagent.utils.helpers import estimate_prompt_tokens_chain
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 def test_subagent_requires_consolidator_at_construction(tmp_path):

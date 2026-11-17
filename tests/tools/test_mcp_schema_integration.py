@@ -7,8 +7,8 @@ from mcp.server.fastmcp import FastMCP
 from mcp.shared.memory import create_connected_server_and_client_session
 from pydantic import Field
 
-from nanobot.agent.tools.mcp import MCPToolWrapper
-from nanobot.agent.tools.registry import ToolRegistry, is_tool_error_result
+from nujinagent.agent.tools.mcp import MCPToolWrapper
+from nujinagent.agent.tools.registry import ToolRegistry, is_tool_error_result
 
 
 @pytest.mark.parametrize("tool_name, valid, invalid", [

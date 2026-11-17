@@ -3,18 +3,18 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.context import RequestContext, current_request_context, request_context
-from nanobot.agent.tools.cron import CronTool
-from nanobot.bus.queue import MessageBus
-from nanobot.config.schema import Config
-from nanobot.cron.binding import CronBinding, binding_revision
-from nanobot.cron.bound_runner import run_bound_cron_job
-from nanobot.cron.service import CronService
-from nanobot.cron.session_turns import CRON_TRIGGER_META
-from nanobot.cron.types import CronSchedule
-from nanobot.providers.base import GenerationSettings, LLMResponse, ToolCallRequest
-from nanobot.session.manager import SessionManager
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.context import RequestContext, current_request_context, request_context
+from nujinagent.agent.tools.cron import CronTool
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.schema import Config
+from nujinagent.cron.binding import CronBinding, binding_revision
+from nujinagent.cron.bound_runner import run_bound_cron_job
+from nujinagent.cron.service import CronService
+from nujinagent.cron.session_turns import CRON_TRIGGER_META
+from nujinagent.cron.types import CronSchedule
+from nujinagent.providers.base import GenerationSettings, LLMResponse, ToolCallRequest
+from nujinagent.session.manager import SessionManager
 
 
 @pytest.mark.asyncio
@@ -35,7 +35,7 @@ async def test_bound_job_runs_with_its_saved_session_key(tmp_path):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("delivery", ["reply", "legacy_message", "broadcast"])
 async def test_moved_cron_keeps_reply_send_and_prompt_prefix_contract(tmp_path, monkeypatch, delivery):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path / "data")
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path / "data")
     workspace = tmp_path / "workspace"
     sessions = SessionManager(workspace)
     bus = MessageBus()

@@ -6,8 +6,8 @@ x-bwrap-security: &bwrap-security
     - seccomp=unconfined
 
 services:
-  nanobot-gateway:
+  nujinagent-gateway:
     <<: *bwrap-security
 
-  nanobot-cli:
+  nujinagent-cli:
     <<: *bwrap-security

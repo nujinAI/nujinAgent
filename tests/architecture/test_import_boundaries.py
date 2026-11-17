@@ -10,75 +10,75 @@ from scripts.check_import_boundaries import Violation, find_violations
 
 
 @pytest.mark.parametrize("module", [
-    "nanobot.agent.loop", "nanobot.session.state", "nanobot.runtime_admission",
-    "nanobot.data_access", "nanobot.installation_lock",
+    "nujinagent.agent.loop", "nujinagent.session.state", "nujinagent.runtime_admission",
+    "nujinagent.data_access", "nujinagent.installation_lock",
 ])
 def test_runtime_owners_do_not_depend_on_update_policy(module: str) -> None:
-    assert find_violations("from nanobot.update_service import UpdateService", module) == [
-        Violation("update-policy-direction", "nanobot.update_service.UpdateService", 1),
+    assert find_violations("from nujinagent.update_service import UpdateService", module) == [
+        Violation("update-policy-direction", "nujinagent.update_service.UpdateService", 1),
     ]
 
 
 def test_updater_uses_process_contracts_not_agent_or_client_implementations() -> None:
-    assert find_violations("from nanobot.agent.loop import AgentLoop", "nanobot.update_stop") == [
-        Violation("update-domain", "nanobot.agent.loop.AgentLoop", 1),
+    assert find_violations("from nujinagent.agent.loop import AgentLoop", "nujinagent.update_stop") == [
+        Violation("update-domain", "nujinagent.agent.loop.AgentLoop", 1),
     ]
     assert find_violations(
-        "from nanobot.gateway.runtime import GatewayRuntime", "nanobot.update_stop",
+        "from nujinagent.gateway.runtime import GatewayRuntime", "nujinagent.update_stop",
     ) == []
     assert find_violations(
-        "from nanobot.update_stop import watch_gateway_stop", "nanobot.cli.gateway_runtime",
+        "from nujinagent.update_stop import watch_gateway_stop", "nujinagent.cli.gateway_runtime",
     ) == []
     assert find_violations(
-        "from nanobot.cli.gateway_runtime import _run_gateway", "nanobot.update_restart",
+        "from nujinagent.cli.gateway_runtime import _run_gateway", "nujinagent.update_restart",
     ) == []
     assert find_violations(
-        "from nanobot.agent.loop import AgentLoop", "nanobot.update_restart",
-    ) == [Violation("update-restart-adapter", "nanobot.agent.loop.AgentLoop", 1)]
+        "from nujinagent.agent.loop import AgentLoop", "nujinagent.update_restart",
+    ) == [Violation("update-restart-adapter", "nujinagent.agent.loop.AgentLoop", 1)]
 
 
 @pytest.mark.parametrize(
     ("source", "target", "line"),
     [
-        ("import nanobot.webui.metadata", "nanobot.webui.metadata", 1),
-        ("from nanobot import webui", "nanobot.webui", 1),
-        ("from nanobot.webui import metadata", "nanobot.webui.metadata", 1),
-        ("from .. import webui", "nanobot.webui", 1),
-        ("from ..webui import metadata", "nanobot.webui.metadata", 1),
+        ("import nujinagent.webui.metadata", "nujinagent.webui.metadata", 1),
+        ("from nujinagent import webui", "nujinagent.webui", 1),
+        ("from nujinagent.webui import metadata", "nujinagent.webui.metadata", 1),
+        ("from .. import webui", "nujinagent.webui", 1),
+        ("from ..webui import metadata", "nujinagent.webui.metadata", 1),
         (
-            "def load():\n    from nanobot.cli import gateway",
-            "nanobot.cli.gateway", 2,
+            "def load():\n    from nujinagent.cli import gateway",
+            "nujinagent.cli.gateway", 2,
         ),
         (
-            "import importlib\nimportlib.import_module('nanobot.webui.metadata')",
-            "nanobot.webui.metadata", 2,
+            "import importlib\nimportlib.import_module('nujinagent.webui.metadata')",
+            "nujinagent.webui.metadata", 2,
         ),
         (
             "import importlib as modules\n"
-            "modules.import_module(name='nanobot.webui.metadata')",
-            "nanobot.webui.metadata", 2,
+            "modules.import_module(name='nujinagent.webui.metadata')",
+            "nujinagent.webui.metadata", 2,
         ),
         (
             "from importlib import import_module as load\n"
             "load('..webui.metadata', __package__)",
-            "nanobot.webui.metadata", 2,
+            "nujinagent.webui.metadata", 2,
         ),
         (
             "from importlib import import_module\n"
-            "import_module('..webui.metadata', package='nanobot.agent')",
-            "nanobot.webui.metadata", 2,
+            "import_module('..webui.metadata', package='nujinagent.agent')",
+            "nujinagent.webui.metadata", 2,
         ),
-        ("__import__('nanobot.webui.metadata')", "nanobot.webui.metadata", 1),
+        ("__import__('nujinagent.webui.metadata')", "nujinagent.webui.metadata", 1),
         (
-            "import builtins as imports\nimports.__import__('nanobot.webui.metadata')",
-            "nanobot.webui.metadata", 2,
+            "import builtins as imports\nimports.__import__('nujinagent.webui.metadata')",
+            "nujinagent.webui.metadata", 2,
         ),
     ],
 )
 def test_core_rejects_adapter_imports_in_supported_spellings(
     source: str, target: str, line: int,
 ) -> None:
-    assert find_violations(source, "nanobot.agent.loop") == [
+    assert find_violations(source, "nujinagent.agent.loop") == [
         Violation("core-execution", target, line),
     ]
 
@@ -87,96 +87,96 @@ def test_core_rejects_adapter_imports_in_supported_spellings(
     "source",
     [
         "from typing import TYPE_CHECKING as TC\n"
-        "if TC:\n    from nanobot.webui import metadata",
+        "if TC:\n    from nujinagent.webui import metadata",
         "import typing as t\n"
-        "if t.TYPE_CHECKING:\n    from nanobot.webui import metadata",
+        "if t.TYPE_CHECKING:\n    from nujinagent.webui import metadata",
     ],
 )
 def test_core_boundary_includes_type_dependencies(source: str) -> None:
-    assert find_violations(source, "nanobot.agent.runner") == [
-        Violation("core-execution", "nanobot.webui.metadata", 3),
+    assert find_violations(source, "nujinagent.agent.runner") == [
+        Violation("core-execution", "nujinagent.webui.metadata", 3),
     ]
 
 
 @pytest.mark.parametrize(
     ("module", "rule"),
     [
-        ("nanobot.session.manager", "session-storage"),
-        ("nanobot.session.recovery", "session-storage"),
-        ("nanobot.security.workspace_policy", "security-primitives"),
-        ("nanobot.agent.turn_delivery", "core-execution"),
-        ("nanobot.channels.notification_routes", "channel-routing-contracts"),
-        ("nanobot.config.schema", "configuration-contracts"),
-        ("nanobot.agent.tools.cli_apps_config", "tool-configuration-contracts"),
-        ("nanobot.utils.file_io", "shared-primitives"),
+        ("nujinagent.session.manager", "session-storage"),
+        ("nujinagent.session.recovery", "session-storage"),
+        ("nujinagent.security.workspace_policy", "security-primitives"),
+        ("nujinagent.agent.turn_delivery", "core-execution"),
+        ("nujinagent.channels.notification_routes", "channel-routing-contracts"),
+        ("nujinagent.config.schema", "configuration-contracts"),
+        ("nujinagent.agent.tools.cli_apps_config", "tool-configuration-contracts"),
+        ("nujinagent.utils.file_io", "shared-primitives"),
     ],
 )
 def test_storage_and_security_do_not_depend_on_adapters(module: str, rule: str) -> None:
-    assert find_violations("from nanobot.cli import gateway", module) == [
-        Violation(rule, "nanobot.cli.gateway", 1),
+    assert find_violations("from nujinagent.cli import gateway", module) == [
+        Violation(rule, "nujinagent.cli.gateway", 1),
     ]
 
 
 @pytest.mark.parametrize(
     "dependency",
     [
-        "nanobot.bus.outbound_events.ProgressEvent",
-        "nanobot.command.router",
-        "nanobot.pairing.events.PairingChanged",
-        "nanobot.session.webui_turns.clear_websocket_turn_if_current",
-        "nanobot.webui.transcript.WebUITranscriptRecorder",
-        "nanobot.webui.outbound_wire.project_notification",
+        "nujinagent.bus.outbound_events.ProgressEvent",
+        "nujinagent.command.router",
+        "nujinagent.pairing.events.PairingChanged",
+        "nujinagent.session.webui_turns.clear_websocket_turn_if_current",
+        "nujinagent.webui.transcript.WebUITranscriptRecorder",
+        "nujinagent.webui.outbound_wire.project_notification",
     ],
 )
 def test_websocket_transport_leaves_event_and_history_policy_to_delivery(dependency: str) -> None:
     module, name = dependency.rsplit(".", 1)
     source = f"from {module} import {name}\n"
-    assert find_violations(source, "nanobot.channels.websocket.runtime") == [
+    assert find_violations(source, "nujinagent.channels.websocket.runtime") == [
         Violation("websocket-transport", dependency, 1),
     ]
-    assert find_violations(source, "nanobot.webui.outbound_delivery") == []
+    assert find_violations(source, "nujinagent.webui.outbound_delivery") == []
 
 
 @pytest.mark.parametrize(
     "source",
     [
-        "from nanobot.config.schema import Base",
+        "from nujinagent.config.schema import Base",
         "from ...config.schema import Base as ConfigBase",
     ],
 )
 def test_tool_configs_import_the_shared_base_directly(source: str) -> None:
-    assert find_violations(source, "nanobot.agent.tools.shell") == [
-        Violation("tool-config-base", "nanobot.config.schema.Base", 1),
+    assert find_violations(source, "nujinagent.agent.tools.shell") == [
+        Violation("tool-config-base", "nujinagent.config.schema.Base", 1),
     ]
     assert find_violations(
-        "from nanobot.config_base import Base", "nanobot.agent.tools.shell",
+        "from nujinagent.config_base import Base", "nujinagent.agent.tools.shell",
     ) == []
 
 
 def test_configuration_imports_the_six_tool_owned_config_contracts() -> None:
     source = (
-        "from nanobot.agent.tools.cli_apps_config import CliAppsToolConfig\n"
-        "from nanobot.agent.tools.filesystem_config import FileToolsConfig\n"
-        "from nanobot.agent.tools.image_generation_config import ImageGenerationToolConfig\n"
-        "from nanobot.agent.tools.self_config import MyToolConfig\n"
-        "from nanobot.agent.tools.shell_config import ExecToolConfig\n"
-        "from nanobot.agent.tools.web_config import WebToolsConfig\n"
+        "from nujinagent.agent.tools.cli_apps_config import CliAppsToolConfig\n"
+        "from nujinagent.agent.tools.filesystem_config import FileToolsConfig\n"
+        "from nujinagent.agent.tools.image_generation_config import ImageGenerationToolConfig\n"
+        "from nujinagent.agent.tools.self_config import MyToolConfig\n"
+        "from nujinagent.agent.tools.shell_config import ExecToolConfig\n"
+        "from nujinagent.agent.tools.web_config import WebToolsConfig\n"
     )
-    assert find_violations(source, "nanobot.config.schema") == []
+    assert find_violations(source, "nujinagent.config.schema") == []
 
 
 @pytest.mark.parametrize(
     ("module", "source"),
     [
-        ("nanobot.agent.loop", "from nanobot.session.recovery import RecoveryAdmission"),
-        ("nanobot.session.manager", "from nanobot.providers.base import ProviderConversationState"),
-        ("nanobot.session.webui_turns", "from nanobot.webui import transcript"),
-        ("nanobot.cli.gateway_runtime", "from nanobot.agent.loop import AgentLoop"),
-        ("nanobot.channels.websocket.runtime", "from nanobot.webui import inbound_commands"),
-        ("nanobot.agent.tools.cli_apps_config", "from nanobot.config_base import Base"),
+        ("nujinagent.agent.loop", "from nujinagent.session.recovery import RecoveryAdmission"),
+        ("nujinagent.session.manager", "from nujinagent.providers.base import ProviderConversationState"),
+        ("nujinagent.session.webui_turns", "from nujinagent.webui import transcript"),
+        ("nujinagent.cli.gateway_runtime", "from nujinagent.agent.loop import AgentLoop"),
+        ("nujinagent.channels.websocket.runtime", "from nujinagent.webui import inbound_commands"),
+        ("nujinagent.agent.tools.cli_apps_config", "from nujinagent.config_base import Base"),
         (
-            "nanobot.agent.turn_delivery",
-            "from nanobot.channels.notification_routes import notification_metadata",
+            "nujinagent.agent.turn_delivery",
+            "from nujinagent.channels.notification_routes import notification_metadata",
         ),
     ],
 )
@@ -190,65 +190,65 @@ def test_existing_runtime_and_composition_dependencies_remain_allowed(
     ("relative", "source", "rule", "target", "line"),
     [
         (
-            "nanobot/agent/runner.py", "import nanobot.webui.metadata",
-            "core-execution", "nanobot.webui.metadata", 1,
+            "nujinagent/agent/runner.py", "import nujinagent.webui.metadata",
+            "core-execution", "nujinagent.webui.metadata", 1,
         ),
         (
-            "nanobot/agent/loop.py",
-            "import importlib\nif importlib.import_module('nanobot.webui.metadata'):\n    pass",
-            "core-execution", "nanobot.webui.metadata", 2,
+            "nujinagent/agent/loop.py",
+            "import importlib\nif importlib.import_module('nujinagent.webui.metadata'):\n    pass",
+            "core-execution", "nujinagent.webui.metadata", 2,
         ),
         (
-            "nanobot/agent/loop.py", "if __import__('nanobot.webui.metadata'):\n    pass",
-            "core-execution", "nanobot.webui.metadata", 1,
+            "nujinagent/agent/loop.py", "if __import__('nujinagent.webui.metadata'):\n    pass",
+            "core-execution", "nujinagent.webui.metadata", 1,
         ),
         (
-            "nanobot/session/manager.py", "from nanobot.cli import gateway",
-            "session-storage", "nanobot.cli.gateway", 1,
+            "nujinagent/session/manager.py", "from nujinagent.cli import gateway",
+            "session-storage", "nujinagent.cli.gateway", 1,
         ),
         (
-            "nanobot/channels/notification_routes.py",
-            "from nanobot.channels.slack.runtime import SlackChannel",
-            "channel-routing-contracts", "nanobot.channels.slack.runtime.SlackChannel", 1,
+            "nujinagent/channels/notification_routes.py",
+            "from nujinagent.channels.slack.runtime import SlackChannel",
+            "channel-routing-contracts", "nujinagent.channels.slack.runtime.SlackChannel", 1,
         ),
         (
-            "nanobot/channels/notification_routes.py",
-            "from nanobot.agent.turn_delivery import TurnRoute",
-            "channel-routing-contracts", "nanobot.agent.turn_delivery.TurnRoute", 1,
+            "nujinagent/channels/notification_routes.py",
+            "from nujinagent.agent.turn_delivery import TurnRoute",
+            "channel-routing-contracts", "nujinagent.agent.turn_delivery.TurnRoute", 1,
         ),
         (
-            "nanobot/security/__init__.py", "from ..cli import gateway",
-            "security-primitives", "nanobot.cli.gateway", 1,
+            "nujinagent/security/__init__.py", "from ..cli import gateway",
+            "security-primitives", "nujinagent.cli.gateway", 1,
         ),
         (
-            "nanobot/channels/websocket/runtime.py",
-            "import importlib as modules\nmodules.import_module('nanobot.command.router')",
-            "websocket-transport", "nanobot.command.router", 2,
+            "nujinagent/channels/websocket/runtime.py",
+            "import importlib as modules\nmodules.import_module('nujinagent.command.router')",
+            "websocket-transport", "nujinagent.command.router", 2,
         ),
         (
-            "nanobot/agent/tools/shell.py", "from ...config.schema import Base as ConfigBase",
-            "tool-config-base", "nanobot.config.schema.Base", 1,
+            "nujinagent/agent/tools/shell.py", "from ...config.schema import Base as ConfigBase",
+            "tool-config-base", "nujinagent.config.schema.Base", 1,
         ),
         (
-            "nanobot/channels/telegram/runtime.py", "from nanobot.config.schema import Base",
-            "tool-config-base", "nanobot.config.schema.Base", 1,
+            "nujinagent/channels/telegram/runtime.py", "from nujinagent.config.schema import Base",
+            "tool-config-base", "nujinagent.config.schema.Base", 1,
         ),
         (
-            "nanobot/config/schema.py", "from nanobot.agent.tools.shell import ExecTool",
-            "configuration-contracts", "nanobot.agent.tools.shell.ExecTool", 1,
+            "nujinagent/config/schema.py", "from nujinagent.agent.tools.shell import ExecTool",
+            "configuration-contracts", "nujinagent.agent.tools.shell.ExecTool", 1,
         ),
         (
-            "nanobot/agent/tools/cli_apps_config.py", "from .cli_apps import CliAppsTool",
-            "tool-configuration-contracts", "nanobot.agent.tools.cli_apps.CliAppsTool", 1,
+            "nujinagent/agent/tools/cli_apps_config.py", "from .cli_apps import CliAppsTool",
+            "tool-configuration-contracts", "nujinagent.agent.tools.cli_apps.CliAppsTool", 1,
         ),
         (
-            "nanobot/agent/tools/web_config.py", "from nanobot.config.schema import Config",
-            "tool-configuration-contracts", "nanobot.config.schema.Config", 1,
+            "nujinagent/agent/tools/web_config.py", "from nujinagent.config.schema import Config",
+            "tool-configuration-contracts", "nujinagent.config.schema.Config", 1,
         ),
         (
-            "nanobot/providers/oauth_catalog_cache.py",
-            "from nanobot.providers import openai_codex_provider",
-            "oauth-catalog-cache", "nanobot.providers.openai_codex_provider", 1,
+            "nujinagent/providers/oauth_catalog_cache.py",
+            "from nujinagent.providers import openai_codex_provider",
+            "oauth-catalog-cache", "nujinagent.providers.openai_codex_provider", 1,
         ),
     ],
 )
@@ -272,10 +272,10 @@ def test_cli_rejects_a_violation_and_reports_its_source_location(
 
 
 def test_cli_accepts_a_tool_owned_config_import(tmp_path: Path) -> None:
-    path = tmp_path / "nanobot/config/schema.py"
+    path = tmp_path / "nujinagent/config/schema.py"
     path.parent.mkdir(parents=True)
     path.write_text(
-        "from nanobot.agent.tools.cli_apps_config import CliAppsToolConfig\n",
+        "from nujinagent.agent.tools.cli_apps_config import CliAppsToolConfig\n",
         encoding="utf-8",
     )
 

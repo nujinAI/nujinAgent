@@ -4,13 +4,13 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.context import TranscriptInput
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.message import MessageTool
-from nanobot.bus.events import InboundMessage, OutboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.providers.base import LLMResponse, ToolCallRequest
-from nanobot.utils.progress_events import output_events
+from nujinagent.agent.context import TranscriptInput
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.message import MessageTool
+from nujinagent.bus.events import InboundMessage, OutboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.providers.base import LLMResponse, ToolCallRequest
+from nujinagent.utils.progress_events import output_events
 
 
 def _make_loop(tmp_path: Path) -> AgentLoop:

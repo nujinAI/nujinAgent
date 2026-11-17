@@ -5,8 +5,8 @@ from types import SimpleNamespace
 import httpx
 import pytest
 
-from nanobot.providers import github_copilot_provider as provider
-from nanobot.providers.github_copilot_oauth import GitHubCopilotOAuthFlow
+from nujinagent.providers import github_copilot_provider as provider
+from nujinagent.providers.github_copilot_oauth import GitHubCopilotOAuthFlow
 
 
 def test_device_prompt_precedes_approval_and_success_persists_token(monkeypatch):
@@ -84,7 +84,7 @@ def test_cancelling_device_flow_interrupts_polling_without_saving(monkeypatch):
 
 
 def test_approval_after_cancellation_cannot_overwrite_saved_credentials(monkeypatch):
-    from nanobot.providers import github_copilot_oauth as oauth
+    from nujinagent.providers import github_copilot_oauth as oauth
 
     approved = threading.Event()
     finished = threading.Event()
@@ -114,7 +114,7 @@ def test_approval_after_cancellation_cannot_overwrite_saved_credentials(monkeypa
 
 
 def test_device_flow_does_not_expose_upstream_failure_details(monkeypatch):
-    from nanobot.providers import github_copilot_oauth as oauth
+    from nujinagent.providers import github_copilot_oauth as oauth
 
     def login(**_kwargs):
         raise RuntimeError("upstream echoed synthetic-secret")

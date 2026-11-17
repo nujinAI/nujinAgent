@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
 
 
 class FakeUsage:
@@ -262,7 +262,7 @@ def test_parse_chunks_preserves_usage_only_chunk(as_sdk: bool) -> None:
 
 
 def test_anthropic_adds_native_cache_fields_to_logical_input():
-    from nanobot.providers.anthropic_provider import AnthropicProvider
+    from nujinagent.providers.anthropic_provider import AnthropicProvider
 
     usage_obj = FakeUsage(
         input_tokens=800,
@@ -287,7 +287,7 @@ def test_anthropic_adds_native_cache_fields_to_logical_input():
 
 
 def test_anthropic_no_cache_fields():
-    from nanobot.providers.anthropic_provider import AnthropicProvider
+    from nujinagent.providers.anthropic_provider import AnthropicProvider
 
     usage_obj = FakeUsage(input_tokens=800, output_tokens=200)
     content_block = FakeUsage(type="text", text="hello")

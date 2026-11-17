@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.agent.tools.apply_patch import ApplyPatchTool
-from nanobot.agent.tools.filesystem import EditFileTool, WriteFileTool
-from nanobot.utils.file_edit_events import (
+from nujinagent.agent.tools.apply_patch import ApplyPatchTool
+from nujinagent.agent.tools.filesystem import EditFileTool, WriteFileTool
+from nujinagent.utils.file_edit_events import (
     FileDiff,
     FileEditResult,
     build_file_edit_end_event,
@@ -269,7 +269,7 @@ def test_binary_file_is_reported_but_not_counted(tmp_path: Path) -> None:
 def test_unavailable_before_is_reported_but_not_counted(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, before: bytes,
 ) -> None:
-    monkeypatch.setattr("nanobot.utils.file_edit_events._MAX_SNAPSHOT_BYTES", 64)
+    monkeypatch.setattr("nujinagent.utils.file_edit_events._MAX_SNAPSHOT_BYTES", 64)
     target = tmp_path / "data.bin"
     target.write_bytes(before)
     trackers = prepare_file_edit_trackers(

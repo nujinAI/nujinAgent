@@ -123,10 +123,10 @@ def test_workflow_keeps_preparation_read_only_and_daily_opt_in():
                          Loader=yaml.BaseLoader)
     assert workflow["permissions"] == {"contents": "read"}
     jobs = workflow["jobs"]
-    assert "vars.NANOBOT_DAILY_CANDIDATES_ENABLED == 'true'" in jobs["plan"]["if"]
+    assert "vars.NUJINAGENT_DAILY_CANDIDATES_ENABLED == 'true'" in jobs["plan"]["if"]
     assert "github.event_name == 'workflow_dispatch'" in jobs["plan"]["if"]
     assert "Disabled daily candidate" in workflow["run-name"]
-    assert "NANOBOT_DAILY_CANDIDATES_ENABLED" in workflow["run-name"]
+    assert "NUJINAGENT_DAILY_CANDIDATES_ENABLED" in workflow["run-name"]
     assert jobs["plan"]["permissions"] == {"contents": "read", "actions": "read"}
     assert jobs["candidate"]["if"] == "needs.plan.outputs.prepare == 'true'"
     assert "needs.plan.outputs.prepare == 'true'" in jobs["verified"]["if"]

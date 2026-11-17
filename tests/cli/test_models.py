@@ -5,8 +5,8 @@ import pytest
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
 
-from nanobot.cli import models, onboard
-from nanobot.config.schema import Config, ModelPresetConfig
+from nujinagent.cli import models, onboard
+from nujinagent.config.schema import Config, ModelPresetConfig
 
 
 @pytest.fixture

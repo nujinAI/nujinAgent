@@ -5,31 +5,31 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.session_messages import SendSessionMessageTool
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.outbound_events import UserInputEvent
-from nanobot.bus.queue import MessageBus
-from nanobot.bus.runtime_events import UserInputAccepted
-from nanobot.channels.manager import ChannelManager
-from nanobot.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
-from nanobot.providers.base import LLMResponse
-from nanobot.runtime_context import public_history_message
-from nanobot.security.workspace_access import current_workspace_scope
-from nanobot.session.display_history import HISTORY_GENERATION_METADATA_KEY
-from nanobot.session.recovery import PENDING_FOLLOWUPS_KEY
-from nanobot.session.session_handles import SessionHandleResolver
-from nanobot.session.session_messages import SESSION_MESSAGE_METADATA_KEY
-from nanobot.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
-from nanobot.webui.gateway_services import build_gateway_services
-from nanobot.webui.history import record_from_fact
-from nanobot.webui.transcript import build_prompt_index, build_webui_thread_response
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.session_messages import SendSessionMessageTool
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.outbound_events import UserInputEvent
+from nujinagent.bus.queue import MessageBus
+from nujinagent.bus.runtime_events import UserInputAccepted
+from nujinagent.channels.manager import ChannelManager
+from nujinagent.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
+from nujinagent.providers.base import LLMResponse
+from nujinagent.runtime_context import public_history_message
+from nujinagent.security.workspace_access import current_workspace_scope
+from nujinagent.session.display_history import HISTORY_GENERATION_METADATA_KEY
+from nujinagent.session.recovery import PENDING_FOLLOWUPS_KEY
+from nujinagent.session.session_handles import SessionHandleResolver
+from nujinagent.session.session_messages import SESSION_MESSAGE_METADATA_KEY
+from nujinagent.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
+from nujinagent.webui.gateway_services import build_gateway_services
+from nujinagent.webui.history import record_from_fact
+from nujinagent.webui.transcript import build_prompt_index, build_webui_thread_response
 
 
 @pytest.fixture
 async def loop(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path / "state")
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path / "state")
     provider = MagicMock(aclose=AsyncMock())
     provider.get_default_model.return_value = "test-model"
     provider.generation = SimpleNamespace(max_tokens=4096)
@@ -361,7 +361,7 @@ async def test_busy_cross_session_input_uses_target_scope_and_keeps_its_answer(l
 async def test_session_message_source_context_independent_of_tool_policy(
     loop: AgentLoop, expect_reply: bool, disabled: bool,
 ) -> None:
-    from nanobot.session.manager import SessionPolicy
+    from nujinagent.session.manager import SessionPolicy
 
     session = loop.sessions.get_or_create("telegram:target")
     loop.sessions.save(session)

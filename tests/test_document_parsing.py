@@ -3,7 +3,7 @@ from zipfile import ZipFile
 
 import pytest
 
-from nanobot.utils.document import (
+from nujinagent.utils.document import (
     PdfSafetyError,
     _is_text_extension,
     extract_pdf_pages,
@@ -296,7 +296,7 @@ class TestExtractText:
     ):
         from docx import Document
 
-        from nanobot.utils import document as document_utils
+        from nujinagent.utils import document as document_utils
 
         docx_file = tmp_path / "too-many-cells.docx"
         doc = Document()
@@ -314,7 +314,7 @@ class TestExtractText:
     ):
         from docx import Document
 
-        from nanobot.utils import document as document_utils
+        from nujinagent.utils import document as document_utils
 
         docx_file = tmp_path / "nested-too-deep.docx"
         doc = Document()
@@ -443,7 +443,7 @@ class TestExtractText:
         with ZipFile(office_file, "w") as archive:
             archive.writestr("word/document.xml", "x" * 32)
 
-        monkeypatch.setattr("nanobot.utils.document._MAX_OFFICE_UNCOMPRESSED_SIZE", 16)
+        monkeypatch.setattr("nujinagent.utils.document._MAX_OFFICE_UNCOMPRESSED_SIZE", 16)
 
         assert "Office document expands beyond" in (extract_text(office_file) or "")
 
@@ -475,7 +475,7 @@ class TestExtractText:
             return workbook
 
         monkeypatch.setattr("openpyxl.load_workbook", tracked_load_workbook)
-        monkeypatch.setattr("nanobot.utils.document._MAX_TEXT_LENGTH", 80)
+        monkeypatch.setattr("nujinagent.utils.document._MAX_TEXT_LENGTH", 80)
 
         result = extract_text(xlsx_file)
 
@@ -504,7 +504,7 @@ class TestExtractText:
                 self.pages = [_Page()]
 
         monkeypatch.setattr("pypdf.PdfReader", _Reader)
-        monkeypatch.setattr("nanobot.utils.document._MAX_PDF_CONTENT_STREAM_SIZE", 16)
+        monkeypatch.setattr("nujinagent.utils.document._MAX_PDF_CONTENT_STREAM_SIZE", 16)
 
         path = tmp_path / "large.pdf"
         path.touch()

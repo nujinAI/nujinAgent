@@ -24,7 +24,7 @@ def test_corresponding_source_contains_build_helpers_byte_for_byte():
             "scripts/release-notices.ts",
             "scripts/package-release.py",
         ):
-            source = archive.extractfile(f"nanobot-tui-source/tui/{relative}")
+            source = archive.extractfile(f"nujinagent-tui-source/tui/{relative}")
             assert source is not None
             assert source.read() == (root / relative).read_bytes(), relative
 

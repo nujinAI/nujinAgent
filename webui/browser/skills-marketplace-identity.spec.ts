@@ -5,7 +5,7 @@ for (const width of [390, 1440]) {
     for (const locale of ["en", "zh-CN"]) {
       test(`marketplace source states remain distinct at ${width}px in ${theme} ${locale}`, async ({ page }, testInfo) => {
         await page.setViewportSize({ width, height: 900 });
-        await page.addInitScript((language) => localStorage.setItem("nanobot.locale", language), locale);
+        await page.addInitScript((language) => localStorage.setItem("nujinagent.locale", language), locale);
         const labels = locale === "en"
           ? { installed: "Installed", conflict: "Name already in use", unknown: "Installed source unknown", search: "Search skills", trending: "Popular skills", install: "Install", cancel: "Cancel" }
           : { installed: "已安装", conflict: "技能名称已占用", unknown: "已装技能来源未知", search: "搜索技能", trending: "热门技能", install: "安装", cancel: "取消" };

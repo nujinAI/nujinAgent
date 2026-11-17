@@ -130,8 +130,8 @@ async function openFixture(page: Page, width = 1440) {
   await page.setViewportSize({ width, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {
-    localStorage.setItem("nanobot.locale", "en");
-    localStorage.setItem("nanobot_debug_ws", "0");
+    localStorage.setItem("nujinagent.locale", "en");
+    localStorage.setItem("nujinagent_debug_ws", "0");
   });
   const backend = await installBackend(page);
   await page.goto("/browser/fixture.html?case=history-hydration");
@@ -529,7 +529,7 @@ test("the open context sidebar keeps its slot through hydration and empty conver
 
 test("switching away from file edits does not rebuild the outgoing diff before history hands over", async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.setItem("nanobot-webui.settings-preferences", JSON.stringify({
+    localStorage.setItem("nujinagent-webui.settings-preferences", JSON.stringify({
       activityMode: "expanded", fileEditDisplayMode: "diff",
     }));
   });

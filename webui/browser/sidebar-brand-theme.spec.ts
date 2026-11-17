@@ -4,8 +4,8 @@ test("sidebar cat follows the chosen app theme without moving or losing the draf
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
   await page.addInitScript(() => {
-    localStorage.setItem("nanobot.locale", "en");
-    if (!localStorage.getItem("nanobot-webui.theme")) localStorage.setItem("nanobot-webui.theme", "light");
+    localStorage.setItem("nujinagent.locale", "en");
+    if (!localStorage.getItem("nujinagent-webui.theme")) localStorage.setItem("nujinagent-webui.theme", "light");
   });
   await page.goto("/browser/fixture.html?case=theme-toggle&chat");
   const mark = page.getByTestId("sidebar-brand-mark");
@@ -36,8 +36,8 @@ test("the sidebar night mark follows live System theme changes", async ({ page }
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
   await page.addInitScript(() => {
-    localStorage.setItem("nanobot.locale", "en");
-    localStorage.setItem("nanobot-webui.theme", "system");
+    localStorage.setItem("nujinagent.locale", "en");
+    localStorage.setItem("nujinagent-webui.theme", "system");
   });
   await page.goto("/browser/fixture.html?case=theme-toggle&chat");
   const images = page.getByTestId("sidebar-brand-mark").locator("img");
@@ -51,8 +51,8 @@ test("the sidebar night mark follows live System theme changes", async ({ page }
 test("paired artwork blends in place without native snapshots", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.addInitScript(() => {
-    localStorage.setItem("nanobot.locale", "en");
-    localStorage.setItem("nanobot-webui.theme", "light");
+    localStorage.setItem("nujinagent.locale", "en");
+    localStorage.setItem("nujinagent-webui.theme", "light");
     Object.defineProperty(document, "startViewTransition", { value: undefined });
   });
   await page.goto("/browser/fixture.html?case=theme-toggle&chat");

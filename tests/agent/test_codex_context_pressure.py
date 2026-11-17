@@ -7,31 +7,31 @@ from unittest.mock import AsyncMock
 import httpx
 import pytest
 
-from nanobot.agent.context_governance import (
+from nujinagent.agent.context_governance import (
     ContextCompactionState,
     ContextGovernanceConfig,
     ContextGovernor,
     ModelRequestState,
 )
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.config.schema import ModelPresetConfig
-from nanobot.providers.base import (
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.schema import ModelPresetConfig
+from nujinagent.providers.base import (
     LLMProvider,
     LLMResponse,
     LLMUsage,
     ProviderCallContext,
     ToolCallRequest,
 )
-from nanobot.providers.compaction import ProviderStateCommitError
-from nanobot.providers.conversation_state import ProviderConversationStateController
-from nanobot.providers.fallback_provider import FallbackProvider
-from nanobot.providers.openai_codex_provider import OpenAICodexProvider, _CodexHTTPError
-from nanobot.providers.openai_responses import build_responses_state
-from nanobot.session.manager import SessionManager
-from nanobot.session.recovery import (
+from nujinagent.providers.compaction import ProviderStateCommitError
+from nujinagent.providers.conversation_state import ProviderConversationStateController
+from nujinagent.providers.fallback_provider import FallbackProvider
+from nujinagent.providers.openai_codex_provider import OpenAICodexProvider, _CodexHTTPError
+from nujinagent.providers.openai_responses import build_responses_state
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.recovery import (
     RUNTIME_CHECKPOINT_KEY,
     restore_runtime_checkpoint,
     runtime_checkpoint_is_well_formed,
@@ -86,12 +86,12 @@ def transport(monkeypatch):
     bodies = []
     behavior = {"errors": [], "generation_errors": [], "compacted_content": "compacted state"}
     monkeypatch.setattr(
-        "nanobot.providers.openai_codex_provider.get_codex_token",
+        "nujinagent.providers.openai_codex_provider.get_codex_token",
         lambda **_kwargs: SimpleNamespace(account_id="acct", access="token"),
     )
 
     monkeypatch.setattr(
-        "nanobot.providers.openai_responses.backend.ResponsesBackend.websocket_request",
+        "nujinagent.providers.openai_responses.backend.ResponsesBackend.websocket_request",
         AsyncMock(return_value=None),
     )
 
@@ -138,7 +138,7 @@ def transport(monkeypatch):
             ),
         )
 
-    monkeypatch.setattr("nanobot.providers.openai_codex_provider._request_codex", request)
+    monkeypatch.setattr("nujinagent.providers.openai_codex_provider._request_codex", request)
     return bodies, behavior
 
 
@@ -592,21 +592,21 @@ async def test_compaction_survives_stop_and_session_restore(
         assert final.provider_state is not None
         if mode == "temporary":
             assert loop.sessions.read_session_file(key) is None
-            assert not (tmp_path / ".nanobot" / "tool-results").exists()
+            assert not (tmp_path / ".nujinagent" / "tool-results").exists()
     finally:
         await loop.aclose()
 
 
 @pytest.mark.parametrize("existing", [False, True])
 async def test_sdk_temporary_compaction_does_not_commit_to_session_owner(transport, tmp_path, existing):
-    from nanobot import Nanobot
+    from nujinagent import NujinAgent
 
     provider = OpenAICodexProvider()
     loop = AgentLoop(
         bus=MessageBus(), provider=provider, workspace=tmp_path,
         model=provider.default_model, context_window_tokens=200_000,
     )
-    bot = Nanobot(loop)
+    bot = NujinAgent(loop)
     key = "sdk:compaction"
     durable_state = build_responses_state(
         provider=provider._responses_state_provider(), model="gpt-5.6-sol",

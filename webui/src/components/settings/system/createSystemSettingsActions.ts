@@ -12,8 +12,8 @@ import {
   cancelMcpOAuth,
   changeAutomationChat,
   completeMcpOAuth,
-  disableNanobotFeature,
-  enableNanobotFeature,
+  disableNujinAgentFeature,
+  enableNujinAgentFeature,
   fetchMcpOAuthStatus,
   fetchMcpPresets,
   importMcpConfig,
@@ -27,13 +27,13 @@ import {
 } from "@/lib/api";
 import { notifyCliAppsChanged } from "@/lib/cli-app-events";
 import { notifyMcpPresetsChanged } from "@/lib/mcp-preset-events";
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import type {
   AutomationUpdatePayload,
   AutomationChatUpdate,
   McpOAuthFlowPayload,
   McpPresetsPayload,
-  NanobotFeatureInfo,
+  NujinAgentFeatureInfo,
   SessionAutomationJob,
 } from "@/lib/types";
 
@@ -64,8 +64,8 @@ function isExpectedMcpOAuthPendingReloadFailure(
 
 interface SystemSettingsActionsOptions {
   state: SystemSettingsState;
-  featureCatalog: NanobotFeatureInfo[];
-  client: NanobotClient;
+  featureCatalog: NujinAgentFeatureInfo[];
+  client: NujinAgentClient;
   getToken: () => string;
   t: TFunction;
   maybeRestartHostEngine: MaybeRestartHostEngine;
@@ -90,8 +90,8 @@ export function createSystemSettingsActions({
     mcpOAuthFlowRef,
     mcpOAuthNavigatedUrlRef,
     mcpOAuthPopupRef,
-    nanobotFeatureActionRef,
-    nanobotFeatures,
+    nujinagentFeatureActionRef,
+    nujinagentFeatures,
     setAutomationAction,
     setAutomationPendingDelete,
     setAutomationPendingEdit,
@@ -114,23 +114,23 @@ export function createSystemSettingsActions({
     setMcpOAuthPopupBlocked,
     setMcpPresetAction,
     setMcpPresets,
-    setNanobotFeatureAction,
-    setNanobotFeatureConfirm,
-    setNanobotFeatures,
-    setNanobotFeaturesError,
+    setNujinAgentFeatureAction,
+    setNujinAgentFeatureConfirm,
+    setNujinAgentFeatures,
+    setNujinAgentFeaturesError,
   } = state;
 
-  const beginNanobotFeatureAction = (key: string) => {
-    if (nanobotFeatureActionRef.current) return false;
-    nanobotFeatureActionRef.current = key;
-    setNanobotFeatureAction(key);
+  const beginNujinAgentFeatureAction = (key: string) => {
+    if (nujinagentFeatureActionRef.current) return false;
+    nujinagentFeatureActionRef.current = key;
+    setNujinAgentFeatureAction(key);
     return true;
   };
 
-  const endNanobotFeatureAction = (key: string) => {
-    if (nanobotFeatureActionRef.current !== key) return;
-    nanobotFeatureActionRef.current = null;
-    setNanobotFeatureAction(null);
+  const endNujinAgentFeatureAction = (key: string) => {
+    if (nujinagentFeatureActionRef.current !== key) return;
+    nujinagentFeatureActionRef.current = null;
+    setNujinAgentFeatureAction(null);
   };
 
   const installCapabilities = async (names: string[]): Promise<boolean> => {
@@ -139,23 +139,23 @@ export function createSystemSettingsActions({
     );
     if (!missing.length) return true;
     const key = `enable:${names.join("+")}`;
-    if (!beginNanobotFeatureAction(key)) return false;
-    setNanobotFeaturesError(null);
+    if (!beginNujinAgentFeatureAction(key)) return false;
+    setNujinAgentFeaturesError(null);
     try {
-      let latest = nanobotFeatures;
+      let latest = nujinagentFeatures;
       for (const name of missing) {
-        latest = await enableNanobotFeature(client, name);
+        latest = await enableNujinAgentFeature(client, name);
         if (latest.requires_restart) {
           setPendingRestartSections((prev) => ({ ...prev, runtime: true }));
         }
       }
-      if (latest) setNanobotFeatures(latest);
+      if (latest) setNujinAgentFeatures(latest);
       return true;
     } catch (err) {
-      setNanobotFeaturesError((err as Error).message);
+      setNujinAgentFeaturesError((err as Error).message);
       return false;
     } finally {
-      endNanobotFeatureAction(key);
+      endNujinAgentFeatureAction(key);
     }
   };
 
@@ -183,7 +183,7 @@ export function createSystemSettingsActions({
     }
   };
 
-  const handleNanobotFeatureAction = async (
+  const handleNujinAgentFeatureAction = async (
     action: "enable" | "disable",
     name: string,
     options: { confirmed?: boolean; installOnly?: boolean } = {},
@@ -196,32 +196,32 @@ export function createSystemSettingsActions({
       && !feature.installed
       && feature.install_supported
     ) {
-      setNanobotFeaturesError(null);
-      setNanobotFeatureConfirm({ feature, installOnly: Boolean(options.installOnly) });
+      setNujinAgentFeaturesError(null);
+      setNujinAgentFeatureConfirm({ feature, installOnly: Boolean(options.installOnly) });
       return;
     }
     const key = `${action === "enable" && options.installOnly ? "install" : action}:${name}`;
-    if (!beginNanobotFeatureAction(key)) return;
-    setNanobotFeatureConfirm(null);
-    setNanobotFeaturesError(null);
+    if (!beginNujinAgentFeatureAction(key)) return;
+    setNujinAgentFeatureConfirm(null);
+    setNujinAgentFeaturesError(null);
     try {
       const payload = action === "enable"
-        ? await enableNanobotFeature(client, name, { installOnly: options.installOnly })
-        : await disableNanobotFeature(client, name);
-      setNanobotFeatures(payload);
+        ? await enableNujinAgentFeature(client, name, { installOnly: options.installOnly })
+        : await disableNujinAgentFeature(client, name);
+      setNujinAgentFeatures(payload);
       if (payload.requires_restart) {
         setPendingRestartSections((prev) => ({ ...prev, runtime: true }));
       }
     } catch (err) {
-      console.error("nanobot feature action failed", {
+      console.error("nujinagent feature action failed", {
         action,
         name,
         installOnly: Boolean(options.installOnly),
         error: err,
       });
-      setNanobotFeaturesError(err instanceof Error ? err.message : String(err));
+      setNujinAgentFeaturesError(err instanceof Error ? err.message : String(err));
     } finally {
-      endNanobotFeatureAction(key);
+      endNujinAgentFeatureAction(key);
     }
   };
 
@@ -302,7 +302,7 @@ export function createSystemSettingsActions({
     try {
       popup = window.open(
         authorizationUrl ?? "about:blank",
-        "nanobot-mcp-oauth",
+        "nujinagent-mcp-oauth",
         "popup,width=560,height=720,resizable=yes,scrollbars=yes",
       );
       if (popup) {
@@ -387,7 +387,7 @@ export function createSystemSettingsActions({
       setMcpError(
         flow.hot_reload.message
         || t("settings.mcp.reloadFailed", {
-          defaultValue: "Signed in, but nanobot could not connect the tools. Try restarting nanobot.",
+          defaultValue: "Signed in, but nujinagent could not connect the tools. Try restarting nujinagent.",
         }),
       );
       return;
@@ -685,7 +685,7 @@ export function createSystemSettingsActions({
     handleMcpOAuthOpen,
     handleMcpPresetAction,
     handleMcpToolsChange,
-    handleNanobotFeatureAction,
+    handleNujinAgentFeatureAction,
     handleSaveCustomMcp,
     installCapabilities,
   };

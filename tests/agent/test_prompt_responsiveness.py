@@ -5,13 +5,13 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from nanobot.agent.hook import AgentHook
-from nanobot.agent.runner import AgentRunner
-from nanobot.agent.tools.context import current_request_context
-from nanobot.providers.base import LLMProvider, LLMResponse, LLMUsage
-from nanobot.runtime_context import public_history_message
-from nanobot.security.workspace_access import current_workspace_scope
-from nanobot.session.manager import Session, SessionPolicy
+from nujinagent.agent.hook import AgentHook
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.agent.tools.context import current_request_context
+from nujinagent.providers.base import LLMProvider, LLMResponse, LLMUsage
+from nujinagent.runtime_context import public_history_message
+from nujinagent.security.workspace_access import current_workspace_scope
+from nujinagent.session.manager import Session, SessionPolicy
 
 
 class ControlledProvider(LLMProvider):
@@ -111,7 +111,7 @@ async def test_preparation_allows_status_heartbeat_and_cancellation(
         monkeypatch.setattr(Session, "get_history", history)
     else:
         module = "context_governance" if phase == "request" else "runner"
-        from nanobot.utils.helpers import estimate_prompt_tokens_chain
+        from nujinagent.utils.helpers import estimate_prompt_tokens_chain
 
         def count(*args, **kwargs):
             request = current_request_context()
@@ -119,7 +119,7 @@ async def test_preparation_allows_status_heartbeat_and_cancellation(
                 return blocked(estimate_prompt_tokens_chain, *args, **kwargs)
             return estimate_prompt_tokens_chain(*args, **kwargs)
 
-        monkeypatch.setattr(f"nanobot.agent.{module}.estimate_prompt_tokens_chain", count)
+        monkeypatch.setattr(f"nujinagent.agent.{module}.estimate_prompt_tokens_chain", count)
 
     task = asyncio.create_task(loop.process_direct("Hello", session_key=key, hooks=[Lifecycle()]))
     pulse = asyncio.create_task(heartbeat())
@@ -451,7 +451,7 @@ async def test_local_token_estimation_leaves_loop_available(
 
     loop._extra_hooks.append(Lifecycle())
 
-    from nanobot.utils.helpers import estimate_prompt_tokens_chain
+    from nujinagent.utils.helpers import estimate_prompt_tokens_chain
 
     def count(*args, **kwargs):
         captured.append((current_request_context(), threading.get_ident()))
@@ -463,7 +463,7 @@ async def test_local_token_estimation_leaves_loop_available(
             runtime_loop.call_soon_threadsafe(completed.set)
 
     module = "context_governance" if phase == "request" else "runner"
-    monkeypatch.setattr(f"nanobot.agent.{module}.estimate_prompt_tokens_chain", count)
+    monkeypatch.setattr(f"nujinagent.agent.{module}.estimate_prompt_tokens_chain", count)
     task = asyncio.create_task(loop.process_direct("Hello", session_key="cli:token-work"))
     entry = asyncio.create_task(entered.wait())
     try:

@@ -6,14 +6,14 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.cron import CronTool
-from nanobot.agent.tools.message import MessageTool
-from nanobot.agent.tools.subagent import SubagentTool
-from nanobot.cron.service import CronService
-from nanobot.providers.base import GenerationSettings, LLMProvider
-from nanobot.runtime_context import RUNTIME_CONTEXT_INPUT_META, RuntimeContextBlock
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.cron import CronTool
+from nujinagent.agent.tools.message import MessageTool
+from nujinagent.agent.tools.subagent import SubagentTool
+from nujinagent.cron.service import CronService
+from nujinagent.providers.base import GenerationSettings, LLMProvider
+from nujinagent.runtime_context import RUNTIME_CONTEXT_INPUT_META, RuntimeContextBlock
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 def _runtime(model: str = "test-model") -> LLMRuntime:

@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { SettingsHint } from "@/components/settings/shared/SettingsHint";
 import { isNativeRuntime } from "@/lib/runtime";
-import type { NanobotFeatureInfo } from "@/lib/types";
+import type { NujinAgentFeatureInfo } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export const SETTINGS_SEARCH_INPUT_CLASS =
@@ -44,18 +44,18 @@ export function CapabilityInstallNotice({
   );
 }
 
-export function NanobotFeatureInstallDialog({
+export function NujinAgentFeatureInstallDialog({
   feature,
   installOnly = false,
   installing,
   onOpenChange,
   onConfirm,
 }: {
-  feature: NanobotFeatureInfo | null;
+  feature: NujinAgentFeatureInfo | null;
   installOnly?: boolean;
   installing: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: (feature: NanobotFeatureInfo) => void | Promise<void>;
+  onConfirm: (feature: NujinAgentFeatureInfo) => void | Promise<void>;
 }) {
   const { t } = useTranslation();
   const tx = (key: string, fallback: string, values?: Record<string, unknown>) =>
@@ -69,18 +69,18 @@ export function NanobotFeatureInstallDialog({
       >
         <DialogHeader className="items-center space-y-0 text-center">
           <DialogTitle className="text-center text-title tracking-[-0.02em] text-foreground">
-            {tx("settings.nanobotFeatures.installConfirmTitle", "Install support for {{name}}?", { name })}
+            {tx("settings.nujinagentFeatures.installConfirmTitle", "Install support for {{name}}?", { name })}
           </DialogTitle>
           <DialogDescription className="mt-3 max-w-[20rem] text-center text-[14px] leading-6 text-muted-foreground">
             {installOnly
               ? tx(
-                "settings.nanobotFeatures.installOnlyConfirmDescription",
-                "nanobot will install what {{name}} needs. You can connect it after installation.",
+                "settings.nujinagentFeatures.installOnlyConfirmDescription",
+                "nujinagent will install what {{name}} needs. You can connect it after installation.",
                 { name },
               )
               : tx(
-                "settings.nanobotFeatures.installConfirmDescription",
-                "nanobot will add what {{name}} needs, then turn it on. Continue?",
+                "settings.nujinagentFeatures.installConfirmDescription",
+                "nujinagent will add what {{name}} needs, then turn it on. Continue?",
                 { name },
               )}
           </DialogDescription>
@@ -103,8 +103,8 @@ export function NanobotFeatureInstallDialog({
           >
             {installing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> : null}
             {installOnly
-              ? tx("settings.nanobotFeatures.installOnlyConfirmAction", "Install support")
-              : tx("settings.nanobotFeatures.installConfirmAction", "Install and enable")}
+              ? tx("settings.nujinagentFeatures.installOnlyConfirmAction", "Install support")
+              : tx("settings.nujinagentFeatures.installConfirmAction", "Install and enable")}
           </Button>
         </DialogFooter>
       </DialogContent>

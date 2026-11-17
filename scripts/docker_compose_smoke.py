@@ -30,7 +30,7 @@ def main() -> None:
          "--profile", "cli", "config", "--format", "json"],
         text=True,
     ))
-    with tempfile.TemporaryDirectory(prefix="nanobot-compose-smoke-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="nujinagent-compose-smoke-") as temporary:
         root = Path(temporary)
         config.pop("name", None)
         for network in config.get("networks", {}).values():
@@ -67,37 +67,37 @@ def main() -> None:
             for service in config["services"].values():
                 service["volumes"] = [{
                     "type": "bind", "source": str(data),
-                    "target": "/home/nanobot/.nanobot",
+                    "target": "/home/nujinagent/.nujinagent",
                 }]
                 service["environment"].update(
-                    NANOBOT_WEB_TOKEN=secret,
+                    NUJINAGENT_WEB_TOKEN=secret,
                 )
             compose_path.write_text(json.dumps(config), encoding="utf-8")
             try:
                 if label == "generated":
                     retired = subprocess.run(
-                        [*compose, "run", "--rm", "--no-deps", "-T", "nanobot-cli", "serve", "--port", "8900"],
+                        [*compose, "run", "--rm", "--no-deps", "-T", "nujinagent-cli", "serve", "--port", "8900"],
                         capture_output=True, text=True, timeout=45,
                     )
                     output = retired.stdout + retired.stderr
                     assert retired.returncode == 2, output
-                    assert "'nanobot serve' has been removed" in output, output
+                    assert "'nujinagent serve' has been removed" in output, output
                     assert not (data / "config.json").exists()
                     print("PASS retired serve command: migration hint without Compose bootstrap")
-                onboard = run("run", "--rm", "--no-deps", "-T", "nanobot-cli", "onboard")
+                onboard = run("run", "--rm", "--no-deps", "-T", "nujinagent-cli", "onboard")
                 assert "Overwrite?" not in onboard
                 assert "Created config" in onboard
                 subprocess.run([
                     "docker", "run", "--rm", "--user", "1000:1000", "--entrypoint", "python",
-                    "-v", f"{data}:/home/nanobot/.nanobot", args.image,
-                    "-c", "from pathlib import Path; Path('/home/nanobot/.nanobot/config.json').unlink()",
+                    "-v", f"{data}:/home/nujinagent/.nujinagent", args.image,
+                    "-c", "from pathlib import Path; Path('/home/nujinagent/.nujinagent/config.json').unlink()",
                 ], check=True)
                 run("up", "-d")
-                health = endpoint("nanobot-gateway", 18790)
-                webui = endpoint("nanobot-gateway", 8765)
+                health = endpoint("nujinagent-gateway", 18790)
+                webui = endpoint("nujinagent-gateway", 8765)
                 wait_for(health + "/health")
                 wait_for(webui + "/")
-                assert set(run("ps", "--services").split()) == {"nanobot-gateway"}
+                assert set(run("ps", "--services").split()) == {"nujinagent-gateway"}
                 path = data / "config.json"
                 saved = json.loads(path.read_text(encoding="utf-8"))
                 password = saved["channels"]["websocket"]["tokenIssueSecret"]
@@ -121,18 +121,18 @@ def main() -> None:
                 saved["api"] = {"host": "0.0.0.0", "apiKey": "${RETIRED_SERVE_TOKEN}"}
                 # Use the mounted owner to write the legacy config on Linux.
                 subprocess.run([
-                    *compose, "exec", "-T", "--user", "1000:1000", "nanobot-gateway", "python", "-c",
+                    *compose, "exec", "-T", "--user", "1000:1000", "nujinagent-gateway", "python", "-c",
                     "import sys; from pathlib import Path; "
-                    "Path('/home/nanobot/.nanobot/config.json').write_text(sys.stdin.read(), encoding='utf-8')",
+                    "Path('/home/nujinagent/.nujinagent/config.json').write_text(sys.stdin.read(), encoding='utf-8')",
                 ], input=json.dumps(saved), text=True, check=True)
                 previous = path.read_bytes()
                 for service in config["services"].values():
                     service["environment"].update(
-                        NANOBOT_WEB_TOKEN="changed-env",
+                        NUJINAGENT_WEB_TOKEN="changed-env",
                     )
                 compose_path.write_text(json.dumps(config), encoding="utf-8")
-                run("up", "-d", "--force-recreate", "nanobot-gateway")
-                webui = endpoint("nanobot-gateway", 8765)
+                run("up", "-d", "--force-recreate", "nujinagent-gateway")
+                webui = endpoint("nujinagent-gateway", 8765)
                 wait_for(webui + "/")
                 assert path.read_bytes() == previous
                 assert request(webui + "/webui/bootstrap", password)[0] == 200
@@ -153,14 +153,14 @@ def main() -> None:
                     ], check=True)
 
         commands = {name: list(service["command"]) for name, service in config["services"].items()}
-        selected_path = "/home/nanobot/.nanobot/selected.json"
+        selected_path = "/home/nujinagent/.nujinagent/selected.json"
         selectors = (
             ("long", ["--config", selected_path]),
             ("long-equals", [f"--config={selected_path}"]),
             ("short", ["-c", selected_path]),
             ("short-attached", [f"-c{selected_path}"]),
         )
-        service_name = "nanobot-gateway"
+        service_name = "nujinagent-gateway"
         for label, selector in selectors:
             data = root / f"{service_name}-{label}"
             data.mkdir()
@@ -170,7 +170,7 @@ def main() -> None:
             for service in config["services"].values():
                 service["volumes"] = [{
                     "type": "bind", "source": str(data),
-                    "target": "/home/nanobot/.nanobot",
+                    "target": "/home/nujinagent/.nujinagent",
                 }]
             config["services"][service_name]["command"] = [*commands[service_name], *selector]
             compose_path.write_text(json.dumps(config), encoding="utf-8")
@@ -200,8 +200,8 @@ def main() -> None:
         readonly.mkdir()
         result = subprocess.run([
             "docker", "run", "--rm", "--read-only",
-            "-e", "NANOBOT_DOCKER_BOOTSTRAP=1",
-            "-v", f"{readonly}:/home/nanobot/.nanobot:ro", args.image, "status",
+            "-e", "NUJINAGENT_DOCKER_BOOTSTRAP=1",
+            "-v", f"{readonly}:/home/nujinagent/.nujinagent:ro", args.image, "status",
         ], capture_output=True, text=True)
         assert result.returncode == 1, result.stdout + result.stderr
         assert not (readonly / "config.json").exists()

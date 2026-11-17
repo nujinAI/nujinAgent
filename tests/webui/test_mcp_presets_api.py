@@ -9,12 +9,12 @@ from pathlib import Path
 import pytest
 from mcp.shared.auth import OAuthToken
 
-from nanobot.agent.plugins import AGENT_PLUGIN_MCP_SCHEMA, AGENT_PLUGIN_SCHEMA
-from nanobot.agent.tools.mcp_oauth import MCPOAuthStorage, mcp_oauth_has_credentials
-from nanobot.apps.cli import CliAppManager
-from nanobot.config.loader import load_config, save_config
-from nanobot.config.schema import Config
-from nanobot.webui.mcp_presets_api import (
+from nujinagent.agent.plugins import AGENT_PLUGIN_MCP_SCHEMA, AGENT_PLUGIN_SCHEMA
+from nujinagent.agent.tools.mcp_oauth import MCPOAuthStorage, mcp_oauth_has_credentials
+from nujinagent.apps.cli import CliAppManager
+from nujinagent.config.loader import load_config, save_config
+from nujinagent.config.schema import Config
+from nujinagent.webui.mcp_presets_api import (
     McpPresetError,
     custom_mcp_action,
     ensure_mcp_oauth_server,
@@ -32,7 +32,7 @@ def _use_config(tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
         json.dumps({"agents": {"defaults": {"workspace": str(tmp_path / "workspace")}}}),
         encoding="utf-8",
     )
-    monkeypatch.setattr("nanobot.config.loader._current_config_path", config_path)
+    monkeypatch.setattr("nujinagent.config.loader._current_config_path", config_path)
 
 
 def _write_agent_plugin(workspace: Path) -> None:
@@ -46,7 +46,7 @@ def _write_agent_plugin(workspace: Path) -> None:
                 "name": "desktop",
                 "description": "Control the local desktop.",
                 "extensions": {
-                    "dev.nanobot": {
+                    "dev.nujinagent": {
                         "displayName": "Desktop Control",
                         "permissions": ["screen-recording"],
                     }
@@ -358,7 +358,7 @@ def test_service_bearer_key_resolves_environment_reference(
     tmp_path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from nanobot.config.loader import resolve_config_env_vars
+    from nujinagent.config.loader import resolve_config_env_vars
 
     _use_config(tmp_path, monkeypatch)
     monkeypatch.setenv("DEEPNOTE_API_KEY", "environment-test-secret")
@@ -466,7 +466,7 @@ def test_redis_url_is_passed_to_cli_and_kept_secret(
     monkeypatch: pytest.MonkeyPatch,
     from_environment: bool,
 ) -> None:
-    from nanobot.config.loader import resolve_config_env_vars
+    from nujinagent.config.loader import resolve_config_env_vars
 
     _use_config(tmp_path, monkeypatch)
     url = "rediss://default:redis-test-secret@cache.example.com:16380/3"
@@ -641,7 +641,7 @@ def test_test_mcp_preset_reports_missing_dependency(
 ) -> None:
     _use_config(tmp_path, monkeypatch)
     mcp_presets_action("enable", {"name": ["playwright"]})
-    monkeypatch.setattr("nanobot.webui.mcp_presets_api.shutil.which", lambda _command: None)
+    monkeypatch.setattr("nujinagent.webui.mcp_presets_api.shutil.which", lambda _command: None)
 
     payload = asyncio.run(mcp_presets_test_action({"name": ["playwright"]}))
 
@@ -672,7 +672,7 @@ def test_test_mcp_preset_connects_and_reports_tools(
         registry.register(FakeTool())
         return {"playwright": FakeStack()}
 
-    monkeypatch.setattr("nanobot.agent.tools.mcp.connect_mcp_servers", fake_connect)
+    monkeypatch.setattr("nujinagent.agent.tools.mcp.connect_mcp_servers", fake_connect)
 
     payload = asyncio.run(mcp_presets_test_action({"name": ["playwright"]}))
 
@@ -711,7 +711,7 @@ def test_test_mcp_preset_inspects_tools_outside_the_enabled_allowlist(
             registry.register(FakeTool(f"mcp_playwright_tool_{index:02d}"))
         return {"playwright": FakeStack()}
 
-    monkeypatch.setattr("nanobot.agent.tools.mcp.connect_mcp_servers", fake_connect)
+    monkeypatch.setattr("nujinagent.agent.tools.mcp.connect_mcp_servers", fake_connect)
 
     payload = asyncio.run(mcp_presets_test_action({"name": ["playwright"]}))
 
@@ -737,7 +737,7 @@ def test_test_mcp_preset_scrubs_connection_errors(
     async def fake_connect(_servers, _registry, *, network):
         raise RuntimeError("failed https://mcp.browserbase.com/mcp?browserbaseApiKey=bb_live_secret")
 
-    monkeypatch.setattr("nanobot.agent.tools.mcp.connect_mcp_servers", fake_connect)
+    monkeypatch.setattr("nujinagent.agent.tools.mcp.connect_mcp_servers", fake_connect)
 
     payload = asyncio.run(mcp_presets_test_action({"name": ["browserbase"]}))
 
@@ -958,7 +958,7 @@ def test_normalize_mcp_mentions_uses_explicit_gateway_config(
     default_path = tmp_path / "default.json"
     config_path = tmp_path / "gateway.json"
     save_config(Config(), default_path)
-    monkeypatch.setattr("nanobot.config.loader._current_config_path", default_path)
+    monkeypatch.setattr("nujinagent.config.loader._current_config_path", default_path)
     custom_mcp_action(
         "custom",
         {

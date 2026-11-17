@@ -3,17 +3,17 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.runner_helpers import make_run_spec
-from nanobot.agent.hook import AgentHook
-from nanobot.agent.runner import AgentRunner
-from nanobot.config.schema import AgentDefaults
-from nanobot.providers.base import (
+from nujinagent.agent.hook import AgentHook
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.config.schema import AgentDefaults
+from nujinagent.providers.base import (
     LLMProvider,
     LLMResponse,
     LLMUsage,
     ProviderConversationState,
     ToolCallRequest,
 )
-from nanobot.utils.runtime import EMPTY_FINAL_RESPONSE_MESSAGE
+from nujinagent.utils.runtime import EMPTY_FINAL_RESPONSE_MESSAGE
 
 
 @pytest.fixture
@@ -230,8 +230,8 @@ async def test_runner_propagates_continuation_failure(run_spec, response_kind):
 
 @pytest.mark.parametrize("response_kind", ["text", "tool"])
 async def test_continuation_preserves_transcript_checkpoints_and_provider_state(run_spec, tmp_path, response_kind):
-    from nanobot.agent.tools.filesystem import ListDirTool
-    from nanobot.agent.tools.registry import ToolRegistry
+    from nujinagent.agent.tools.filesystem import ListDirTool
+    from nujinagent.agent.tools.registry import ToolRegistry
 
     (tmp_path / "evidence.txt").write_text("evidence", encoding="utf-8")
     tools = ToolRegistry()

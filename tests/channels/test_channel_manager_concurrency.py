@@ -3,13 +3,13 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.bus.events import OutboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.channels import manager as manager_module
-from nanobot.channels.base import BaseChannel
-from nanobot.channels.manager import ChannelManager
-from nanobot.config.schema import Config
-from nanobot.runtime_admission import RuntimeBusyError
+from nujinagent.bus.events import OutboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels import manager as manager_module
+from nujinagent.channels.base import BaseChannel
+from nujinagent.channels.manager import ChannelManager
+from nujinagent.config.schema import Config
+from nujinagent.runtime_admission import RuntimeBusyError
 
 
 def make_manager(*, config_path=None):
@@ -140,7 +140,7 @@ async def test_ready_batches_are_capped_at_32_and_keep_fifo():
 
 
 async def test_batches_keep_fifo_across_noneligible_and_scheduled_boundaries(tmp_path):
-    from nanobot.bus.delivery import DeliveryRequest
+    from nujinagent.bus.delivery import DeliveryRequest
 
     manager, channel = make_manager(config_path=tmp_path / "config.json")
     channel.can_batch_send.side_effect = lambda previous, following: (
@@ -452,7 +452,7 @@ async def test_all_send_slots_in_backoff_leave_healthy_chat_and_fifo_live(monkey
 
 
 async def test_scheduled_cancel_waiting_for_permit_does_not_claim(tmp_path, monkeypatch):
-    from nanobot.bus.delivery import DeliveryRequest
+    from nujinagent.bus.delivery import DeliveryRequest
 
     monkeypatch.setattr(manager_module, "_OUTBOUND_CONCURRENCY", 1)
     config = Config.model_validate({"channels": {"websocket": {"enabled": False}}})
@@ -479,7 +479,7 @@ async def test_scheduled_cancel_waiting_for_permit_does_not_claim(tmp_path, monk
 
 
 async def test_restart_notice_does_not_outwait_send_permit_deadline(tmp_path):
-    from nanobot.utils.restart import RestartNotice
+    from nujinagent.utils.restart import RestartNotice
 
     config = Config.model_validate({"channels": {"websocket": {"enabled": False}}})
     manager = ChannelManager(config, MessageBus(), config_path=tmp_path / "config.json")
@@ -517,7 +517,7 @@ async def test_restart_notice_does_not_outwait_send_permit_deadline(tmp_path):
 
 
 async def test_restart_notice_deadline_does_not_cancel_submitted_send(tmp_path):
-    from nanobot.utils.restart import RestartNotice
+    from nujinagent.utils.restart import RestartNotice
 
     config = Config.model_validate({"channels": {"websocket": {"enabled": False}}})
     manager = ChannelManager(config, MessageBus(), config_path=tmp_path / "config.json")

@@ -41,7 +41,7 @@ export function RailFixture() {
     return () => window.clearInterval(timer);
   }, [streaming]);
   const navigation = usePromptHistory(messages.length ? "websocket:rail" : null, version, messages);
-  const composer = <div style={{ height: parameters.has("tall-composer") ? 240 : 100, border: "1px solid #ddd", borderRadius: 20, padding: 20 }}>Message nanobot</div>;
+  const composer = <div style={{ height: parameters.has("tall-composer") ? 240 : 100, border: "1px solid #ddd", borderRadius: 20, padding: 20 }}>Message nujinagent</div>;
   const viewport = (external: boolean, navigationFrame?: HTMLElement | null) => <ThreadViewport
     messages={messages} isStreaming={streaming} conversationKey="websocket:rail"
     navigation={parameters.has("short") ? undefined : navigation}

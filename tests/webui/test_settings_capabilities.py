@@ -4,16 +4,16 @@ from typing import Any
 
 import pytest
 
-from nanobot.config.schema import Config
-from nanobot.webui.settings_capabilities import (
+from nujinagent.config.schema import Config
+from nujinagent.webui.settings_capabilities import (
     capability_settings_payload,
     update_image_generation_settings,
     update_network_safety_settings,
     update_transcription_settings,
     update_web_search_settings,
 )
-from nanobot.webui.settings_contracts import WebUISettingsError
-from nanobot.webui.settings_models import create_provider_settings, update_provider_settings
+from nujinagent.webui.settings_contracts import WebUISettingsError
+from nujinagent.webui.settings_models import create_provider_settings, update_provider_settings
 
 
 def test_dynamic_image_provider_selection_and_private_overrides():

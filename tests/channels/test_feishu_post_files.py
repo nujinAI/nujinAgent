@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from nanobot.channels.feishu import runtime as feishu_runtime
+from nujinagent.channels.feishu import runtime as feishu_runtime
 
 # Payloads captured from a real p2p chat (file keys replaced with
 # placeholders). Sending text + a file together makes the Feishu client

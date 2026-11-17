@@ -12,7 +12,7 @@ These are handwritten, source-aligned finite abstractions, **not checked TypeScr
 | Pure preflight before cache publication | `Process.canApply/canCache/cacheInstall` use the pre-transition ledger, before completion settlement |
 | Fresh full-page explicit lifecycle settlement | `Process.lifecycle` applies even with an owner and rejected cache admission |
 | Idle-only unmounted whole-snapshot adoption | `ownerWhole` versus `backgroundWhole`; never both |
-| `useNanobotStream`: own-read/non-seed cache handoff versus exposed fragment IDs | `ownerWhole`, separate `accepted` and `exposed`; no fragment-gap bridging proof |
+| `useNujinAgentStream`: own-read/non-seed cache handoff versus exposed fragment IDs | `ownerWhole`, separate `accepted` and `exposed`; no fragment-gap bridging proof |
 | Owner/disposal/supersession guards and synchronous cache install | `mounted` separate from `selected`, canceled H after publication, `CacheHandoff.ownReadSuperseded/owner` |
 | `ClientRunLedger.completeTurns` | Exact named `open/closed/clock` settlement; content coverage alone extends `fenced`; lifecycle coverage preserves anonymous recovery |
 

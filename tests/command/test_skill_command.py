@@ -3,14 +3,14 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.skills import SkillsLoader
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.command.application import register_builtin_commands
-from nanobot.command.builtin import cmd_skill
-from nanobot.command.router import CommandContext, CommandRouter
-from nanobot.config.schema import ModelPresetConfig
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.skills import SkillsLoader
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.command.application import register_builtin_commands
+from nujinagent.command.builtin import cmd_skill
+from nujinagent.command.router import CommandContext, CommandRouter
+from nujinagent.config.schema import ModelPresetConfig
 
 
 def _provider(default_model: str = "test-model") -> MagicMock:

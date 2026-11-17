@@ -13,13 +13,13 @@ from datetime import datetime
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.sessions import ReadSessionTool, SearchSessionsTool
-from nanobot.runtime_context import RuntimeContextBlock, append_runtime_context
-from nanobot.session.automation_spec import AUTOMATION_HISTORY_META
-from nanobot.session.history import SessionHistoryReader
-from nanobot.session.manager import SessionManager
-from nanobot.session.types import SessionType
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.sessions import ReadSessionTool, SearchSessionsTool
+from nujinagent.runtime_context import RuntimeContextBlock, append_runtime_context
+from nujinagent.session.automation_spec import AUTOMATION_HISTORY_META
+from nujinagent.session.history import SessionHistoryReader
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.types import SessionType
 
 
 @pytest.mark.asyncio
@@ -72,7 +72,7 @@ async def test_session_tools_find_old_matches_in_full_session(
 @pytest.mark.parametrize("state", ["canonical", "transcript", "mixed"])
 async def test_session_tools_use_canonical_records_after_restart(history, tmp_path, monkeypatch, state):
     webui_dir = tmp_path / "webui"
-    monkeypatch.setattr("nanobot.webui.history.get_webui_dir", lambda: webui_dir)
+    monkeypatch.setattr("nujinagent.webui.history.get_webui_dir", lambda: webui_dir)
     manager = history.sessions
     key = "websocket:history"
     if state != "transcript":
@@ -262,7 +262,7 @@ def test_read_uses_one_snapshot_for_header_and_messages(tmp_path, monkeypatch):
 
 
 def test_session_read_decodes_only_as_far_as_needed(tmp_path, monkeypatch):
-    from nanobot.session import sqlite_store
+    from nujinagent.session import sqlite_store
 
     manager = SessionManager(tmp_path)
     session = manager.get_or_create("sdk:history")
@@ -407,7 +407,7 @@ async def test_queued_history_tool_cancels_without_starting_a_transaction(tmp_pa
 @pytest.mark.asyncio
 @pytest.mark.parametrize("tool_name", ["read", "search", "search-refill"])
 async def test_cancelled_history_scan_exits_and_releases_wal_snapshot(tmp_path, monkeypatch, tool_name):
-    from nanobot.session import sqlite_store
+    from nujinagent.session import sqlite_store
 
     manager = SessionManager(tmp_path)
     key = "sdk:long-history"
@@ -489,7 +489,7 @@ async def test_cancelled_history_scan_exits_and_releases_wal_snapshot(tmp_path, 
 
 @pytest.mark.asyncio
 async def test_cancelled_running_reader_preserves_unexpected_worker_failure(tmp_path, monkeypatch):
-    from nanobot.session import sqlite_store
+    from nujinagent.session import sqlite_store
 
     manager = SessionManager(tmp_path)
     session = manager.get_or_create("sdk:history")

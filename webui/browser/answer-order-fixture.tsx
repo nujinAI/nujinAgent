@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 
 import { ThreadShell } from "@/components/thread/ThreadShell";
 import { settings } from "@/dev/gallery/settings";
-import { NanobotClient } from "@/lib/nanobot-client";
+import { NujinAgentClient } from "@/lib/nujinagent-client";
 import { ThreadMessageCache } from "@/lib/thread-message-cache";
 import { ClientProvider } from "@/providers/ClientProvider";
 
 export function AnswerOrderFixture() {
-  const [client] = useState(() => new NanobotClient({
+  const [client] = useState(() => new NujinAgentClient({
     url: `ws://${location.host}/answer-order-socket`,
     reconnect: new URLSearchParams(location.search).get("reconnect") === "1",
   }));

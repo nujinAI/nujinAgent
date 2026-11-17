@@ -4,11 +4,11 @@ from types import SimpleNamespace
 
 import pytest
 
-from nanobot.bus.events import InboundMessage
-from nanobot.command.application import build_help_text, builtin_command_palette
-from nanobot.command.builtin import cmd_evaluator_prompt
-from nanobot.command.router import CommandContext
-from nanobot.utils.evaluator import default_evaluator_prompt
+from nujinagent.bus.events import InboundMessage
+from nujinagent.command.application import build_help_text, builtin_command_palette
+from nujinagent.command.builtin import cmd_evaluator_prompt
+from nujinagent.command.router import CommandContext
+from nujinagent.utils.evaluator import default_evaluator_prompt
 
 
 def _make_ctx(tmp_path, raw: str = "/evaluator-prompt", args: str = "") -> CommandContext:
@@ -21,7 +21,7 @@ def _make_ctx(tmp_path, raw: str = "/evaluator-prompt", args: str = "") -> Comma
 async def test_evaluator_prompt_reports_default_prompt(tmp_path) -> None:
     out = await cmd_evaluator_prompt(_make_ctx(tmp_path))
 
-    assert "Heartbeat evaluator prompt: nanobot default" in out.content
+    assert "Heartbeat evaluator prompt: nujinagent default" in out.content
     assert "prompts/evaluator.md" in out.content
     assert str(tmp_path) not in out.content
     assert "/evaluator-prompt init" in out.content
@@ -68,7 +68,7 @@ async def test_evaluator_prompt_handles_undecodable_existing_prompt(tmp_path) ->
         _make_ctx(tmp_path, "/evaluator-prompt init", "init")
     )
 
-    assert "Heartbeat evaluator prompt: nanobot default" in status.content
+    assert "Heartbeat evaluator prompt: nujinagent default" in status.content
     assert "already exists" in init.content
     assert prompt_file.read_bytes() == original
 

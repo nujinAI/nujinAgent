@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from nanobot.channels.websocket.runtime import WebSocketChannel
+from nujinagent.channels.websocket.runtime import WebSocketChannel
 
 
 class _StubSocket:

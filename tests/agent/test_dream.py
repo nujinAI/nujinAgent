@@ -1,14 +1,14 @@
 import pytest
 
-from nanobot.agent.memory import MemoryStore
-from nanobot.config.schema import ModelPresetConfig
-from nanobot.providers.base import LLMResponse
-from nanobot.security.workspace_access import (
+from nujinagent.agent.memory import MemoryStore
+from nujinagent.config.schema import ModelPresetConfig
+from nujinagent.providers.base import LLMResponse
+from nujinagent.security.workspace_access import (
     bind_workspace_scope,
     default_workspace_scope,
     reset_workspace_scope,
 )
-from nanobot.utils.prompt_templates import render_template
+from nujinagent.utils.prompt_templates import render_template
 
 
 @pytest.fixture
@@ -374,9 +374,9 @@ class TestEphemeralDirect:
         """Factory fixture that builds a minimal AgentLoop with mocked deps."""
         from unittest.mock import AsyncMock, MagicMock, patch
 
-        from nanobot.agent.loop import AgentLoop
-        from nanobot.agent.memory import MemoryStore
-        from nanobot.bus.queue import MessageBus
+        from nujinagent.agent.loop import AgentLoop
+        from nujinagent.agent.memory import MemoryStore
+        from nujinagent.bus.queue import MessageBus
 
         store = MemoryStore(tmp_path)
         store.write_soul("# Soul")
@@ -393,7 +393,7 @@ class TestEphemeralDirect:
         )
 
         with (
-            patch("nanobot.agent.loop.SubagentManager") as mock_sub,
+            patch("nujinagent.agent.loop.SubagentManager") as mock_sub,
         ):
             mock_sub.return_value.cancel_by_session = AsyncMock(return_value=0)
             loop = AgentLoop(
@@ -443,9 +443,9 @@ class TestEphemeralDirect:
         from copy import deepcopy
         from unittest.mock import AsyncMock, MagicMock, patch
 
-        from nanobot.agent.loop import AgentLoop
-        from nanobot.bus.queue import MessageBus
-        from nanobot.providers.base import GenerationSettings
+        from nujinagent.agent.loop import AgentLoop
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.providers.base import GenerationSettings
 
         store = MemoryStore(tmp_path)
         store.write_memory("# Memory")
@@ -467,7 +467,7 @@ class TestEphemeralDirect:
         async def _silent(*_args, **_kwargs):
             pass
 
-        with patch("nanobot.agent.runner.deepcopy", wraps=deepcopy) as copy_state:
+        with patch("nujinagent.agent.runner.deepcopy", wraps=deepcopy) as copy_state:
             response = await loop.process_direct(
                 prompt, session_key=MemoryStore.dream_session_key(), ephemeral=True,
                 tools=store.build_dream_tools(), on_progress=_silent,
@@ -539,7 +539,7 @@ class TestEphemeralDirect:
     async def test_completed_response_after_tool_error_is_success(self, _make_loop):
         from unittest.mock import AsyncMock
 
-        from nanobot.providers.base import ToolCallRequest
+        from nujinagent.providers.base import ToolCallRequest
 
         loop, store = _make_loop
         loop.provider.chat_stream_with_retry = AsyncMock(side_effect=[
@@ -577,8 +577,8 @@ class TestEphemeralDirect:
     async def test_dream_turn_can_skip_unbatched_recent_history(self, tmp_path):
         from unittest.mock import MagicMock
 
-        from nanobot.agent.loop import AgentLoop
-        from nanobot.bus.queue import MessageBus
+        from nujinagent.agent.loop import AgentLoop
+        from nujinagent.bus.queue import MessageBus
 
         store = MemoryStore(tmp_path)
         for i in range(60):
@@ -626,8 +626,8 @@ class TestEphemeralDirect:
     async def test_dream_turn_injects_memory_files_once_and_persists_session(self, tmp_path):
         from unittest.mock import MagicMock
 
-        from nanobot.agent.loop import AgentLoop
-        from nanobot.bus.queue import MessageBus
+        from nujinagent.agent.loop import AgentLoop
+        from nujinagent.bus.queue import MessageBus
 
         markers = {
             "SOUL.md": "DREAM_SOUL_MARKER",
@@ -687,10 +687,10 @@ class TestEphemeralHooks:
         """Build an AgentLoop with a spy hook to verify hook firing behavior."""
         from unittest.mock import AsyncMock, MagicMock, patch
 
-        from nanobot.agent.hook import AgentHook
-        from nanobot.agent.loop import AgentLoop
-        from nanobot.bus.queue import MessageBus
-        from nanobot.providers.base import LLMResponse
+        from nujinagent.agent.hook import AgentHook
+        from nujinagent.agent.loop import AgentLoop
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.providers.base import LLMResponse
 
         bus = MessageBus()
         provider = MagicMock()
@@ -711,7 +711,7 @@ class TestEphemeralHooks:
         spy.after_iteration = AsyncMock(return_value=None)
 
         with (
-            patch("nanobot.agent.loop.SubagentManager") as mock_sub,
+            patch("nujinagent.agent.loop.SubagentManager") as mock_sub,
         ):
             mock_sub.return_value.cancel_by_session = AsyncMock(return_value=0)
             loop = AgentLoop(

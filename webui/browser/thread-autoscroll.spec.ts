@@ -13,7 +13,7 @@ test("lets native autoscroll leave the live tail and reverse after returning", a
   await expect.poll(() => page.locator("#control").evaluate((node) => node.scrollTop)).toBeGreaterThan(100);
   await page.keyboard.press("Escape");
 
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   await page.goto("/browser/fixture.html?case=history-boundary&local=1");
   const body = page.getByTestId("thread-message-region");
   // The plain-text fallback is replaced when the lazy Markdown renderer loads.

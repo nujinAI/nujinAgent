@@ -9,16 +9,16 @@ from types import SimpleNamespace
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.loader import ToolLoader
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.agent.tools.session_messages import SendSessionMessageTool
-from nanobot.agent.tools.sessions import ReadSessionTool, SearchSessionsTool
-from nanobot.bus.queue import MessageBus
-from nanobot.runtime_context import RuntimeContextBlock, append_runtime_context
-from nanobot.sdk.clients import SessionClient
-from nanobot.session.manager import SessionManager
-from nanobot.session.session_handles import SessionHandleResolver
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.loader import ToolLoader
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.agent.tools.session_messages import SendSessionMessageTool
+from nujinagent.agent.tools.sessions import ReadSessionTool, SearchSessionsTool
+from nujinagent.bus.queue import MessageBus
+from nujinagent.runtime_context import RuntimeContextBlock, append_runtime_context
+from nujinagent.sdk.clients import SessionClient
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.session_handles import SessionHandleResolver
 
 
 @pytest.fixture

@@ -1,4 +1,4 @@
-from nanobot.providers.base import _SYNTHETIC_USER_CONTENT, LLMProvider
+from nujinagent.providers.base import _SYNTHETIC_USER_CONTENT, LLMProvider
 
 
 class TestEnforceRoleAlternation:

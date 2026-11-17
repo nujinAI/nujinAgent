@@ -9,8 +9,8 @@ for (const dark of [false, true]) {
       page.on("pageerror", error => errors.push(error.message));
       await page.setViewportSize({ width: narrow ? 390 : 1280, height: 900 });
       await page.addInitScript(theme => {
-        localStorage.setItem("nanobot.locale", "en");
-        localStorage.setItem("nanobot-webui.theme", theme);
+        localStorage.setItem("nujinagent.locale", "en");
+        localStorage.setItem("nujinagent-webui.theme", theme);
       }, dark ? "dark" : "light");
       await page.goto("/browser/fixture.html?case=code-highlighting");
       const code = page.getByRole("region", { name: "TypeScript", exact: true });
@@ -87,7 +87,7 @@ for (const dark of [false, true]) {
 
 test("large numbered code remains complete and copies original source", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   await page.goto("/browser/fixture.html?case=code-highlighting");
   await page.getByRole("button", { name: "Show large code", exact: true }).click();
   const section = page.getByRole("region", { name: "Large code", exact: true });
@@ -103,7 +103,7 @@ test("large numbered code remains complete and copies original source", async ({
 
 test("a real grammar request failure keeps complete source, controls and the application", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   const failed: string[] = [];
   const warning = page.waitForEvent("console", message => message.type() === "warning" && message.text().startsWith("Code highlighting failed."));
   await page.route(/\/hjson-[^/]*\.js(?:\?|$)/, async route => {

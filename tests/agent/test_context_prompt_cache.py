@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.agent.context import ContextBuilder
-from nanobot.runtime_context import RuntimeContextBlock
+from nujinagent.agent.context import ContextBuilder
+from nujinagent.runtime_context import RuntimeContextBlock
 
 
 class _FakeDatetime(real_datetime):
@@ -26,7 +26,7 @@ def _make_workspace(tmp_path: Path) -> Path:
 
 
 def test_bootstrap_files_are_backed_by_templates() -> None:
-    template_dir = pkg_files("nanobot") / "templates"
+    template_dir = pkg_files("nujinagent") / "templates"
 
     for filename in ContextBuilder.BOOTSTRAP_FILES:
         assert (template_dir / filename).is_file(), f"missing bootstrap template: {filename}"
@@ -105,7 +105,7 @@ def test_provider_context_appended_after_user_content(tmp_path) -> None:
 
 
 def test_execution_rules_in_system_prompt(tmp_path) -> None:
-    from nanobot.utils.helpers import sync_workspace_templates
+    from nujinagent.utils.helpers import sync_workspace_templates
 
     workspace = _make_workspace(tmp_path)
     sync_workspace_templates(workspace, silent=True)
@@ -119,7 +119,7 @@ def test_execution_rules_in_system_prompt(tmp_path) -> None:
 def test_execution_rules_reach_existing_workspace_soul(tmp_path) -> None:
     workspace = _make_workspace(tmp_path)
     legacy_soul = (
-        pkg_files("nanobot") / "templates" / "legacy" / "SOUL.md"
+        pkg_files("nujinagent") / "templates" / "legacy" / "SOUL.md"
     ).read_text(encoding="utf-8")
     legacy_rule = "For multi-step tasks, outline the plan first and wait for user confirmation."
     soul_path = workspace / "SOUL.md"
@@ -136,7 +136,7 @@ def test_execution_rules_reach_existing_workspace_soul(tmp_path) -> None:
 
 @pytest.mark.parametrize("legacy_workspace", [False, True])
 def test_scheduling_contract_reaches_fresh_and_legacy_workspaces(tmp_path, legacy_workspace) -> None:
-    from nanobot.utils.helpers import sync_workspace_templates
+    from nujinagent.utils.helpers import sync_workspace_templates
 
     workspace = _make_workspace(tmp_path)
     agents_path = workspace / "AGENTS.md"
@@ -168,9 +168,9 @@ def test_scheduling_contract_reaches_fresh_and_legacy_workspaces(tmp_path, legac
 
 
 def test_default_soul_template_keeps_execution_policy_in_tool_contract() -> None:
-    soul = (pkg_files("nanobot") / "templates" / "SOUL.md").read_text(encoding="utf-8")
+    soul = (pkg_files("nujinagent") / "templates" / "SOUL.md").read_text(encoding="utf-8")
     contract = (
-        pkg_files("nanobot") / "templates" / "agent" / "tool_contract.md"
+        pkg_files("nujinagent") / "templates" / "agent" / "tool_contract.md"
     ).read_text(encoding="utf-8")
 
     assert "## Execution Rules" not in soul
@@ -235,7 +235,7 @@ def test_memory_skill_is_lazy_loaded_from_skills_index(tmp_path) -> None:
 
 
 def test_fresh_workspace_omits_default_prompt_scaffolding(tmp_path) -> None:
-    from nanobot.utils.helpers import sync_workspace_templates
+    from nujinagent.utils.helpers import sync_workspace_templates
 
     workspace = _make_workspace(tmp_path)
     sync_workspace_templates(workspace, silent=True)
@@ -250,7 +250,7 @@ def test_fresh_workspace_omits_default_prompt_scaffolding(tmp_path) -> None:
 
 def test_template_memory_md_is_skipped(tmp_path) -> None:
     workspace = _make_workspace(tmp_path)
-    from nanobot.utils.helpers import sync_workspace_templates
+    from nujinagent.utils.helpers import sync_workspace_templates
     sync_workspace_templates(workspace, silent=True)
 
     builder = ContextBuilder(workspace)
@@ -258,12 +258,12 @@ def test_template_memory_md_is_skipped(tmp_path) -> None:
 
     assert "# Long-term Memory" not in prompt
     assert "History log: memory/history.jsonl" in prompt
-    assert "This file is automatically updated by nanobot" not in prompt
+    assert "This file is automatically updated by nujinagent" not in prompt
 
 
 def test_customized_memory_md_is_injected(tmp_path, monkeypatch) -> None:
     workspace = _make_workspace(tmp_path)
-    from nanobot.utils.helpers import sync_workspace_templates
+    from nujinagent.utils.helpers import sync_workspace_templates
     sync_workspace_templates(workspace, silent=True)
 
     (workspace / "memory" / "MEMORY.md").write_text(

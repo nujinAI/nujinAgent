@@ -3,12 +3,12 @@ from unittest.mock import patch
 import pytest
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.providers.registry import find_by_name
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.registry import find_by_name
 
 
 def test_custom_provider_parse_handles_empty_choices() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
     response = ChatCompletion(
         id="chatcmpl-empty", choices=[], created=0, model="test-model", object="chat.completion",
@@ -21,7 +21,7 @@ def test_custom_provider_parse_handles_empty_choices() -> None:
 
 
 def test_custom_provider_parse_accepts_plain_string_response() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     result = provider._parse("hello from backend")
@@ -31,7 +31,7 @@ def test_custom_provider_parse_accepts_plain_string_response() -> None:
 
 
 def test_custom_provider_parse_accepts_dict_response() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     result = provider._parse({
@@ -53,7 +53,7 @@ def test_custom_provider_parse_accepts_dict_response() -> None:
 
 
 def test_custom_provider_parse_keeps_structured_tool_call_over_text_markup() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     result = provider._parse({
@@ -123,7 +123,7 @@ def test_custom_provider_parse_chunks_deduplicates_parallel_tool_call_ids(as_sdk
 
 def test_local_provider_502_error_includes_reachability_hint() -> None:
     spec = find_by_name("ollama")
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider(api_base="http://localhost:11434/v1", spec=spec)
 
     result = provider._handle_error(

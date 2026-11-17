@@ -7,9 +7,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-import nanobot.webui.sidebar_state as sidebar_state
-from nanobot.session.manager import Session, SessionManager
-from nanobot.webui.sidebar_state import (
+import nujinagent.webui.sidebar_state as sidebar_state
+from nujinagent.session.manager import Session, SessionManager
+from nujinagent.webui.sidebar_state import (
     WebUISidebarState,
     default_webui_sidebar_state,
     read_webui_sidebar_state,
@@ -19,7 +19,7 @@ from nanobot.webui.sidebar_state import (
 
 
 def test_sidebar_state_defaults_when_file_missing(tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
 
     state = read_webui_sidebar_state()
 
@@ -28,7 +28,7 @@ def test_sidebar_state_defaults_when_file_missing(tmp_path, monkeypatch) -> None
 
 
 def test_sidebar_state_normalizes_partial_payload(tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     path = webui_sidebar_state_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -101,7 +101,7 @@ def test_sidebar_state_normalizes_partial_payload(tmp_path, monkeypatch) -> None
 
 
 def test_sidebar_state_write_is_scoped_to_config_data_dir(tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
 
     state = write_webui_sidebar_state(
         {
@@ -126,7 +126,7 @@ def test_sidebar_state_write_is_scoped_to_config_data_dir(tmp_path, monkeypatch)
 
 
 def test_sidebar_state_persists_only_visible_workbench_groups(tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     tabs = {
         f"tab:websocket:{index}": {
             "explicit": False,
@@ -145,7 +145,7 @@ def test_sidebar_state_persists_only_visible_workbench_groups(tmp_path, monkeypa
 
 
 def test_sidebar_state_requires_supported_workbench_version(tmp_path, monkeypatch) -> None:
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
 
     state = write_webui_sidebar_state(
         {
@@ -190,7 +190,7 @@ def test_sidebar_state_serializes_concurrent_writes(monkeypatch) -> None:
 
 
 async def test_sidebar_archive_migration_preserves_wire_shape_and_restored_state(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     path = webui_sidebar_state_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({
@@ -233,7 +233,7 @@ async def test_sidebar_archive_migration_preserves_wire_shape_and_restored_state
 
 
 async def test_archive_import_failure_keeps_json_source_for_retry(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     path = webui_sidebar_state_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     source = json.dumps({"archived_keys": ["websocket:first", "websocket:fail"]})
@@ -260,7 +260,7 @@ async def test_archive_import_failure_keeps_json_source_for_retry(tmp_path, monk
 
 
 async def test_sidebar_reads_and_preferences_do_not_wait_for_unrelated_session_write(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     manager = SessionManager(tmp_path)
     sidebar = WebUISidebarState(manager.state)
     await manager.state.import_messages("websocket:busy", [{"role": "user", "content": "hello"}])
@@ -302,7 +302,7 @@ async def test_sidebar_reads_and_preferences_do_not_wait_for_unrelated_session_w
 
 
 async def test_archive_only_update_keeps_preferences_unchanged(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     manager = SessionManager(tmp_path)
     manager.save(Session(key="websocket:empty"))
     sidebar = WebUISidebarState(manager.state)
@@ -329,7 +329,7 @@ async def test_archive_only_update_keeps_preferences_unchanged(tmp_path, monkeyp
 
 
 async def test_sidebar_readers_overlap_without_overtaking_queued_write(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     manager = SessionManager(tmp_path)
     manager.save(Session(key="websocket:new"))
     sidebar = WebUISidebarState(manager.state)
@@ -371,9 +371,9 @@ async def test_sidebar_readers_overlap_without_overtaking_queued_write(tmp_path,
 
 
 async def test_failed_archive_read_drains_preference_write_before_releasing_admission(tmp_path, monkeypatch):
-    from nanobot.session.state import SessionOperationQueueFullError
+    from nujinagent.session.state import SessionOperationQueueFullError
 
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     manager = SessionManager(tmp_path)
     sidebar = WebUISidebarState(manager.state)
     saved = await sidebar.write({"view": {"density": "comfortable"}, "archived_keys": []})

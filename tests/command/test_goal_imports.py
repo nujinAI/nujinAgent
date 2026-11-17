@@ -4,12 +4,12 @@ import sys
 import pytest
 
 
-@pytest.mark.parametrize("first_module", ["nanobot.goal.command", "nanobot.command.builtin"])
+@pytest.mark.parametrize("first_module", ["nujinagent.goal.command", "nujinagent.command.builtin"])
 def test_goal_and_builtin_commands_import_in_either_order(first_module):
     script = f"""
 import {first_module}
-from nanobot.goal.command import register_goal_command
-from nanobot.command import CommandRouter, register_builtin_commands
+from nujinagent.goal.command import register_goal_command
+from nujinagent.command import CommandRouter, register_builtin_commands
 
 router = CommandRouter()
 register_builtin_commands(router)

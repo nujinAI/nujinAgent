@@ -10,30 +10,30 @@ import {
 import type {
   AutomationsPayload,
   McpOAuthFlowPayload,
-  NanobotFeatureInfo,
-  NanobotFeaturesPayload,
+  NujinAgentFeatureInfo,
+  NujinAgentFeaturesPayload,
   SessionAutomationJob,
 } from "@/lib/types";
 
-export type NanobotFeatureInstallRequest = {
-  feature: NanobotFeatureInfo;
+export type NujinAgentFeatureInstallRequest = {
+  feature: NujinAgentFeatureInfo;
   installOnly: boolean;
 };
 
 export function useSystemSettingsState(toolsCatalog: ToolsCatalog) {
   const { cliApps, mcpPresets, invalidation: toolsCatalogInvalidation } = useSyncExternalStore(toolsCatalog.subscribe, toolsCatalog.getSnapshot);
   const { setCliApps, setMcpPresets } = toolsCatalog;
-  const [nanobotFeatures, setNanobotFeatures] = useState<NanobotFeaturesPayload | null>(null);
+  const [nujinagentFeatures, setNujinAgentFeatures] = useState<NujinAgentFeaturesPayload | null>(null);
   const [automations, setAutomations] = useState<AutomationsPayload | null>(null);
   const [cliAppsLoading, setCliAppsLoading] = useState(true);
-  const [nanobotFeaturesLoading, setNanobotFeaturesLoading] = useState(true);
+  const [nujinagentFeaturesLoading, setNujinAgentFeaturesLoading] = useState(true);
   const [mcpPresetsLoading, setMcpPresetsLoading] = useState(true);
   const [automationsLoading, setAutomationsLoading] = useState(true);
   const [cliAppsAction, setCliAppsAction] = useState<string | null>(null);
-  const [nanobotFeatureAction, setNanobotFeatureAction] = useState<string | null>(null);
-  const nanobotFeatureActionRef = useRef<string | null>(null);
-  const [nanobotFeatureConfirm, setNanobotFeatureConfirm] =
-    useState<NanobotFeatureInstallRequest | null>(null);
+  const [nujinagentFeatureAction, setNujinAgentFeatureAction] = useState<string | null>(null);
+  const nujinagentFeatureActionRef = useRef<string | null>(null);
+  const [nujinagentFeatureConfirm, setNujinAgentFeatureConfirm] =
+    useState<NujinAgentFeatureInstallRequest | null>(null);
   const [mcpPresetAction, setMcpPresetAction] = useState<string | null>(null);
   const [mcpOAuthFlow, setMcpOAuthFlow] = useState<McpOAuthFlowPayload | null>(null);
   const mcpOAuthFlowRef = useRef<McpOAuthFlowPayload | null>(null);
@@ -47,7 +47,7 @@ export function useSystemSettingsState(toolsCatalog: ToolsCatalog) {
   const [automationsFilter, setAutomationsFilter] = useState<AutomationFilter>("all");
   const [cliAppsMessage, setCliAppsMessage] = useState<string | null>(null);
   const [cliAppsError, setCliAppsError] = useState<string | null>(null);
-  const [nanobotFeaturesError, setNanobotFeaturesError] = useState<string | null>(null);
+  const [nujinagentFeaturesError, setNujinAgentFeaturesError] = useState<string | null>(null);
   const [cliAppsFocusName, setCliAppsFocusName] = useState<string | null>(null);
   const [mcpMessage, setMcpMessage] = useState<string | null>(null);
   const [mcpError, setMcpError] = useState<string | null>(null);
@@ -94,12 +94,12 @@ export function useSystemSettingsState(toolsCatalog: ToolsCatalog) {
     mcpPresetAction,
     mcpPresets,
     mcpPresetsLoading,
-    nanobotFeatureAction,
-    nanobotFeatureActionRef,
-    nanobotFeatureConfirm,
-    nanobotFeatures,
-    nanobotFeaturesError,
-    nanobotFeaturesLoading,
+    nujinagentFeatureAction,
+    nujinagentFeatureActionRef,
+    nujinagentFeatureConfirm,
+    nujinagentFeatures,
+    nujinagentFeaturesError,
+    nujinagentFeaturesLoading,
     setAppsQuery,
     setAutomationAction,
     setAutomationPendingDelete,
@@ -127,11 +127,11 @@ export function useSystemSettingsState(toolsCatalog: ToolsCatalog) {
     setMcpPresetAction,
     setMcpPresets,
     setMcpPresetsLoading,
-    setNanobotFeatureAction,
-    setNanobotFeatureConfirm,
-    setNanobotFeatures,
-    setNanobotFeaturesError,
-    setNanobotFeaturesLoading,
+    setNujinAgentFeatureAction,
+    setNujinAgentFeatureConfirm,
+    setNujinAgentFeatures,
+    setNujinAgentFeaturesError,
+    setNujinAgentFeaturesLoading,
   };
 }
 

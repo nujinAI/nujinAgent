@@ -1,9 +1,9 @@
 import pytest
 
-from nanobot.agent.tools.session_messages import SendSessionMessageTool, SessionMessageError
-from nanobot.bus.queue import MessageBus
-from nanobot.session.manager import SessionManager
-from nanobot.session.session_handles import SessionHandleResolver
+from nujinagent.agent.tools.session_messages import SendSessionMessageTool, SessionMessageError
+from nujinagent.bus.queue import MessageBus
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.session_handles import SessionHandleResolver
 
 
 async def test_session_send_rejects_commands_and_delivers_normal_input(tmp_path):

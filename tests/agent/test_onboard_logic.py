@@ -8,8 +8,8 @@ from prompt_toolkit.input import create_pipe_input
 from prompt_toolkit.output import DummyOutput
 from pydantic import BaseModel, Field
 
-from nanobot.cli import onboard as onboard_wizard
-from nanobot.cli.onboard import (
+from nujinagent.cli import onboard as onboard_wizard
+from nujinagent.cli.onboard import (
     _BACK_PRESSED,
     _configure_pydantic_model,
     _format_value,
@@ -19,9 +19,9 @@ from nanobot.cli.onboard import (
     _input_text,
     run_onboard,
 )
-from nanobot.config.loader import merge_missing_defaults
-from nanobot.config.schema import Config, ModelPresetConfig
-from nanobot.utils.helpers import sync_workspace_templates
+from nujinagent.config.loader import merge_missing_defaults
+from nujinagent.config.schema import Config, ModelPresetConfig
+from nujinagent.utils.helpers import sync_workspace_templates
 
 
 class TestMergeMissingDefaults:
@@ -201,7 +201,7 @@ class TestGetFieldTypeInfo:
         assert inner == ["standard", "persistent"]
 
     def test_real_provider_retry_mode_field(self):
-        from nanobot.config.schema import AgentDefaults
+        from nujinagent.config.schema import AgentDefaults
 
         type_name, inner = _get_field_type_info(AgentDefaults.model_fields["provider_retry_mode"])
         assert type_name == "literal"
@@ -350,7 +350,7 @@ class TestSyncWorkspaceTemplates:
 class TestProviderChannelInfo:
 
     def test_get_provider_names_returns_dict(self):
-        from nanobot.cli.onboard import _get_provider_names
+        from nujinagent.cli.onboard import _get_provider_names
 
         names = _get_provider_names()
         assert isinstance(names, dict)
@@ -371,7 +371,7 @@ class TestProviderChannelInfo:
         }
 
     def test_get_provider_info_returns_valid_structure(self):
-        from nanobot.cli.onboard import _get_provider_info
+        from nujinagent.cli.onboard import _get_provider_info
 
         info = _get_provider_info()
         assert isinstance(info, dict)
@@ -501,7 +501,7 @@ class TestValidateFieldConstraint:
             name: str = "hello"
 
         field_info = M.model_fields["name"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         assert _validate_field_constraint("anything", field_info) is None
 
@@ -512,7 +512,7 @@ class TestValidateFieldConstraint:
             count: int = Field(default=3, ge=0)
 
         field_info = M.model_fields["count"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         result = _validate_field_constraint(-1, field_info)
         assert result is not None
@@ -525,7 +525,7 @@ class TestValidateFieldConstraint:
             count: int = Field(default=3, ge=0)
 
         field_info = M.model_fields["count"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         assert _validate_field_constraint(0, field_info) is None
 
@@ -536,7 +536,7 @@ class TestValidateFieldConstraint:
             retries: int = Field(default=3, le=10)
 
         field_info = M.model_fields["retries"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         result = _validate_field_constraint(11, field_info)
         assert result is not None
@@ -549,7 +549,7 @@ class TestValidateFieldConstraint:
             retries: int = Field(default=3, le=10)
 
         field_info = M.model_fields["retries"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         assert _validate_field_constraint(10, field_info) is None
 
@@ -560,7 +560,7 @@ class TestValidateFieldConstraint:
             retries: int = Field(default=3, ge=0, le=10)
 
         field_info = M.model_fields["retries"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         assert _validate_field_constraint(5, field_info) is None
         assert _validate_field_constraint(-1, field_info) is not None
@@ -573,7 +573,7 @@ class TestValidateFieldConstraint:
             ratio: float = Field(default=0.5, gt=0.0, lt=1.0)
 
         field_info = M.model_fields["ratio"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         assert _validate_field_constraint(0.5, field_info) is None
         assert _validate_field_constraint(0.0, field_info) is not None
@@ -586,7 +586,7 @@ class TestValidateFieldConstraint:
             name: str = Field(default="x", min_length=1)
 
         field_info = M.model_fields["name"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         assert _validate_field_constraint("a", field_info) is None
         assert _validate_field_constraint("", field_info) is not None
@@ -598,14 +598,14 @@ class TestValidateFieldConstraint:
             tag: str = Field(default="x", max_length=5)
 
         field_info = M.model_fields["tag"]
-        from nanobot.cli.onboard import _validate_field_constraint
+        from nujinagent.cli.onboard import _validate_field_constraint
 
         assert _validate_field_constraint("abc", field_info) is None
         assert _validate_field_constraint("abcdef", field_info) is not None
 
     def test_real_send_max_retries_field(self):
-        from nanobot.cli.onboard import _validate_field_constraint
-        from nanobot.config.schema import ChannelsConfig
+        from nujinagent.cli.onboard import _validate_field_constraint
+        from nujinagent.config.schema import ChannelsConfig
 
         field_info = ChannelsConfig.model_fields["send_max_retries"]
         assert _validate_field_constraint(3, field_info) is None
@@ -666,7 +666,7 @@ class TestGetConstraintHint:
         assert ")" not in hint
 
     def test_real_send_max_retries_hint(self):
-        from nanobot.config.schema import ChannelsConfig
+        from nujinagent.config.schema import ChannelsConfig
 
         field_info = ChannelsConfig.model_fields["send_max_retries"]
         hint = _get_constraint_hint(field_info)
@@ -724,19 +724,19 @@ class TestInputTextWithValidation:
 class TestChannelCommonRegistration:
 
     def test_channel_common_in_settings_sections(self):
-        from nanobot.cli.onboard import _SETTINGS_SECTIONS
+        from nujinagent.cli.onboard import _SETTINGS_SECTIONS
 
         assert "Channel Common" in _SETTINGS_SECTIONS
 
     def test_channel_common_getter_returns_channels(self):
-        from nanobot.cli.onboard import _SETTINGS_GETTER
+        from nujinagent.cli.onboard import _SETTINGS_GETTER
 
         config = Config()
         result = _SETTINGS_GETTER["Channel Common"](config)
         assert result is config.channels
 
     def test_channel_common_setter_writes_channels(self):
-        from nanobot.cli.onboard import _SETTINGS_SETTER
+        from nujinagent.cli.onboard import _SETTINGS_SETTER
 
         config = Config()
         original = config.channels
@@ -817,7 +817,7 @@ class TestSelectWithBack:
 class TestMainMenuInteraction:
 
     def test_main_menu_hides_save_actions_until_needed(self):
-        from nanobot.cli.onboard import _get_main_menu_choices
+        from nujinagent.cli.onboard import _get_main_menu_choices
 
         clean_choices = _get_main_menu_choices(False)
         dirty_choices = _get_main_menu_choices(True)
@@ -894,7 +894,7 @@ class TestMainMenuInteraction:
         assert prompt.application.timeoutlen == onboard_wizard._PROMPT_ESCAPE_TIMEOUT_SECONDS
 
     def test_quick_start_provider_choices_include_all_chat_providers(self):
-        from nanobot.providers.registry import PROVIDERS
+        from nujinagent.providers.registry import PROVIDERS
 
         choices = onboard_wizard._get_quick_start_provider_choices()
         selected_provider_names = set(choices.values())
@@ -1027,8 +1027,8 @@ class TestMainMenuInteraction:
 
         assert onboard_wizard._quick_start_oauth_login(Config(), "openai_codex") is False
         assert messages == [
-            "[red]This nanobot installation is missing the required oauth-cli-kit package. "
-            "Reinstall or upgrade nanobot-ai using the same installation method.[/red]"
+            "[red]This nujinagent installation is missing the required oauth-cli-kit package. "
+            "Reinstall or upgrade nujinagent using the same installation method.[/red]"
         ]
 
     def test_quick_start_openai_codex_runs_interactive_login_for_bad_cached_token(
@@ -1616,7 +1616,7 @@ class TestMainMenuInteraction:
         assert rows["WebSocket channel"] == "enabled"
 
     def test_configure_login_channel_defaults_to_login(self, monkeypatch):
-        from nanobot.channels.base import BaseChannel
+        from nujinagent.channels.base import BaseChannel
 
         config = Config()
         calls: dict[str, Any] = {}
@@ -1768,24 +1768,24 @@ class TestInputTextEmptyString:
 class TestIsStrOrNone:
 
     def test_str_or_none_true(self):
-        from nanobot.cli.onboard import _is_str_or_none
+        from nujinagent.cli.onboard import _is_str_or_none
 
         assert _is_str_or_none(str | None) is True
 
     def test_optional_str_true(self):
         from typing import Optional
 
-        from nanobot.cli.onboard import _is_str_or_none
+        from nujinagent.cli.onboard import _is_str_or_none
 
         assert _is_str_or_none(Optional[str]) is True
 
     def test_str_only_false(self):
-        from nanobot.cli.onboard import _is_str_or_none
+        from nujinagent.cli.onboard import _is_str_or_none
 
         assert _is_str_or_none(str) is False
 
     def test_int_or_none_false(self):
-        from nanobot.cli.onboard import _is_str_or_none
+        from nujinagent.cli.onboard import _is_str_or_none
 
         assert _is_str_or_none(int | None) is False
 
@@ -1855,8 +1855,8 @@ class TestConfigurePydanticModelEmptyString:
 class TestModelPresetWizard:
 
     def test_sync_preset_cache(self):
-        from nanobot.cli.onboard import _MODEL_PRESET_CACHE, _sync_preset_cache
-        from nanobot.config.schema import ModelPresetConfig
+        from nujinagent.cli.onboard import _MODEL_PRESET_CACHE, _sync_preset_cache
+        from nujinagent.config.schema import ModelPresetConfig
 
         config = Config()
         config.model_presets["fast"] = ModelPresetConfig(model="gpt-4.1-mini")
@@ -1866,8 +1866,8 @@ class TestModelPresetWizard:
         _MODEL_PRESET_CACHE.clear()
 
     def test_model_preset_add(self, monkeypatch):
-        from nanobot.cli.onboard import _MODEL_PRESET_CACHE, _configure_model_presets
-        from nanobot.config.schema import ModelPresetConfig
+        from nujinagent.cli.onboard import _MODEL_PRESET_CACHE, _configure_model_presets
+        from nujinagent.config.schema import ModelPresetConfig
 
         config = Config()
         _MODEL_PRESET_CACHE.clear()
@@ -1908,8 +1908,8 @@ class TestModelPresetWizard:
         _MODEL_PRESET_CACHE.clear()
 
     def test_model_preset_delete(self, monkeypatch):
-        from nanobot.cli.onboard import _MODEL_PRESET_CACHE, _configure_model_presets
-        from nanobot.config.schema import ModelPresetConfig
+        from nujinagent.cli.onboard import _MODEL_PRESET_CACHE, _configure_model_presets
+        from nujinagent.config.schema import ModelPresetConfig
 
         config = Config()
         config.model_presets["old - preset"] = ModelPresetConfig(model="x")
@@ -1955,8 +1955,8 @@ class TestModelPresetWizard:
         _MODEL_PRESET_CACHE.clear()
 
     def test_model_preset_field_handler(self, monkeypatch):
-        from nanobot.cli.onboard import _MODEL_PRESET_CACHE, _handle_model_preset_field
-        from nanobot.config.schema import AgentDefaults
+        from nujinagent.cli.onboard import _MODEL_PRESET_CACHE, _handle_model_preset_field
+        from nujinagent.config.schema import AgentDefaults
 
         _MODEL_PRESET_CACHE.clear()
         _MODEL_PRESET_CACHE.update({"fast", "power", "default"})
@@ -1969,12 +1969,12 @@ class TestModelPresetWizard:
         _MODEL_PRESET_CACHE.clear()
 
     def test_model_preset_field_handler_clear(self, monkeypatch):
-        from nanobot.cli.onboard import (
+        from nujinagent.cli.onboard import (
             _CLEAR_CHOICE,
             _MODEL_PRESET_CACHE,
             _handle_model_preset_field,
         )
-        from nanobot.config.schema import AgentDefaults
+        from nujinagent.config.schema import AgentDefaults
 
         _MODEL_PRESET_CACHE.clear()
         _MODEL_PRESET_CACHE.add("fast")
@@ -1987,7 +1987,7 @@ class TestModelPresetWizard:
         _MODEL_PRESET_CACHE.clear()
 
     def test_run_onboard_model_presets_edit(self, monkeypatch):
-        from nanobot.config.schema import ModelPresetConfig
+        from nujinagent.config.schema import ModelPresetConfig
 
         initial_config = Config()
 
@@ -2022,8 +2022,8 @@ class TestModelPresetWizard:
         assert "test" in result.config.model_presets
 
     def test_fallback_models_field_add(self, monkeypatch):
-        from nanobot.cli.onboard import _MODEL_PRESET_CACHE, _handle_fallback_models_field
-        from nanobot.config.schema import AgentDefaults
+        from nujinagent.cli.onboard import _MODEL_PRESET_CACHE, _handle_fallback_models_field
+        from nujinagent.config.schema import AgentDefaults
 
         _MODEL_PRESET_CACHE.clear()
         _MODEL_PRESET_CACHE.update({"fast", "default"})
@@ -2059,8 +2059,8 @@ class TestModelPresetWizard:
         _MODEL_PRESET_CACHE.clear()
 
     def test_provider_field_handler(self, monkeypatch):
-        from nanobot.cli.onboard import _handle_provider_field
-        from nanobot.config.schema import AgentDefaults
+        from nujinagent.cli.onboard import _handle_provider_field
+        from nujinagent.config.schema import AgentDefaults
 
         monkeypatch.setattr(onboard_wizard, "_select_with_back", lambda *a, **kw: "anthropic")
 
@@ -2069,8 +2069,8 @@ class TestModelPresetWizard:
         assert defaults.provider == "anthropic"
 
     def test_search_provider_field_handler(self, monkeypatch):
-        from nanobot.agent.tools.web import WebSearchConfig
-        from nanobot.cli.onboard import _handle_search_provider_field
+        from nujinagent.agent.tools.web import WebSearchConfig
+        from nujinagent.cli.onboard import _handle_search_provider_field
 
         monkeypatch.setattr(onboard_wizard, "_select_with_back", lambda *a, **kw: "keenable")
 
@@ -2079,13 +2079,13 @@ class TestModelPresetWizard:
         assert cfg.provider == "keenable"
 
     def test_provider_field_dispatch_is_model_type_aware(self):
-        from nanobot.agent.tools.web import WebSearchConfig
-        from nanobot.cli.onboard import (
+        from nujinagent.agent.tools.web import WebSearchConfig
+        from nujinagent.cli.onboard import (
             _handle_provider_field,
             _handle_search_provider_field,
             _resolve_field_handler,
         )
-        from nanobot.config.schema import AgentDefaults
+        from nujinagent.config.schema import AgentDefaults
 
         assert _resolve_field_handler(WebSearchConfig(), "provider") is _handle_search_provider_field
         assert _resolve_field_handler(AgentDefaults(), "provider") is _handle_provider_field

@@ -4,22 +4,22 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.context import TranscriptInput
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.context import RequestContext
-from nanobot.bus.events import INBOUND_META_TURN_ID, InboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.providers.base import GenerationSettings, LLMResponse
-from nanobot.runtime_context import public_history_message
-from nanobot.session.manager import Session, SessionManager
-from nanobot.session.recovery import (
+from nujinagent.agent.context import TranscriptInput
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.context import RequestContext
+from nujinagent.bus.events import INBOUND_META_TURN_ID, InboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.providers.base import GenerationSettings, LLMResponse
+from nujinagent.runtime_context import public_history_message
+from nujinagent.session.manager import Session, SessionManager
+from nujinagent.session.recovery import (
     PENDING_FOLLOWUP_ID_KEY,
     RUNTIME_CHECKPOINT_KEY,
     pending_followups,
     restore_runtime_checkpoint,
 )
-from nanobot.session.session_messages import SESSION_MESSAGE_METADATA_KEY
-from nanobot.webui.recovery import RecoveryCoordinator
+from nujinagent.session.session_messages import SESSION_MESSAGE_METADATA_KEY
+from nujinagent.webui.recovery import RecoveryCoordinator
 
 
 def _loop(sessions):
@@ -39,7 +39,7 @@ def _input(text, turn_id):
 @pytest.mark.parametrize("count", [1, 2])
 @pytest.mark.parametrize("leave_unconsumed", [False, True])
 async def test_late_consumption_commits_history_and_only_its_ids(tmp_path, monkeypatch, count, leave_unconsumed):
-    monkeypatch.setattr("nanobot.webui.history.get_webui_dir", lambda: tmp_path / "webui")
+    monkeypatch.setattr("nujinagent.webui.history.get_webui_dir", lambda: tmp_path / "webui")
     sessions = SessionManager(tmp_path / "workspace", sessions_root=tmp_path / "sessions")
     state = sessions.state
     try:

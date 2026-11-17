@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext
-from nanobot.goal.runtime import GoalExecutionPolicy
-from nanobot.session.goal_state import GOAL_STATE_KEY
-from nanobot.session.manager import SessionManager
-from nanobot.session.turn_continuation import (
+from nujinagent.agent.tools.context import RequestContext
+from nujinagent.goal.runtime import GoalExecutionPolicy
+from nujinagent.session.goal_state import GOAL_STATE_KEY
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.turn_continuation import (
     INTERNAL_CONTINUATION_META,
     iteration_limit_context,
     record_iteration_limit,

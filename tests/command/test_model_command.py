@@ -3,21 +3,21 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.goal_permission import goal_mutation_allowed
-from nanobot.agent.loop import AgentLoop
-from nanobot.bus.events import InboundMessage, OutboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.command.application import (
+from nujinagent.agent.goal_permission import goal_mutation_allowed
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.bus.events import InboundMessage, OutboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.command.application import (
     build_help_text,
     builtin_command_palette,
     register_builtin_commands,
 )
-from nanobot.command.builtin import cmd_model
-from nanobot.command.router import CommandContext, CommandExpansion, CommandInput, CommandRouter
-from nanobot.config.schema import ModelPresetConfig
-from nanobot.goal.command import cmd_goal, register_goal_command
-from nanobot.session.history_visibility import HIDDEN_HISTORY_META
-from nanobot.session.model_selection import (
+from nujinagent.command.builtin import cmd_model
+from nujinagent.command.router import CommandContext, CommandExpansion, CommandInput, CommandRouter
+from nujinagent.config.schema import ModelPresetConfig
+from nujinagent.goal.command import cmd_goal, register_goal_command
+from nujinagent.session.history_visibility import HIDDEN_HISTORY_META
+from nujinagent.session.model_selection import (
     SESSION_MODEL_PRESET_METADATA_KEY,
     model_preset_from_metadata,
 )

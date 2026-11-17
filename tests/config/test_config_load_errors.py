@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from nanobot.config.errors import ConfigLoadError
-from nanobot.config.loader import load_config, resolve_config_env_vars, save_config
+from nujinagent.config.errors import ConfigLoadError
+from nujinagent.config.loader import load_config, resolve_config_env_vars, save_config
 
 
 def test_load_config_missing_file_uses_defaults(tmp_path) -> None:
@@ -33,7 +33,7 @@ def test_load_config_reports_malformed_environment_safely(
 ) -> None:
     config_path = tmp_path / "missing.json"
     invalid_value = "sensitive-not-json"
-    monkeypatch.setenv("NANOBOT_PROVIDERS", invalid_value)
+    monkeypatch.setenv("NUJINAGENT_PROVIDERS", invalid_value)
 
     with pytest.raises(ConfigLoadError) as exc_info:
         load_config(config_path)
@@ -41,7 +41,7 @@ def test_load_config_reports_malformed_environment_safely(
     error = exc_info.value
     assert error.kind == "invalid_schema"
     assert error.path == config_path
-    assert "complex NANOBOT_* values use valid JSON" in str(error)
+    assert "complex NUJINAGENT_* values use valid JSON" in str(error)
     assert invalid_value not in str(error)
 
 

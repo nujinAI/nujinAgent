@@ -18,14 +18,14 @@ from websockets.datastructures import Headers
 from websockets.exceptions import InvalidStatus
 from websockets.http11 import Request
 
-from nanobot.channels.websocket.binary_http import BinaryHTTPBridge
-from nanobot.channels.websocket.runtime import WebSocketConfig
-from nanobot.webui import remote_ssh
-from nanobot.webui.client_contract import webui_contract
-from nanobot.webui.gateway_services import build_gateway_services
-from nanobot.webui.local_client_assets import LocalClientAssets
-from nanobot.webui.remote_proxy import RemoteProxy
-from nanobot.webui.remote_ssh import RemoteProfile, open_tunnel
+from nujinagent.channels.websocket.binary_http import BinaryHTTPBridge
+from nujinagent.channels.websocket.runtime import WebSocketConfig
+from nujinagent.webui import remote_ssh
+from nujinagent.webui.client_contract import webui_contract
+from nujinagent.webui.gateway_services import build_gateway_services
+from nujinagent.webui.local_client_assets import LocalClientAssets
+from nujinagent.webui.remote_proxy import RemoteProxy
+from nujinagent.webui.remote_ssh import RemoteProfile, open_tunnel
 
 ROOT = "synthetic-remote-root"
 MEDIA = "/api/media/AAAAAAAAAAAAAAAAAAAAAA/remoteFilePayload"
@@ -33,14 +33,14 @@ MEDIA = "/api/media/AAAAAAAAAAAAAAAAAAAAAA/remoteFilePayload"
 
 @pytest.fixture
 async def remote(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     assets = tmp_path / "local-dist"
     assets.mkdir()
-    (assets / "index.html").write_text("<!doctype html><title>Local nanobot</title>", encoding="utf-8")
+    (assets / "index.html").write_text("<!doctype html><title>Local nujinagent</title>", encoding="utf-8")
     (assets / "assets").mkdir()
     for name in ["index-AbcD1234.js", "index-AbcD1234.css", "index.js"]:
         (assets / "assets" / name).write_text("local client asset", encoding="utf-8")
-    monkeypatch.setattr("nanobot.webui.remote_proxy.LocalClientAssets", lambda: LocalClientAssets(assets))
+    monkeypatch.setattr("nujinagent.webui.remote_proxy.LocalClientAssets", lambda: LocalClientAssets(assets))
     config = WebSocketConfig(host="127.0.0.1", token_issue_secret=ROOT, path="/custom/ws")
     services = build_gateway_services(
         config=config, bus=MagicMock(), session_manager=None, static_dist_path=None,
@@ -99,7 +99,7 @@ async def remote(tmp_path, monkeypatch):
 
     async def messages(ws):
         assert ws in services.endpoint.webui_connections
-        assert ws.request.headers.get("X-Nanobot-Auth") is None
+        assert ws.request.headers.get("X-NujinAgent-Auth") is None
         try:
             await ws.send(json.dumps({"ready": True, "media": MEDIA,
                                       "query": parse_qs(urlsplit(ws.request.path).query).get("client_id"),
@@ -151,7 +151,7 @@ while data := upstream.recv(65536):
 
 async def bootstrap(remote, headers=None):
     response = await remote.client.get(remote.proxy.origin + "/webui/bootstrap", headers=(
-        headers or {"X-Nanobot-Auth": remote.proxy.secret}
+        headers or {"X-NujinAgent-Auth": remote.proxy.secret}
     ))
     assert response.status_code == 200, response.text
     return response.json()
@@ -165,7 +165,7 @@ async def test_only_local_assets_are_served_and_versioned_files_cached(remote, p
     response = await remote.client.get(remote.proxy.origin + path)
     assert response.status_code == 200
     assert response.headers["cache-control"] == ("private, max-age=31536000, immutable" if cacheable else "no-cache")
-    assert response.headers["x-nanobot-ui"] == "local"
+    assert response.headers["x-nujinagent-ui"] == "local"
     assert "set-cookie" not in response.headers
     assert remote.seen == []
     assert "local" in response.text.lower()
@@ -213,7 +213,7 @@ async def test_compressed_sibling_cannot_escape_local_bundle(remote, tmp_path):
 async def test_bootstrap_rechecks_contract_before_issuing_local_credentials(remote, contract, error):
     remote.state.contract = contract
     response = await remote.client.get(remote.proxy.origin + "/webui/bootstrap",
-                                       headers={"X-Nanobot-Auth": remote.proxy.secret})
+                                       headers={"X-NujinAgent-Auth": remote.proxy.secret})
     assert response.status_code == 409
     assert response.json()["error"] == error
     assert "token" not in response.json() and ROOT not in response.text
@@ -264,7 +264,7 @@ async def test_encoded_query_auth_and_case_insensitive_bearer(remote):
 ])
 async def test_foreign_browser_origin_rejected_even_with_local_secret(remote, headers):
     response = await remote.client.get(remote.proxy.origin + "/webui/bootstrap", headers={
-        "X-Nanobot-Auth": remote.proxy.secret, **headers,
+        "X-NujinAgent-Auth": remote.proxy.secret, **headers,
     })
     assert response.status_code == 403
     assert remote.seen == []
@@ -347,7 +347,7 @@ async def test_stalled_binary_upload_is_bounded_and_retryable(remote, monkeypatc
     async with connect(issued["ws_url"] + "?token=" + issued["token"], proxy=None) as ws:
         capability = json.loads(await ws.recv())["upload"]
         with monkeypatch.context() as stalled_timeout:
-            stalled_timeout.setattr("nanobot.webui.remote_proxy.UPLOAD_IDLE_TIMEOUT_SECONDS", .1)
+            stalled_timeout.setattr("nujinagent.webui.remote_proxy.UPLOAD_IDLE_TIMEOUT_SECONDS", .1)
             reader, writer = await asyncio.open_connection("127.0.0.1", remote.proxy.port)
             try:
                 writer.write((
@@ -430,7 +430,7 @@ async def test_shutdown_replay_contains_only_dead_local_capabilities(remote):
         await writer.wait_closed()
 
     async with await asyncio.start_server(replacement, "127.0.0.1", remote.proxy.port):
-        await remote.client.get(origin + "/webui/bootstrap", headers={"X-Nanobot-Auth": secret})
+        await remote.client.get(origin + "/webui/bootstrap", headers={"X-NujinAgent-Auth": secret})
         await remote.client.get(origin + "/api/fixture", headers={"Authorization": "Bearer " + issued["api_token"]})
     wire = b"".join(received).decode()
     assert ROOT not in wire
@@ -463,11 +463,11 @@ async def test_configured_token_issuer_cannot_be_used_through_proxy(remote):
     remote.proxy.resume(ROOT, remote.services.tokens.instance_id, "/assets/token")
     issued = await bootstrap(remote)
     for path in ("/assets/token", "/assets/token/", "/assets/token?token=" + issued["api_token"]):
-        response = await remote.client.get(remote.proxy.origin + path, headers={"X-Nanobot-Auth": remote.proxy.secret})
+        response = await remote.client.get(remote.proxy.origin + path, headers={"X-NujinAgent-Auth": remote.proxy.secret})
         assert response.status_code == 403
     remote.services.http.config.token_issue_path = "/webui/bootstrap"
     assert (await remote.client.get(remote.proxy.origin + "/webui/bootstrap", headers={
-        "X-Nanobot-Auth": remote.proxy.secret,
+        "X-NujinAgent-Auth": remote.proxy.secret,
     })).status_code == 502
 
 
@@ -498,7 +498,7 @@ async def test_local_restart_rejects_all_old_credentials_and_changes_cache_scope
                                           excluded_ports={port})
     try:
         assert (await remote.client.get(remote.proxy.origin + "/webui/bootstrap", headers={
-            "X-Nanobot-Auth": secret,
+            "X-NujinAgent-Auth": secret,
         })).status_code == 401
         assert (await remote.client.get(remote.proxy.origin + "/api/fixture", headers={
             "Authorization": "Bearer " + issued["api_token"],

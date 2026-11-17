@@ -21,7 +21,7 @@ import { ThreadViewport, type ThreadViewportHandle } from "@/components/thread/T
 import { WorkspaceAccessMenu, WorkspaceProjectPicker } from "@/components/thread/WorkspaceControls";
 import { WebSearchRun } from "@/components/thread/activity/WebSearchRun";
 import { Button } from "@/components/ui/button";
-import type { StreamError } from "@/lib/nanobot-client";
+import type { StreamError } from "@/lib/nujinagent-client";
 import { formatToolCallTrace } from "@/lib/tool-traces";
 import type { RecoveryState, SlashCommand, ToolProgressEvent, UIContextCompaction, UIMessage, WorkspaceScopePayload, WorkspacesPayload } from "@/lib/types";
 import { Sample, StatePicker, type ComponentExample } from "./example";
@@ -42,11 +42,11 @@ const commands: SlashCommand[] = [
   { command: "/compact", title: "previews.composer.compactCommand", description: "previews.composer.compactDescription", icon: "archive", lifecycle: "finalize_active_turn", acceptsArgs: false },
   { command: "/help", title: "previews.composer.helpCommand", description: "previews.composer.helpDescription", icon: "circle-help", lifecycle: "side_channel", acceptsArgs: false },
 ];
-const projectScope: WorkspaceScopePayload = { project_path: "D:\\Projects\\nanobot", project_name: "nanobot", access_mode: "restricted" };
+const projectScope: WorkspaceScopePayload = { project_path: "D:\\Projects\\nujinagent", project_name: "nujinagent", access_mode: "restricted" };
 const workspaceCatalog: WorkspacesPayload = {
   schema_version: 1, default_access_mode: "default", default_scope: projectScope,
-  recent_projects: [{ name: "nanobot", path: projectScope.project_path }, { name: "design-system", path: "D:\\Projects\\design-system" }],
-  favorite_projects: [{ name: "nanobot", path: projectScope.project_path }],
+  recent_projects: [{ name: "nujinagent", path: projectScope.project_path }, { name: "design-system", path: "D:\\Projects\\design-system" }],
+  favorite_projects: [{ name: "nujinagent", path: projectScope.project_path }],
   controls: { can_change_project: true },
 };
 const loadExampleProjects = () => Promise.resolve(workspaceCatalog);
@@ -128,11 +128,11 @@ const contextSnapshots: ContextSnapshot[] = [0, 1, 2].map((round) => ({
       { path: "/workspace/MEMORY.md", name: "MEMORY.md", state: "loaded", tokens: 2100 },
       { path: "/workspace/SOUL.md", name: "SOUL.md", state: "loaded", tokens: 380 },
       { path: "/workspace/AGENTS.md", name: "AGENTS.md", state: "loaded", tokens: 1400 },
-      { path: "/workspace/skills/nanobot-document/SKILL.md", name: "nanobot-document", state: "loaded", tokens: 550 },
-      { path: "/workspace/skills/nanobot-document/references/architecture.md", name: "architecture.md", state: round ? "loaded" : "discovered", tokens: round * 1600 },
-      { path: "/workspace/skills/nanobot-document/references/configuration.md", name: "configuration.md", state: "discovered", tokens: 0 },
+      { path: "/workspace/skills/nujinagent-document/SKILL.md", name: "nujinagent-document", state: "loaded", tokens: 550 },
+      { path: "/workspace/skills/nujinagent-document/references/architecture.md", name: "architecture.md", state: round ? "loaded" : "discovered", tokens: round * 1600 },
+      { path: "/workspace/skills/nujinagent-document/references/configuration.md", name: "configuration.md", state: "discovered", tokens: 0 },
     ],
-    edges: ["architecture.md", "configuration.md"].map((name) => ({ source: "/workspace/skills/nanobot-document/SKILL.md", target: `/workspace/skills/nanobot-document/references/${name}` })),
+    edges: ["architecture.md", "configuration.md"].map((name) => ({ source: "/workspace/skills/nujinagent-document/SKILL.md", target: `/workspace/skills/nujinagent-document/references/${name}` })),
   },
 }));
 

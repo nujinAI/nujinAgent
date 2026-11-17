@@ -1,12 +1,12 @@
 我先把你的第二个问题答清楚，因为它决定了第一个问题怎么答。
 
-**nanobot 不用 JSON Schema 的规范实现。** 没有 `jsonschema` 依赖，`base.py` 里 `validate_json_schema_value` 是手写的子集校验器——只认 `type`/`required`/`properties`/`additionalProperties`/`enum`/`min`/`max`/`items` 这些。所以"不认 `$ref`/`anyOf`"不是违反 MCP 规范，是自建校验器不完整。MCP 规范本身也没要求客户端本地校验，责任在 server 一侧。
+**nujinagent 不用 JSON Schema 的规范实现。** 没有 `jsonschema` 依赖，`base.py` 里 `validate_json_schema_value` 是手写的子集校验器——只认 `type`/`required`/`properties`/`additionalProperties`/`enum`/`min`/`max`/`items` 这些。所以"不认 `$ref`/`anyOf`"不是违反 MCP 规范，是自建校验器不完整。MCP 规范本身也没要求客户端本地校验，责任在 server 一侧。
 
 另外有个作者和我之前都没提的事：`mcp.py` 里**已经有一份完整的 $ref 解析器** `_resolve_local_schema_ref`，支持 JSON Pointer 全路径、`~0`/`~1` 转义、嵌套。它在构造 wrapper 时就把 server 给的本地 ref 全部提升到根 `$defs`。PR 又在 `base.py` 写了一个简化版（只认单段 `#/$defs/x`、`#/definitions/x`，不处理转义和嵌套路径）。对 MCP 工具能用，是因为规整层已经兜住了；但同一件事现在有两套实现。
 
 **具体误拒的例子（我实测了，不是推测）：**
 
-`def book(addr: Address | None = None)` 这种签名，FastMCP 输出 `anyOf: [{$ref: Address}, {type: null}]`，nanobot 的 `_normalize_nullable_schema` 把它折叠成 `{$ref: "#/$defs/Address", nullable: true}`。
+`def book(addr: Address | None = None)` 这种签名，FastMCP 输出 `anyOf: [{$ref: Address}, {type: null}]`，nujinagent 的 `_normalize_nullable_schema` 把它折叠成 `{$ref: "#/$defs/Address", nullable: true}`。
 
 然后传 `{"addr": null}` 的结果：
 

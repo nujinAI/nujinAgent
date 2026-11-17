@@ -8,18 +8,18 @@ import pytest
 pytest.importorskip("telegram")
 from telegram.error import NetworkError, RetryAfter, TimedOut
 
-from nanobot.bus.delivery import ChannelNotReadyError
-from nanobot.bus.events import OutboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.channels import manager as manager_module
-from nanobot.channels.manager import ChannelManager
-from nanobot.channels.telegram import runtime as telegram_module
-from nanobot.channels.telegram.runtime import (
+from nujinagent.bus.delivery import ChannelNotReadyError
+from nujinagent.bus.events import OutboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels import manager as manager_module
+from nujinagent.channels.manager import ChannelManager
+from nujinagent.channels.telegram import runtime as telegram_module
+from nujinagent.channels.telegram.runtime import (
     TELEGRAM_MAX_MESSAGE_LEN,
     TelegramChannel,
     _split_telegram_markdown,
 )
-from nanobot.config.schema import Config
+from nujinagent.config.schema import Config
 
 
 def make_manager(tmp_path):
@@ -111,7 +111,7 @@ async def test_manager_deadline_clamps_jitter_and_keeps_pre_submit_retry(tmp_pat
 
 
 async def test_telegram_restart_notice_deadline_never_replays_unknown_result(tmp_path):
-    from nanobot.utils.restart import RestartNotice
+    from nujinagent.utils.restart import RestartNotice
 
     manager = make_manager(tmp_path)
     channel = telegram_channel(manager)

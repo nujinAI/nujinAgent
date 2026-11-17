@@ -2,9 +2,9 @@ import os
 
 import pytest
 
-from nanobot.agent.tools import file_state
-from nanobot.agent.tools.apply_patch import ApplyPatchTool
-from nanobot.agent.tools.filesystem import EditFileTool, ReadFileTool
+from nujinagent.agent.tools import file_state
+from nujinagent.agent.tools.apply_patch import ApplyPatchTool
+from nujinagent.agent.tools.filesystem import EditFileTool, ReadFileTool
 
 
 class TestEditReadTracking:

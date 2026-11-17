@@ -11,11 +11,11 @@ from ddgs.exceptions import TimeoutException
 from ddgs.http_client import HttpClient
 
 from agent.runner_helpers import make_run_spec
-from nanobot.agent.runner import AgentRunner
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.agent.tools.web import WebSearchTool
-from nanobot.config.schema import AgentDefaults, WebSearchConfig
-from nanobot.providers.base import LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.agent.tools.web import WebSearchTool
+from nujinagent.config.schema import AgentDefaults, WebSearchConfig
+from nujinagent.providers.base import LLMProvider, LLMResponse, ToolCallRequest
 
 
 @pytest.mark.asyncio
@@ -38,13 +38,13 @@ async def test_ddgs_failure_reaches_model_with_observable_cause(monkeypatch, out
         if outcome == "timeout":
             raise TimeoutException("request timed out")
         status = {"empty": 200, "forbidden": 403, "rate_limited": 429}[outcome]
-        return SimpleNamespace(status_code=status, text=json.dumps(["nanobot", [], [], []]))
+        return SimpleNamespace(status_code=status, text=json.dumps(["nujinagent", [], [], []]))
 
     monkeypatch.setattr(HttpClient, "request", request)
     provider = MagicMock(spec=LLMProvider)
     provider.chat_stream_with_retry = AsyncMock(side_effect=[
         LLMResponse(content=None, tool_calls=[ToolCallRequest(
-            id="search-1", name="web_search", arguments={"query": "nanobot"},
+            id="search-1", name="web_search", arguments={"query": "nujinagent"},
         )]),
         LLMResponse(content="done"),
     ])
@@ -54,7 +54,7 @@ async def test_ddgs_failure_reaches_model_with_observable_cause(monkeypatch, out
     result = await AgentRunner().run(make_run_spec(
         provider,
         model="test-model",
-        initial_messages=[{"role": "user", "content": "Search for nanobot"}],
+        initial_messages=[{"role": "user", "content": "Search for nujinagent"}],
         tools=tools,
         max_iterations=2,
         max_tool_result_chars=AgentDefaults().max_tool_result_chars,

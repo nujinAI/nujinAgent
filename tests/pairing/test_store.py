@@ -2,12 +2,12 @@ import json
 
 import pytest
 
-from nanobot.pairing import __all__ as pairing_all
-from nanobot.pairing import store
+from nujinagent.pairing import __all__ as pairing_all
+from nujinagent.pairing import store
 
 
 def test_all_exports_are_importable():
-    import nanobot.pairing as pkg
+    import nujinagent.pairing as pkg
 
     for name in pairing_all:
         assert hasattr(pkg, name), f"{name} is in __all__ but not exported"
@@ -109,10 +109,10 @@ class TestFormatPairingReply:
     def test_points_owner_to_webui_with_command_fallback(self) -> None:
         reply = store.format_pairing_reply("ABCD-EFGH")
 
-        assert "nanobot WebUI" in reply
+        assert "nujinagent WebUI" in reply
         assert "ABCD-EFGH" in reply
         assert "/pairing approve ABCD-EFGH" in reply
-        assert "private nanobot" in reply
+        assert "private nujinagent" in reply
         assert "approved users" not in reply
 
 

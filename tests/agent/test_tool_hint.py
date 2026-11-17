@@ -1,5 +1,5 @@
-from nanobot.providers.base import ToolCallRequest
-from nanobot.utils.tool_hints import format_tool_hints
+from nujinagent.providers.base import ToolCallRequest
+from nujinagent.utils.tool_hints import format_tool_hints
 
 
 def _tc(name: str, args) -> ToolCallRequest:
@@ -29,7 +29,7 @@ class TestToolHintKnownTools:
         assert result == 'read foo.txt'
 
     def test_read_file_long_path(self):
-        result = _hint([_tc("read_file", {"path": "/home/user/.local/share/uv/tools/nanobot/agent/loop.py"})])
+        result = _hint([_tc("read_file", {"path": "/home/user/.local/share/uv/tools/nujinagent/agent/loop.py"})])
         assert "loop.py" in result
         assert "read " in result
 
@@ -57,19 +57,19 @@ class TestToolHintKnownTools:
         assert len(result) <= 50
 
     def test_exec_abbreviates_paths_in_command(self):
-        cmd = "cd D:\\Documents\\GitHub\\nanobot\\.worktree\\tomain\\nanobot && git diff origin/main...pr-2706 --name-only 2>&1"
+        cmd = "cd D:\\Documents\\GitHub\\nujinagent\\.worktree\\tomain\\nujinagent && git diff origin/main...pr-2706 --name-only 2>&1"
         result = _hint([_tc("exec", {"command": cmd})])
         assert "\u2026/" in result
         assert "worktree" not in result
 
     def test_exec_abbreviates_linux_paths(self):
-        cmd = "cd /home/user/projects/nanobot/.worktree/tomain && make build"
+        cmd = "cd /home/user/projects/nujinagent/.worktree/tomain && make build"
         result = _hint([_tc("exec", {"command": cmd})])
         assert "\u2026/" in result
         assert "projects" not in result
 
     def test_exec_abbreviates_home_paths(self):
-        cmd = "cd ~/projects/nanobot/workspace && pytest tests/"
+        cmd = "cd ~/projects/nujinagent/workspace && pytest tests/"
         result = _hint([_tc("exec", {"command": cmd})])
         assert "\u2026/" in result
 
@@ -272,19 +272,19 @@ class TestToolHintMaxLength:
         assert len(result) >= len(result_40)
 
     def test_path_type_respects_max_length(self):
-        long_path = "/home/user/.local/share/uv/tools/nanobot/agent/loop.py"
+        long_path = "/home/user/.local/share/uv/tools/nujinagent/agent/loop.py"
         short = _hint([_tc("read_file", {"path": long_path})], max_length=40)
         long = _hint([_tc("read_file", {"path": long_path})], max_length=120)
         assert len(long) > len(short)
 
     def test_edit_path_respects_max_length(self):
-        long_path = "/home/user/projects/nanobot/src/agent/loop.py"
+        long_path = "/home/user/projects/nujinagent/src/agent/loop.py"
         short = _hint([_tc("edit", {"file_path": long_path})], max_length=40)
         long = _hint([_tc("edit", {"file_path": long_path})], max_length=120)
         assert len(long) > len(short)
 
     def test_list_dir_path_respects_max_length(self):
-        long_path = "/home/user/.local/share/uv/tools/nanobot/"
+        long_path = "/home/user/.local/share/uv/tools/nujinagent/"
         short = _hint([_tc("list_dir", {"path": long_path})], max_length=40)
         long = _hint([_tc("list_dir", {"path": long_path})], max_length=120)
         assert len(long) > len(short)

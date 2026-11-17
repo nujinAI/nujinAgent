@@ -3,11 +3,11 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.model_runtime import ModelRuntimeResolver
-from nanobot.config.schema import Config, ModelPresetConfig
-from nanobot.providers import factory
-from nanobot.providers.base import LLMProvider, LLMResponse
-from nanobot.utils.llm_runtime import runtime_from_provider_snapshot
+from nujinagent.agent.model_runtime import ModelRuntimeResolver
+from nujinagent.config.schema import Config, ModelPresetConfig
+from nujinagent.providers import factory
+from nujinagent.providers.base import LLMProvider, LLMResponse
+from nujinagent.utils.llm_runtime import runtime_from_provider_snapshot
 
 
 @pytest.fixture
@@ -151,8 +151,8 @@ async def test_late_fallback_keeps_captured_credentials_body_and_proxy(configure
     backup = config.get_provider(preset=config.model_presets["backup"])
     backup.use_proxy = True
     backup.extra_body = {"metadata": {"token": "old-body"}}
-    config.network.proxy = "${NANOBOT_REUSE_TEST_PROXY}"
-    monkeypatch.setenv("NANOBOT_REUSE_TEST_PROXY", "http://old-proxy.test:9000")
+    config.network.proxy = "${NUJINAGENT_REUSE_TEST_PROXY}"
+    monkeypatch.setenv("NUJINAGENT_REUSE_TEST_PROXY", "http://old-proxy.test:9000")
     first = resolve(config, resolver)
     entered, release = asyncio.Event(), asyncio.Event()
 
@@ -167,7 +167,7 @@ async def test_late_fallback_keeps_captured_credentials_body_and_proxy(configure
         await asyncio.wait_for(entered.wait(), timeout=2)
         backup.api_key = "new-backup"
         backup.extra_body["metadata"]["token"] = "new-body"
-        monkeypatch.setenv("NANOBOT_REUSE_TEST_PROXY", "http://new-proxy.test:9000")
+        monkeypatch.setenv("NUJINAGENT_REUSE_TEST_PROXY", "http://new-proxy.test:9000")
         second = resolve(config, resolver)
         assert second.provider is not first.provider
         resolver.invalidate()
@@ -208,13 +208,13 @@ async def test_non_json_override_keeps_existing_construction_contract(configured
 
 @pytest.mark.asyncio
 async def test_sdk_stream_survives_reuse_replacement_and_invalidation(configured_override, tmp_path):
-    from nanobot.bus.events import OutboundMessage
-    from nanobot.nanobot import Nanobot
+    from nujinagent.bus.events import OutboundMessage
+    from nujinagent.nujinagent import NujinAgent
 
     config, fixture_resolver, created = configured_override
     path = tmp_path / "config.json"
     path.write_text(config.model_dump_json(), encoding="utf-8")
-    bot = Nanobot.from_config(path, workspace=tmp_path / "workspace")
+    bot = NujinAgent.from_config(path, workspace=tmp_path / "workspace")
     initial = bot._loop.runtime_resolver.runtime
     entered, release = asyncio.Event(), asyncio.Event()
     admitted = []

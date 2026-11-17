@@ -6,9 +6,9 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from nanobot.agent.tools.base import Tool, tool_parameters
-from nanobot.agent.tools.mcp import MCPToolWrapper
-from nanobot.agent.tools.registry import ToolRegistry, is_tool_error_result
+from nujinagent.agent.tools.base import Tool, tool_parameters
+from nujinagent.agent.tools.mcp import MCPToolWrapper
+from nujinagent.agent.tools.registry import ToolRegistry, is_tool_error_result
 
 
 @tool_parameters({

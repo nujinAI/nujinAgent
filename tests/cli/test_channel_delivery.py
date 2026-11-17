@@ -2,14 +2,14 @@ from functools import partial
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.message import MessageTool
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
-from nanobot.cli.gateway_runtime import _deliver_to_channel
-from nanobot.session.display_history import HISTORY_GENERATION_METADATA_KEY
-from nanobot.session.manager import SessionManager
-from nanobot.webui.gateway_services import build_gateway_services
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.message import MessageTool
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
+from nujinagent.cli.gateway_runtime import _deliver_to_channel
+from nujinagent.session.display_history import HISTORY_GENERATION_METADATA_KEY
+from nujinagent.session.manager import SessionManager
+from nujinagent.webui.gateway_services import build_gateway_services
 
 
 @pytest.fixture
@@ -110,7 +110,7 @@ async def webui_delivery(delivery, tmp_path, monkeypatch):
     sessions, bus, tool = delivery
     data = tmp_path / "instance"
     data.mkdir()
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: data)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: data)
     config = WebSocketConfig.model_validate({
         "enabled": True, "allowFrom": ["*"], "host": "127.0.0.1", "port": 0,
     })

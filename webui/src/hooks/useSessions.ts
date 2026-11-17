@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useClient } from "@/providers/ClientProvider";
-import { useNanobotStream } from "@/hooks/useNanobotStream";
+import { useNujinAgentStream } from "@/hooks/useNujinAgentStream";
 import {
   ApiError,
   deleteSession as apiDeleteSession,
@@ -206,7 +206,7 @@ export function useSessions(): {
 }
 
 export function useSessionHistory(key: string | null) {
-  const { messages, messagesKey, messagesReady, history, refreshHistory, loadOlder } = useNanobotStream(
+  const { messages, messagesKey, messagesReady, history, refreshHistory, loadOlder } = useNujinAgentStream(
     null, undefined, false, undefined, undefined, undefined, { key },
   );
   return { messages, messagesKey, messagesReady, ...history, refresh: refreshHistory, loadOlder };

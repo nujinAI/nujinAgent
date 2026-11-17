@@ -10,11 +10,11 @@ from PIL import Image
 from websockets.datastructures import Headers
 from websockets.http11 import Request
 
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket.attachment_store import AttachmentStore
-from nanobot.webui.background import save_background
-from nanobot.webui.inbound_commands import WebUICommandRouter
-from nanobot.webui.ws_http import GatewayHTTPHandler
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket.attachment_store import AttachmentStore
+from nujinagent.webui.background import save_background
+from nujinagent.webui.inbound_commands import WebUICommandRouter
+from nujinagent.webui.ws_http import GatewayHTTPHandler
 
 
 def image_bytes(fmt="PNG"):
@@ -155,14 +155,14 @@ async def test_background_style_persistence_and_validation(tmp_path):
 
 
 def test_background_style_failed_replace_preserves_both_values(tmp_path, monkeypatch):
-    from nanobot.webui.background import load_background_style, save_background_style
+    from nujinagent.webui.background import load_background_style, save_background_style
 
     save_background_style(tmp_path, 3, 30)
 
     def fail_replace(*args):
         raise OSError("replacement failed")
 
-    monkeypatch.setattr("nanobot.webui.background.os.replace", fail_replace)
+    monkeypatch.setattr("nujinagent.webui.background.os.replace", fail_replace)
     with pytest.raises(OSError):
         save_background_style(tmp_path, 19, 90)
     assert load_background_style(tmp_path) == {"blur": 3, "veil": 30}
@@ -173,7 +173,7 @@ async def test_background_worker_cancellation_survives_disconnect(tmp_path, monk
     import asyncio
     import threading
 
-    from nanobot.webui import background
+    from nujinagent.webui import background
 
     store = AttachmentStore(tmp_path / "staging")
     body = image_bytes()
@@ -212,7 +212,7 @@ async def test_background_worker_cancellation_survives_disconnect(tmp_path, monk
 
 
 async def test_background_worker_failure_releases_upload_for_retry(tmp_path, monkeypatch):
-    from nanobot.webui import background
+    from nujinagent.webui import background
 
     store = AttachmentStore(tmp_path / "staging", max_pending=1)
     body = image_bytes()
@@ -268,8 +268,8 @@ async def test_background_waiter_cancelled_does_not_write(tmp_path, monkeypatch)
     import asyncio
     import threading
 
-    from nanobot.runtime_admission import RuntimeBusyError
-    from nanobot.webui import background
+    from nujinagent.runtime_admission import RuntimeBusyError
+    from nujinagent.webui import background
 
     store = AttachmentStore(tmp_path / "staging")
     body = image_bytes()

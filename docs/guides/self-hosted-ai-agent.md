@@ -1,12 +1,12 @@
-# How to Run a Self-Hosted AI Agent with nanobot
+# How to Run a Self-Hosted AI Agent with nujinagent
 
-This guide sets up nanobot as a self-hosted AI agent runtime on your own machine or server. The result is a gateway process for the WebUI, chat apps, and automations.
+This guide sets up nujinagent as a self-hosted AI agent runtime on your own machine or server. The result is a gateway process for the WebUI, chat apps, and automations.
 
 ## What you will build
 
-- a nanobot config and workspace under your control
+- a nujinagent config and workspace under your control
 - a model provider connected through `config.json`
-- a long-running `nanobot gateway`
+- a long-running `nujinagent gateway`
 - optional browser and chat app access
 
 ## When to use this
@@ -15,7 +15,7 @@ Use this path when you want local or server-side ownership of the agent process,
 
 ## Choose your starting point
 
-**Already chatting in the WebUI:** you already have a self-hosted agent and a running gateway. Open **Channels** to connect a chat platform; use the same running gateway. If you want it to survive closing the launcher, follow [long-running gateway setup](./deploy-nanobot-gateway.md).
+**Already chatting in the WebUI:** you already have a self-hosted agent and a running gateway. Open **Channels** to connect a chat platform; use the same running gateway. If you want it to survive closing the launcher, follow [long-running gateway setup](./deploy-nujinagent-gateway.md).
 
 **New desktop installation:** follow the [quick start](../quick-start.md), configure a model in **Settings → Models**, and send `Hello!`. A normal browser reply confirms the setup; no additional CLI test or second gateway is required.
 
@@ -42,11 +42,11 @@ Send a message through the interface you intend to use. Check that it replies, t
 
 ## Troubleshooting
 
-- Run `nanobot status` with the same `--config` and `--workspace` flags used by the service.
-- Run `nanobot gateway --verbose` while debugging channel startup.
+- Run `nujinagent status` with the same `--config` and `--workspace` flags used by the service.
+- Run `nujinagent gateway --verbose` while debugging channel startup.
 - Check port conflicts if the WebUI or gateway health endpoint fails to bind.
 
-## Related nanobot docs
+## Related nujinagent docs
 
 - [Deployment](../deployment.md)
 - [Multiple Instances](../multiple-instances.md)

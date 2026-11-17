@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from nanobot.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.shell import ExecTool
 
 
 def test_deny_patterns_block_rm_rf():

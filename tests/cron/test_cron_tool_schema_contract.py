@@ -13,9 +13,9 @@ from collections.abc import Iterator
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.cron import CronTool
-from nanobot.agent.tools.registry import ToolRegistry
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.cron import CronTool
+from nujinagent.agent.tools.registry import ToolRegistry
 
 
 class _SvcStub:
@@ -103,7 +103,7 @@ class TestSchemaSelfDescribesRequirements:
 
 
 async def test_invalid_action_returns_tool_error_and_allows_correction(registry):
-    from nanobot.agent.tools.registry import is_tool_error_result
+    from nujinagent.agent.tools.registry import is_tool_error_result
 
     arguments = {"action": ["list"]}
     result = await registry.execute("cron", arguments)

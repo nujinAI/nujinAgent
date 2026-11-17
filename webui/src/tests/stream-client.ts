@@ -1,4 +1,4 @@
-import { NanobotClient } from "@/lib/nanobot-client";
+import { NujinAgentClient } from "@/lib/nujinagent-client";
 import type { InboundEvent } from "@/lib/types";
 
 export function createStreamClient(onSend: (frame: string) => void = () => {}) {
@@ -9,7 +9,7 @@ export function createStreamClient(onSend: (frame: string) => void = () => {}) {
     send: onSend,
     close() {},
   };
-  const client = new NanobotClient({
+  const client = new NujinAgentClient({
     url: "ws://test", reconnect: false,
     socketFactory: () => socket as unknown as WebSocket,
   });

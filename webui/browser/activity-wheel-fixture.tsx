@@ -62,7 +62,7 @@ export function ActivityWheelFixture() {
 
   return <main className="mx-auto space-y-8 px-5 py-8" style={{ maxWidth: 760 }}>
     <header className="space-y-3">
-      <p className="text-xs text-muted-foreground">nanobot · 组件预览 / 模拟活动</p>
+      <p className="text-xs text-muted-foreground">nujinagent · 组件预览 / 模拟活动</p>
       <h1 className="text-xl font-semibold">折叠活动滚轮</h1>
       <p className="text-sm text-muted-foreground">试试慢速或快速播放。点开「处理中」可以看全部记录。</p>
       <div className="flex flex-wrap gap-2">

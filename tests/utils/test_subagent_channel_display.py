@@ -1,4 +1,4 @@
-from nanobot.utils.subagent_channel_display import scrub_subagent_announce_body
+from nujinagent.utils.subagent_channel_display import scrub_subagent_announce_body
 
 
 def test_scrub_subagent_keeps_header_and_result_only() -> None:

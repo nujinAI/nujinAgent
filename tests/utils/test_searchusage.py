@@ -4,9 +4,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from nanobot.providers.base import LLMUsage
-from nanobot.utils.helpers import build_status_content
-from nanobot.utils.searchusage import (
+from nujinagent.providers.base import LLMUsage
+from nujinagent.utils.helpers import build_status_content
+from nujinagent.utils.searchusage import (
     SearchUsageInfo,
     _parse_tavily_usage,
     fetch_search_usage,
@@ -280,7 +280,7 @@ class TestBuildStatusContentWithSearchUsage:
     def test_existing_fields_still_present(self):
         usage_text = "🔍 Web Search: duckduckgo\n   Usage tracking: not available"
         content = build_status_content(**self._BASE_KWARGS, search_usage_text=usage_text)
-        assert "nanobot v0.1.0" in content
+        assert "nujinagent v0.1.0" in content
         assert "claude-opus-4-5" in content
         assert "1000 in / 200 out" in content
         assert "duckduckgo" in content

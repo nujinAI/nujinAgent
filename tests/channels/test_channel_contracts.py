@@ -6,10 +6,10 @@ from typing import Any
 
 import pytest
 
-from nanobot.bus.events import OutboundMessage
-from nanobot.channels._setup import channel_setup_spec
-from nanobot.channels.base import BaseChannel
-from nanobot.channels.contracts import (
+from nujinagent.bus.events import OutboundMessage
+from nujinagent.channels._setup import channel_setup_spec
+from nujinagent.channels.base import BaseChannel
+from nujinagent.channels.contracts import (
     ChannelActivation,
     ChannelFieldSpec,
     ChannelInstanceSpec,
@@ -25,8 +25,8 @@ from nanobot.channels.contracts import (
     channel_update_instance_config,
     resolve_channel_action_target,
 )
-from nanobot.channels.plugin import ChannelPlugin
-from nanobot.channels.registry import discover_plugins, load_channel_plugin
+from nujinagent.channels.plugin import ChannelPlugin
+from nujinagent.channels.registry import discover_plugins, load_channel_plugin
 
 
 class _SingleChannel(BaseChannel):
@@ -122,12 +122,12 @@ def test_contract_module_is_not_discovered_as_a_channel() -> None:
 def test_settings_contract_import_does_not_eagerly_load_runtime_graph() -> None:
     code = """
 import sys
-import nanobot.channels.validation
+import nujinagent.channels.validation
 
 unexpected = {
-    "nanobot.channels.manager",
-    "nanobot.channels.websocket",
-    "nanobot.webui.gateway_services",
+    "nujinagent.channels.manager",
+    "nujinagent.channels.websocket",
+    "nujinagent.webui.gateway_services",
 } & sys.modules.keys()
 assert not unexpected, sorted(unexpected)
 """

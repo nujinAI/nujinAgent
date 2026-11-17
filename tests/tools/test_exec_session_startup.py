@@ -5,10 +5,10 @@ import sys
 
 import pytest
 
-from nanobot.agent.tools.context import RequestContext, bind_request_context, reset_request_context
-from nanobot.agent.tools.exec_session import ExecSessionManager
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.execution import processes
+from nujinagent.agent.tools.context import RequestContext, bind_request_context, reset_request_context
+from nujinagent.agent.tools.exec_session import ExecSessionManager
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.execution import processes
 
 
 async def test_owner_cancellation_during_startup_preserves_other_execution(tmp_path, monkeypatch):

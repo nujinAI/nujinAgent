@@ -15,7 +15,7 @@ from threading import Thread
 
 import pytest
 
-from nanobot.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.shell import ExecTool
 
 pytestmark = pytest.mark.skipif(
     sys.platform != "darwin" or shutil.which("sandbox-exec") is None,
@@ -26,7 +26,7 @@ pytestmark = pytest.mark.skipif(
 @pytest.fixture
 def layout(tmp_path, monkeypatch):
     root = tmp_path.resolve()
-    with tempfile.TemporaryDirectory(prefix="nanobot-seatbelt-peer-", dir="/tmp") as peer:
+    with tempfile.TemporaryDirectory(prefix="nujinagent-seatbelt-peer-", dir="/tmp") as peer:
         paths = {
             "workspace": root / 'project with "quotes',
             "config": root / "config.json",
@@ -44,7 +44,7 @@ def layout(tmp_path, monkeypatch):
             (paths[name] / "sentinel").write_text("synthetic-data")
         paths["link"] = paths["workspace"] / "outside-link"
         paths["link"].symlink_to(paths["peer"], target_is_directory=True)
-        monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: paths["media"])
+        monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: paths["media"])
         yield paths
 
 

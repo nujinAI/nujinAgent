@@ -10,7 +10,7 @@ import { installSettingsViewTestHooks, jsonResponse, renderSettingsView, request
 function runtimeSettings() {
   const payload = settingsPayload();
   const runtimeConfig: NonNullable<SettingsPayload["runtime_config"]> = {
-    "agents.defaults.bot_name": "nanobot",
+    "agents.defaults.bot_name": "nujinagent",
     "agents.defaults.bot_icon": "🐈",
     "agents.defaults.timezone_mode": "auto",
     "agents.defaults.timezone": "UTC",

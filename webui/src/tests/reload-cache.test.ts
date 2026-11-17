@@ -51,7 +51,7 @@ describe("tab reload cache", () => {
     const cache = new WebuiThreadCache();
     cache.set("websocket:growing", body);
     expect(cache.get("websocket:growing")).toBe(body);
-    const raw = sessionStorage.getItem("nanobot.reload.v1.thread");
+    const raw = sessionStorage.getItem("nujinagent.reload.v1.thread");
     expect(raw).not.toBeNull();
     expect(raw!.length).toBeLessThanOrEqual(512 * 1024);
     const restored = new WebuiThreadCache().get("websocket:growing");
@@ -100,7 +100,7 @@ describe("tab reload cache", () => {
   it("does not persist oversized replay and validates session summaries", () => {
     activateReloadCache("ws://localhost:8765/");
     writeReloadCache("thread", { key: "large", body: "x".repeat(600_000) });
-    expect(sessionStorage.getItem("nanobot.reload.v1.thread")).toBeNull();
+    expect(sessionStorage.getItem("nujinagent.reload.v1.thread")).toBeNull();
     writeReloadCache("sessions", [{ key: "bad" }, {
       key: "websocket:a", channel: "websocket", chatId: "a", preview: "Answer", title: "Topic",
     }]);

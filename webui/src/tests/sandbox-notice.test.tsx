@@ -3,12 +3,12 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SandboxNotice } from "@/components/thread/SandboxNotice";
 import { useSandboxNotice } from "@/components/thread/useSandboxNotice";
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import type { InboundEvent, ToolProgressEvent } from "@/lib/types";
 import { createStreamClient } from "./stream-client";
 
 function Harness({ client, chatId = "sandbox-chat", enabled = true, onOpen = () => {} }: {
-  client: NanobotClient;
+  client: NujinAgentClient;
   chatId?: string;
   enabled?: boolean;
   onOpen?: () => void;

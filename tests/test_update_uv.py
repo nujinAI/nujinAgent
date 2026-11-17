@@ -24,25 +24,25 @@ import pytest
 from packaging.tags import sys_tags
 from test_update_jobs import _preparer_script, wheel
 
-import nanobot.update_jobs as jobs
-from nanobot.installation_lock import (
+import nujinagent.update_jobs as jobs
+from nujinagent.installation_lock import (
     InstallationBusyError,
     file_access,
     installation_access,
     installation_state_dir,
 )
-from nanobot.release_feed import ReleaseFeed, ReleaseTarget
-from nanobot.releases import PLATFORMS, ReleaseArtifact, release_filenames
-from nanobot.update_manager import read_manager_policy
-from nanobot.update_plan import InstallationSnapshot, UpdatePlan
-from nanobot.update_stop import stop_reviewed_gateways
-from nanobot.update_uv import UV_TRANSACTION_VERSION, cache_digest, uv_environment
-from nanobot.update_worker import JobStatus, Phase, WorkerSpec, inspect_environment
+from nujinagent.release_feed import ReleaseFeed, ReleaseTarget
+from nujinagent.releases import PLATFORMS, ReleaseArtifact, release_filenames
+from nujinagent.update_manager import read_manager_policy
+from nujinagent.update_plan import InstallationSnapshot, UpdatePlan
+from nujinagent.update_stop import stop_reviewed_gateways
+from nujinagent.update_uv import UV_TRANSACTION_VERSION, cache_digest, uv_environment
+from nujinagent.update_worker import JobStatus, Phase, WorkerSpec, inspect_environment
 
 pytestmark = pytest.mark.skipif(os.name != "posix" or not shutil.which("uv"), reason="Native POSIX uv required")
 
 _FAIL_VERIFICATION_ONCE = """
-from _nanobot_update import update_worker
+from _nujinagent_update import update_worker
 original_verify = update_worker._verify
 def verify(spec, directory):
     marker = directory / 'fail-verification'
@@ -62,7 +62,7 @@ class IndexHandler(SimpleHTTPRequestHandler):
 @pytest.fixture
 def uv_installation(tmp_path, monkeypatch):
     monkeypatch.setattr(ReleaseFeed, "_authorize", AsyncMock())
-    from nanobot import update_process
+    from nujinagent import update_process
 
     manager_version = subprocess.check_output([shutil.which("uv"), "--version"], text=True, timeout=10)
     if manager_version.split()[:2] != ["uv", UV_TRANSACTION_VERSION]:
@@ -110,7 +110,7 @@ def uv_installation(tmp_path, monkeypatch):
     wheel(artifacts, "fixture-feature", "1.0.0")
     wheel(artifacts, "fixture-injected", "1.0.0")
     wheel(artifacts, "fixture-obsolete", "1.0.0")
-    wheel(artifacts, "nanobot-ai", "0.3.4", extras=["feature"], entrypoint=True,
+    wheel(artifacts, "nujinagent", "0.3.4", extras=["feature"], entrypoint=True,
           requires=['fixture-feature>=1; extra == "feature"', "fixture-obsolete==1.0.0"])
     index()
     server = ThreadingHTTPServer(("127.0.0.1", 0), partial(IndexHandler, directory=str(artifacts)))
@@ -122,15 +122,15 @@ def uv_installation(tmp_path, monkeypatch):
         subprocess.run([
             shutil.which("uv"), "tool", "install", "--no-config", "--python", sys._base_executable,
             "--index-url", f"http://127.0.0.1:{server.server_port}/simple/",
-            "--with", "fixture-injected==1.0.0", "nanobot-ai[feature]>=0.3.4,<0.4",
+            "--with", "fixture-injected==1.0.0", "nujinagent[feature]>=0.3.4,<0.4",
         ], env=env, check=True, capture_output=True, timeout=60)
-        environment = tools / "nanobot-ai"
+        environment = tools / "nujinagent"
         python = str(environment / "bin/python")
         baseline = inspect_environment(python, uv=True)
         receipt = environment / "uv-receipt.toml"
         assert "no-build" not in receipt.read_text(), "Baseline must not already have staging's no-build option"
         package = subprocess.check_output([
-            python, "-I", "-c", "import nanobot; print(nanobot.__file__)",
+            python, "-I", "-c", "import nujinagent; print(nujinagent.__file__)",
         ], text=True).strip()
         snapshot = InstallationSnapshot(
             environment=str(environment), python=python, installed_version="0.3.4", running_version="0.3.4",
@@ -142,9 +142,9 @@ def uv_installation(tmp_path, monkeypatch):
         wheel(artifacts, "fixture-feature", "2.0.0")
         wheel(artifacts, "fixture-runtime", "2.0.0")
         platform = next(tag.platform for tag in sys_tags() if tag.platform in PLATFORMS.values())
-        candidate = wheel(artifacts, "nanobot-ai", "0.3.5", platform=platform, extras=["feature"], entrypoint=True,
+        candidate = wheel(artifacts, "nujinagent", "0.3.5", platform=platform, extras=["feature"], entrypoint=True,
                           requires=['fixture-feature>=2; extra == "feature"', "fixture-runtime>=2"])
-        wheel(artifacts, "nanobot-ai", "0.3.6", entrypoint=True)
+        wheel(artifacts, "nujinagent", "0.3.6", entrypoint=True)
         index()
         target = ReleaseTarget(version="0.3.5", source="pypi",
                                url=f"https://files.pythonhosted.org/packages/{candidate.name}",
@@ -158,7 +158,7 @@ def uv_installation(tmp_path, monkeypatch):
             if request.url.host == "files.pythonhosted.org":
                 assert request.url.path.endswith(candidate.name)
                 return httpx.Response(200, content=candidate.read_bytes())
-            assert request.url.path == "/pypi/nanobot-ai/0.3.5/json"
+            assert request.url.path == "/pypi/nujinagent/0.3.5/json"
             files = []
             for filename in release_filenames("0.3.5"):
                 if filename.endswith((".whl", ".tar.gz")):
@@ -166,7 +166,7 @@ def uv_installation(tmp_path, monkeypatch):
                     files.append({"filename": filename, "size": target.artifact.size if selected else 1,
                                   "url": f"https://files.pythonhosted.org/packages/{filename}", "yanked": False,
                                   "digests": {"sha256": target.artifact.sha256 if selected else "a" * 64}})
-            return httpx.Response(200, json={"info": {"name": "nanobot-ai", "version": "0.3.5", "requires_python": ">=3.11"}, "urls": files})
+            return httpx.Response(200, json={"info": {"name": "nujinagent", "version": "0.3.5", "requires_python": ">=3.11"}, "urls": files})
 
         yield plan, baseline, receipt, httpx.MockTransport(response), server
     finally:
@@ -197,7 +197,7 @@ async def test_uv_prepared_job_preserves_owner_and_sealed_inputs(uv_installation
         assert inspect_environment(plan.installation.python, uv=True) == before
         assert receipt.read_bytes() == original_receipt
         assert spec.uv.versions == {
-            "nanobot-ai": "0.3.5", "fixture-feature": "2.0.0",
+            "nujinagent": "0.3.5", "fixture-feature": "2.0.0",
             "fixture-runtime": "2.0.0", "fixture-injected": "1.0.0",
         }
         cache = directory / spec.uv.cache

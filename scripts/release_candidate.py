@@ -23,7 +23,7 @@ from pathlib import Path
 
 from packaging.version import Version
 
-from nanobot.releases import (
+from nujinagent.releases import (
     PLATFORMS,
     ReleaseArtifact,
     ReleaseManifest,
@@ -34,7 +34,7 @@ from scripts.build_tui_wheels import build_wheel, release_bundle, source_files, 
 from scripts.release_install_guide import render_install_guide
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_FILES = ("pyproject.toml", "nanobot/__init__.py")
+VERSION_FILES = ("pyproject.toml", "nujinagent/__init__.py")
 
 
 def _git(root: Path, *args: str, env: dict[str, str] | None = None, trim: bool = True) -> str:
@@ -85,7 +85,7 @@ def prepare_preview(root: Path, output: Path, *, source_commit: str, base: str, 
     current = Version(tomllib.loads(original["pyproject.toml"])["project"]["version"])
     if Version(base).release < current.release or _git(root, "tag", "--list", f"v{base}"):
         raise ValueError("Preview base must not precede the source or reuse an existing stable tag")
-    changes = _version_changes(original["pyproject.toml"], original["nanobot/__init__.py"], version)
+    changes = _version_changes(original["pyproject.toml"], original["nujinagent/__init__.py"], version)
     _git(root, "clone", "--shared", "--no-checkout", "-c", "core.autocrlf=false", str(root), str(output))
     hooks = output / ".git" / "candidate-hooks"
     hooks.mkdir()
@@ -96,8 +96,8 @@ def prepare_preview(root: Path, output: Path, *, source_commit: str, base: str, 
     timestamp = _git(root, "show", "-s", "--format=%cI", source_commit)
     env = dict(os.environ)
     for role in ("AUTHOR", "COMMITTER"):
-        env[f"GIT_{role}_NAME"] = "nanobot release"
-        env[f"GIT_{role}_EMAIL"] = "nanobot-release@users.noreply.github.com"
+        env[f"GIT_{role}_NAME"] = "nujinagent release"
+        env[f"GIT_{role}_EMAIL"] = "nujinagent-release@users.noreply.github.com"
         env[f"GIT_{role}_DATE"] = timestamp
     _git(output, "-c", "commit.gpgsign=false", "-c", f"core.hooksPath={hooks}",
          "commit", "-m", f"Prepare {version} from {source_commit}", env=env)
@@ -120,7 +120,7 @@ def prepare_stable(root: Path, output: Path, *, source_commit: str, version: str
     original = {name: _git(root, "show", f"{source_commit}:{name}", trim=False) for name in VERSION_FILES}
     if tomllib.loads(original["pyproject.toml"])["project"]["version"] != version:
         raise ValueError("Stable source must already declare the requested final version")
-    if _version_changes(original["pyproject.toml"], original["nanobot/__init__.py"], version) != original:
+    if _version_changes(original["pyproject.toml"], original["nujinagent/__init__.py"], version) != original:
         raise ValueError("Stable version declarations need maintainer review")
     if _git(root, "tag", "--list", f"v{version}"):
         raise ValueError("Stable preparation must not reuse an existing stable tag")
@@ -142,7 +142,7 @@ def _candidate_identity(root: Path, source_commit: str) -> tuple[str, str, str]:
         if _git(root, "rev-parse", "HEAD^") != source_commit:
             raise ValueError("Candidate must be a direct child of its exact source commit")
         original = {name: _git(root, "show", f"{source_commit}:{name}", trim=False) for name in VERSION_FILES}
-        expected = _version_changes(original["pyproject.toml"], original["nanobot/__init__.py"], version)
+        expected = _version_changes(original["pyproject.toml"], original["nujinagent/__init__.py"], version)
         changed = set(_git(root, "diff", "--name-only", source_commit, "HEAD").splitlines())
         if changed != set(VERSION_FILES) or any(
             (root / name).read_text(encoding="utf-8") != text for name, text in expected.items()
@@ -156,18 +156,18 @@ def _source_payload(root: Path, source: dict[str, bytes], prefix: str) -> dict[s
     tracked = set(_git(root, "ls-files", "-z", trim=False).split("\0")) - {""}
     build = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))["tool"]["hatch"]["build"]
     exclusions = [*build.get("exclude", []), *build["targets"]["sdist"].get("exclude", [])]
-    expected = {name: name for name in tracked if name.startswith("nanobot/")
+    expected = {name: name for name in tracked if name.startswith("nujinagent/")
                 and not any(fnmatchcase(name, pattern) for pattern in exclusions)}
     for name in tracked:
         if (name.startswith("docs/") and name.endswith(".md")
                 and not any(fnmatchcase(name, pattern) for pattern in exclusions)):
             if source.get(prefix + name) != (root / name).read_bytes():
                 raise ValueError(f"Source documentation differs from the candidate: {name}")
-            expected["nanobot/skills/nanobot-document/references/" + name.removeprefix("docs/")] = name
+            expected["nujinagent/skills/nujinagent-document/references/" + name.removeprefix("docs/")] = name
     payload = {name.removeprefix(prefix): data for name, data in source.items()
-               if name.startswith(prefix + "nanobot/")}
-    generated = {name for name in payload if name == "nanobot/_build_commit.txt"
-                 or name.startswith("nanobot/web/dist/")}
+               if name.startswith(prefix + "nujinagent/")}
+    generated = {name for name in payload if name == "nujinagent/_build_commit.txt"
+                 or name.startswith("nujinagent/web/dist/")}
     if payload.keys() - generated != expected.keys():
         raise ValueError("Source application payload has missing or unexpected files")
     for name, data in payload.items():
@@ -188,41 +188,41 @@ def verify_candidate(root: Path, artifacts: Path, *, source_commit: str) -> Rele
         if (artifacts / name).is_symlink() or not (artifacts / name).is_file():
             raise ValueError(f"Release artifact must be a regular file: {name}")
     commit_bytes = (candidate_commit + "\n").encode()
-    source = source_files((artifacts / f"nanobot_ai-{version}.tar.gz").read_bytes())
-    prefix = f"nanobot_ai-{version}/"
+    source = source_files((artifacts / f"nujinagent_ai-{version}.tar.gz").read_bytes())
+    prefix = f"nujinagent_ai-{version}/"
     source_metadata = BytesParser().parsebytes(source[f"{prefix}PKG-INFO"])
     if (source_metadata["Name"], source_metadata["Version"], source_metadata["Requires-Python"]) != (
-        "nanobot-ai", version, requires_python,
+        "nujinagent", version, requires_python,
     ):
         raise ValueError("Source distribution metadata differs from the candidate")
     for name in VERSION_FILES:
         if source[f"{prefix}{name}"] != (root / name).read_bytes():
             raise ValueError(f"Source distribution differs from candidate: {name}")
-    if (source.get(f"{prefix}nanobot/_build_commit.txt") != commit_bytes
-            or not source.get(f"{prefix}nanobot/web/dist/index.html")):
+    if (source.get(f"{prefix}nujinagent/_build_commit.txt") != commit_bytes
+            or not source.get(f"{prefix}nujinagent/web/dist/index.html")):
         raise ValueError("Source distribution must contain the candidate commit and built WebUI")
     payload = _source_payload(root, source, prefix)
     for target, platform in PLATFORMS.items():
-        wheel = artifacts / f"nanobot_ai-{version}-py3-none-{platform}.whl"
+        wheel = artifacts / f"nujinagent_ai-{version}-py3-none-{platform}.whl"
         files, modes, info = wheel_files(wheel, version, platform=platform)
         package_metadata = BytesParser().parsebytes(files[f"{info}/METADATA"])
         if package_metadata["Requires-Python"] != requires_python:
             raise ValueError("Wheel Python requirement differs from the candidate")
-        if files.get("nanobot/_build_commit.txt") != commit_bytes:
+        if files.get("nujinagent/_build_commit.txt") != commit_bytes:
             raise ValueError("Wheel build commit differs from the candidate")
-        if not files.get("nanobot/web/dist/index.html"):
+        if not files.get("nujinagent/web/dist/index.html"):
             raise ValueError("Wheel is missing its compiled WebUI")
         application = {name: data for name, data in files.items()
-                       if name.startswith("nanobot/") and not name.startswith("nanobot/tui/bin/")}
+                       if name.startswith("nujinagent/") and not name.startswith("nujinagent/tui/bin/")}
         if application != payload:
             raise ValueError(f"Wheel application payload differs from the source distribution: {target}")
         bundle = release_bundle(artifacts, target, root=root)
-        embedded = {name.removeprefix("nanobot/tui/bin/"): data for name, data in files.items()
-                    if name.startswith("nanobot/tui/bin/")}
+        embedded = {name.removeprefix("nujinagent/tui/bin/"): data for name, data in files.items()
+                    if name.startswith("nujinagent/tui/bin/")}
         if embedded != bundle:
             raise ValueError("Wheel and fallback TUI archive differ")
-        asset = f"nanobot-tui-{target}" + (".exe" if target == "win32-x64" else "")
-        mode = modes[f"nanobot/tui/bin/{asset}"]
+        asset = f"nujinagent-tui-{target}" + (".exe" if target == "win32-x64" else "")
+        mode = modes[f"nujinagent/tui/bin/{asset}"]
         if not stat.S_ISREG(mode) or stat.S_IMODE(mode) != 0o755:
             raise ValueError("Installed TUI must retain executable permissions")
     records: list[ReleaseArtifact] = []
@@ -277,7 +277,7 @@ def assemble_candidate(root: Path, output: Path, *, wheel: Path, sdist: Path,
                        tui_dir: Path, source_commit: str) -> ReleaseManifest:
     """Assemble in a fresh directory; failed output is never given a manifest."""
     version, _, _ = _candidate_identity(root, source_commit)
-    if sdist.name != f"nanobot_ai-{version}.tar.gz":
+    if sdist.name != f"nujinagent_ai-{version}.tar.gz":
         raise ValueError("Source distribution filename differs from the candidate")
     output.mkdir(parents=True, exist_ok=False)
     for target in PLATFORMS:

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("inferred files wrap without losing copy text or preview actions", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   await page.goto("/browser/fixture.html?case=inline-file-reference");
   const files = page.getByRole("region", { name: "File references" }).getByTestId("inline-file-path");
   await expect(files).toHaveCount(9);

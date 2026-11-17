@@ -13,7 +13,7 @@
 .appearance-theme-miniature[data-mode="dark"] { --mini-paper: #303030; --mini-sidebar: #383838; --mini-line: #656565; }
 .appearance-theme-miniature[data-mode="system"] { --mini-paper: linear-gradient(110deg, #fff calc(50% - 0.5px), #303030 calc(50% + 0.5px)); --mini-sidebar: #f1f0ec; --mini-line: #969590; }
 .appearance-mini-sidebar { width: 24%; display: flex; flex-direction: column; gap: 6px; padding: 11px 7px; background: var(--mini-sidebar); }
-.appearance-mini-sidebar::before { content: ""; width: 11px; height: 11px; background: url('/brand/nanobot_mark.svg') center / contain no-repeat; margin-bottom: 3px; }
+.appearance-mini-sidebar::before { content: ""; width: 11px; height: 11px; background: url('/brand/nujinagent_mark.svg') center / contain no-repeat; margin-bottom: 3px; }
 .appearance-mini-sidebar span { height: 3px; border-radius: 3px; background: var(--mini-line); }
 .appearance-mini-main { display: flex; min-width: 0; flex: 1; flex-direction: column; align-items: flex-start; gap: 5px; padding: 16px 12px 10px; }
 .appearance-mini-main span { height: 3px; width: 80%; border-radius: 3px; background: var(--mini-line); }

@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from nanobot.agent.tools.filesystem import EditFileTool, ReadFileTool
+from nujinagent.agent.tools.filesystem import EditFileTool, ReadFileTool
 
 
 class TestDeleteLineCleanup:

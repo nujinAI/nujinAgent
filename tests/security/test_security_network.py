@@ -9,7 +9,7 @@ from urllib.request import getproxies_environment
 import httpx
 import pytest
 
-from nanobot.security.network import (
+from nujinagent.security.network import (
     PinnedDNSAsyncTransport,
     configure_ssrf_whitelist,
     contains_internal_url,
@@ -46,7 +46,7 @@ def _clear_proxy_env(monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.delenv(name, raising=False)
     # getproxies() falls back to OS-level proxy settings (e.g. the Windows
     # registry) when no environment variables are set; keep tests hermetic.
-    monkeypatch.setattr("nanobot.security.network.getproxies", getproxies_environment)
+    monkeypatch.setattr("nujinagent.security.network.getproxies", getproxies_environment)
 
 
 def _fake_resolve(host: str, results: list[str]):
@@ -79,7 +79,7 @@ def test_rejects_missing_domain():
     ("0.0.0.0", "zero"),
 ])
 def test_blocks_private_ipv4(ip: str, label: str):
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("evil.com", [ip])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("evil.com", [ip])):
         ok, err = validate_url_target("http://evil.com/path")
         assert not ok, f"Should block {label} ({ip})"
         assert "private" in err.lower() or "blocked" in err.lower()
@@ -88,7 +88,7 @@ def test_blocks_private_ipv4(ip: str, label: str):
 def test_blocks_ipv6_loopback():
     def _resolver(hostname, port, family=0, type_=0):
         return [(socket.AF_INET6, socket.SOCK_STREAM, 0, "", ("::1", 0, 0, 0))]
-    with patch("nanobot.security.network.socket.getaddrinfo", _resolver):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _resolver):
         ok, err = validate_url_target("http://evil.com/")
         assert not ok
 
@@ -109,20 +109,20 @@ def _fake_resolve_v6(host: str, results: list[str]):
 
 
 def test_blocks_ipv6_mapped_loopback():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:127.0.0.1"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:127.0.0.1"])):
         ok, err = validate_url_target("http://evil.com/")
         assert not ok
         assert "blocked" in err.lower()
 
 
 def test_blocks_ipv6_mapped_metadata():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:169.254.169.254"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:169.254.169.254"])):
         ok, err = validate_url_target("http://evil.com/")
         assert not ok
 
 
 def test_blocks_ipv6_mapped_rfc1918():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:10.0.0.1"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:10.0.0.1"])):
         ok, err = validate_url_target("http://evil.com/")
         assert not ok
 
@@ -153,26 +153,26 @@ def test_blocks_sampled_addresses_from_internal_networks():
     for idx, ip in enumerate(samples):
         host = f"internal-{idx}.example"
         resolver = _fake_resolve_v6 if ":" in ip else _fake_resolve
-        with patch("nanobot.security.network.socket.getaddrinfo", resolver(host, [ip])):
+        with patch("nujinagent.security.network.socket.getaddrinfo", resolver(host, [ip])):
             ok, err = validate_url_target(f"http://{host}/")
         assert not ok, f"expected {ip} to be blocked"
         assert "blocked" in err.lower() or "private" in err.lower()
 
 
 def test_allows_public_ipv6():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_v6("example.com", ["2606:4700::6810:84e5"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_v6("example.com", ["2606:4700::6810:84e5"])):
         ok, err = validate_url_target("http://example.com/")
         assert ok, f"Should allow public IPv6, got: {err}"
 
 
 def test_allows_public_ip():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["93.184.216.34"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["93.184.216.34"])):
         ok, err = validate_url_target("http://example.com/page")
         assert ok, f"Should allow public IP, got: {err}"
 
 
 def test_resolve_url_target_returns_validated_public_ips():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["93.184.216.34"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["93.184.216.34"])):
         ok, err, resolved_ips = resolve_url_target("http://example.com/page")
 
     assert ok, err
@@ -188,7 +188,7 @@ def test_resolve_url_target_only_delegates_dns_to_trusted_proxy(
     expected_ok: bool,
 ):
     with patch(
-        "nanobot.security.network.socket.getaddrinfo",
+        "nujinagent.security.network.socket.getaddrinfo",
         side_effect=socket.gaierror("local DNS unavailable"),
     ):
         ok, err, resolved_ips = resolve_url_target(
@@ -212,7 +212,7 @@ def test_resolve_url_target_only_delegates_dns_to_trusted_proxy(
 )
 def test_resolve_url_target_does_not_delegate_local_targets(url: str):
     with patch(
-        "nanobot.security.network.socket.getaddrinfo",
+        "nujinagent.security.network.socket.getaddrinfo",
         side_effect=socket.gaierror("local DNS unavailable"),
     ):
         ok, _, _ = resolve_url_target(url, trust_remote_dns=True)
@@ -226,7 +226,7 @@ def test_pin_resolved_url_dns_prevents_second_resolution_rebind(host):
         return [(socket.AF_INET, socket.SOCK_STREAM, 0, "", ("169.254.169.254", 0))]
 
     with patch(
-        "nanobot.security.network.socket.getaddrinfo", side_effect=_rebinding_resolver
+        "nujinagent.security.network.socket.getaddrinfo", side_effect=_rebinding_resolver
     ) as resolver:
         with pin_resolved_url_dns("http://example.com/page", ("93.184.216.34",)):
             infos = socket.getaddrinfo(host, 80, socket.AF_UNSPEC, socket.SOCK_STREAM)
@@ -240,7 +240,7 @@ def test_pin_resolved_url_dns_prevents_second_resolution_rebind(host):
 def test_pin_resolved_url_dns_preserves_other_host_lookups(host):
     expected = [(socket.AF_INET, socket.SOCK_STREAM, 0, "", ("93.184.216.35", 443))]
     with patch(
-        "nanobot.security.network.socket.getaddrinfo", return_value=expected
+        "nujinagent.security.network.socket.getaddrinfo", return_value=expected
     ) as resolver:
         with pin_resolved_url_dns("https://example.com/", ("93.184.216.34",)):
             infos = socket.getaddrinfo(
@@ -293,7 +293,7 @@ async def test_pinned_dns_httpx_does_not_connect_to_rebound_loopback(monkeypatch
             raise OSError("Test stopped the connection to the validated public IP")
         return await original_create_connection(protocol_factory, host, port, **kwargs)
 
-    monkeypatch.setattr("nanobot.security.network._allowed_networks", [])
+    monkeypatch.setattr("nujinagent.security.network._allowed_networks", [])
     monkeypatch.setattr(socket, "getaddrinfo", rebinding_resolver)
     monkeypatch.setattr(loop, "create_connection", controlled_connection)
     async with server, httpx.AsyncClient(
@@ -313,8 +313,8 @@ async def test_pinned_dns_httpx_does_not_connect_to_rebound_loopback(monkeypatch
 
 
 def test_allows_normal_https():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("github.com", ["140.82.121.3"])):
-        ok, err = validate_url_target("https://github.com/HKUDS/nanobot")
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("github.com", ["140.82.121.3"])):
+        ok, err = validate_url_target("https://github.com/HKUDS/nujinagent")
         assert ok
 
 
@@ -331,37 +331,37 @@ def test_env_proxy_helpers_respect_no_proxy(monkeypatch):
 
 
 def test_detects_curl_metadata():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("169.254.169.254", ["169.254.169.254"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("169.254.169.254", ["169.254.169.254"])):
         assert contains_internal_url('curl -s http://169.254.169.254/computeMetadata/v1/')
 
 
 def test_detects_wget_localhost():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("localhost", ["127.0.0.1"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("localhost", ["127.0.0.1"])):
         assert contains_internal_url("wget http://localhost:8080/secret")
 
 
 def test_loopback_exception_allows_literal_localhost_only():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("localhost", ["127.0.0.1"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("localhost", ["127.0.0.1"])):
         assert not contains_internal_url("curl http://localhost:8765/", allow_loopback=True)
 
 
 def test_loopback_exception_rejects_public_name_resolving_to_loopback():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["127.0.0.1"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["127.0.0.1"])):
         assert contains_internal_url("curl http://example.com:8765/", allow_loopback=True)
 
 
 def test_loopback_exception_rejects_metadata():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("169.254.169.254", ["169.254.169.254"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("169.254.169.254", ["169.254.169.254"])):
         assert contains_internal_url("curl http://169.254.169.254/latest/meta-data/", allow_loopback=True)
 
 
 def test_detects_ipv6_mapped_loopback():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:127.0.0.1"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_v6("evil.com", ["::ffff:127.0.0.1"])):
         assert contains_internal_url("curl http://evil.com/secret")
 
 
 def test_allows_normal_curl():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["93.184.216.34"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("example.com", ["93.184.216.34"])):
         assert not contains_internal_url("curl https://example.com/api/data")
 
 
@@ -372,7 +372,7 @@ def test_no_urls_returns_false():
 # SSRF whitelist — allow specific CIDR ranges (#2669)
 
 def test_blocks_cgnat_by_default():
-    with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("ts.local", ["100.100.1.1"])):
+    with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("ts.local", ["100.100.1.1"])):
         ok, _ = validate_url_target("http://ts.local/api")
         assert not ok
 
@@ -380,7 +380,7 @@ def test_blocks_cgnat_by_default():
 def test_whitelist_allows_cgnat():
     configure_ssrf_whitelist(["100.64.0.0/10"])
     try:
-        with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("ts.local", ["100.100.1.1"])):
+        with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("ts.local", ["100.100.1.1"])):
             ok, err = validate_url_target("http://ts.local/api")
             assert ok, f"Whitelisted CGNAT should be allowed, got: {err}"
     finally:
@@ -390,7 +390,7 @@ def test_whitelist_allows_cgnat():
 def test_whitelist_does_not_affect_other_blocked():
     configure_ssrf_whitelist(["100.64.0.0/10"])
     try:
-        with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("evil.com", ["10.0.0.1"])):
+        with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("evil.com", ["10.0.0.1"])):
             ok, _ = validate_url_target("http://evil.com/secret")
             assert not ok
     finally:
@@ -400,7 +400,7 @@ def test_whitelist_does_not_affect_other_blocked():
 def test_whitelist_invalid_cidr_ignored():
     configure_ssrf_whitelist(["not-a-cidr", "100.64.0.0/10"])
     try:
-        with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve("ts.local", ["100.100.1.1"])):
+        with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve("ts.local", ["100.100.1.1"])):
             ok, _ = validate_url_target("http://ts.local/api")
             assert ok
     finally:
@@ -410,7 +410,7 @@ def test_whitelist_invalid_cidr_ignored():
 def test_whitelist_allows_ipv6_mapped_cgnat():
     configure_ssrf_whitelist(["100.64.0.0/10"])
     try:
-        with patch("nanobot.security.network.socket.getaddrinfo", _fake_resolve_v6("ts.local", ["::ffff:100.100.1.1"])):
+        with patch("nujinagent.security.network.socket.getaddrinfo", _fake_resolve_v6("ts.local", ["::ffff:100.100.1.1"])):
             ok, err = validate_url_target("http://ts.local/api")
             assert ok, f"Whitelisted IPv6-mapped CGNAT should be allowed, got: {err}"
     finally:

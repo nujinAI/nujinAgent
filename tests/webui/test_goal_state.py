@@ -2,15 +2,15 @@ import json
 
 import pytest
 
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.outbound_events import GoalStateSyncEvent, TurnEndEvent
-from nanobot.bus.queue import MessageBus
-from nanobot.bus.runtime_events import GoalStateChanged, RuntimeEventContext
-from nanobot.session.goal_state import GOAL_STATE_KEY, goal_state_runtime_lines
-from nanobot.session.manager import SessionManager
-from nanobot.session.webui_turns import WebuiTurnCoordinator
-from nanobot.webui.goal_state import goal_state_ws_blob
-from nanobot.webui.session_projection import WebUISessionProjection
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.outbound_events import GoalStateSyncEvent, TurnEndEvent
+from nujinagent.bus.queue import MessageBus
+from nujinagent.bus.runtime_events import GoalStateChanged, RuntimeEventContext
+from nujinagent.session.goal_state import GOAL_STATE_KEY, goal_state_runtime_lines
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.webui_turns import WebuiTurnCoordinator
+from nujinagent.webui.goal_state import goal_state_ws_blob
+from nujinagent.webui.session_projection import WebUISessionProjection
 
 
 def test_goal_state_ws_blob_inactive_when_missing_or_completed():

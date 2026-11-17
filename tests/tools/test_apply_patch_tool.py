@@ -4,8 +4,8 @@ import asyncio
 
 import pytest
 
-from nanobot.agent.tools.apply_patch import ApplyPatchTool
-from nanobot.execution.files import WritableFile
+from nujinagent.agent.tools.apply_patch import ApplyPatchTool
+from nujinagent.execution.files import WritableFile
 
 
 def test_apply_patch_edits_replace(tmp_path):
@@ -374,7 +374,7 @@ def test_apply_patch_media_dir_is_read_only_by_default(tmp_path, monkeypatch):
     media.mkdir()
     target = media / "demo.md"
     target.write_text("before\n", encoding="utf-8")
-    monkeypatch.setattr("nanobot.config.loader._current_config_path", tmp_path / "config.json")
+    monkeypatch.setattr("nujinagent.config.loader._current_config_path", tmp_path / "config.json")
     tool = ApplyPatchTool(workspace=workspace, allowed_dir=workspace)
 
     result = asyncio.run(

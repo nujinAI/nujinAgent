@@ -4,7 +4,7 @@ import logging
 
 from websockets.exceptions import InvalidMessage
 
-from nanobot.webui.websocket_logging import (
+from nujinagent.webui.websocket_logging import (
     OPENING_HANDSHAKE_FAILED_MESSAGE,
     WebSocketHandshakeNoiseFilter,
 )

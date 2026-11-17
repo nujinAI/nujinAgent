@@ -38,8 +38,8 @@ for (const dark of [false, true]) {
       page.on("pageerror", error => errors.push(error.message));
       await page.setViewportSize({ width: narrow ? 390 : 1280, height: 900 });
       await page.addInitScript(theme => {
-        localStorage.setItem("nanobot.locale", "en");
-        localStorage.setItem("nanobot-webui.theme", theme);
+        localStorage.setItem("nujinagent.locale", "en");
+        localStorage.setItem("nujinagent-webui.theme", theme);
       }, dark ? "dark" : "light");
       await page.goto("/browser/fixture.html?case=file-diff");
       const tsx = page.getByRole("region", { name: "Status.tsx", exact: true });
@@ -109,7 +109,7 @@ test("custom backgrounds remain visible through diff surfaces in both themes", a
 test("large diffs retain bounded expansion, release and truncated-file actions", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   await page.goto("/browser/fixture.html?case=file-diff");
   const long = page.getByRole("region", { name: "long.ts", exact: true });
   const toggle = long.getByTestId("file-edit-diff-toggle");
@@ -154,7 +154,7 @@ for (const file of ["worker.ts", "long-separated.ts"]) {
   test(`windowed ${file} retains every source line and coordinate`, async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
-    await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+    await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
     await page.goto("/browser/fixture.html?case=file-diff");
     const section = page.getByRole("region", { name: file, exact: true });
     await section.getByTestId("file-edit-diff-toggle").click();
@@ -201,7 +201,7 @@ for (const [file, renderedIndex, sourceLine, reverse] of [["long.ts", 58, 59, fa
   test(`native selection survives moving diff windows and releases pinned rows: ${file}`, async ({ page, context }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.setViewportSize({ width: 1280, height: 700 });
-    await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+    await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
     await page.goto("/browser/fixture.html?case=file-diff");
     const section = page.getByRole("region", { name: file, exact: true });
     await section.getByTestId("file-edit-diff-toggle").click();

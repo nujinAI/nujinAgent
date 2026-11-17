@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import { normalizeToolProgressEvents } from "@/lib/tool-traces";
 import type { SandboxIssue } from "./SandboxNotice";
 
@@ -15,7 +15,7 @@ const issues = new Map<string, SandboxIssue>([
 ]);
 
 /** Observe live execution only; opening history must not replay old warnings. */
-export function useSandboxNotice(client: NanobotClient, chatId: string | null, enabled: boolean) {
+export function useSandboxNotice(client: NujinAgentClient, chatId: string | null, enabled: boolean) {
   const scope = useMemo(() => ({ client, chatId, enabled }), [client, chatId, enabled]);
   const [notice, setNotice] = useState<{
     scope: typeof scope;

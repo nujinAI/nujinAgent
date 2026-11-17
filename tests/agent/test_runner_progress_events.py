@@ -5,13 +5,13 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.runner_helpers import make_run_spec
-from nanobot.agent.progress_hook import AgentProgressHook
-from nanobot.agent.runner import AgentRunner
-from nanobot.agent.tools.base import ToolResult
-from nanobot.agent.tools.registry import with_tool_error_hint
-from nanobot.config.schema import AgentDefaults
-from nanobot.providers.base import LLMResponse, ToolCallRequest
-from nanobot.utils.progress_events import output_events
+from nujinagent.agent.progress_hook import AgentProgressHook
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.agent.tools.base import ToolResult
+from nujinagent.agent.tools.registry import with_tool_error_hint
+from nujinagent.config.schema import AgentDefaults
+from nujinagent.providers.base import LLMResponse, ToolCallRequest
+from nujinagent.utils.progress_events import output_events
 
 _DEFAULTS = AgentDefaults()
 
@@ -296,7 +296,7 @@ async def test_tool_notification_failure_settles_results_and_cancels_siblings(fa
             assert slow["_recovery_interrupted"] is True
             assert "outcome is unknown" in slow["content"]
             assert checkpoint["pending_tool_calls"] == []
-            from nanobot.session.recovery import runtime_checkpoint_is_well_formed
+            from nujinagent.session.recovery import runtime_checkpoint_is_well_formed
 
             assert runtime_checkpoint_is_well_formed(checkpoint)
         else:

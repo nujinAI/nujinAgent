@@ -18,14 +18,14 @@ import pytest
 import websockets
 from aiohttp import web
 
-from nanobot.agent.subagent_sessions import SubagentSessions
-from nanobot.agent.subagent_status import SubagentStatus
-from nanobot.config.loader import load_config
-from nanobot.session.manager import SessionManager
-from nanobot.session.recovery import PENDING_USER_TURN_KEY, RUNTIME_CHECKPOINT_KEY
-from nanobot.webui.local_client_assets import LocalClientAssets
-from nanobot.webui.remote_proxy import RemoteProxy
-from nanobot.webui.remote_ssh import Tunnel
+from nujinagent.agent.subagent_sessions import SubagentSessions
+from nujinagent.agent.subagent_status import SubagentStatus
+from nujinagent.config.loader import load_config
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.recovery import PENDING_USER_TURN_KEY, RUNTIME_CHECKPOINT_KEY
+from nujinagent.webui.local_client_assets import LocalClientAssets
+from nujinagent.webui.remote_proxy import RemoteProxy
+from nujinagent.webui.remote_ssh import Tunnel
 
 _BOOTSTRAP_SECRET = "smoke-secret"
 
@@ -39,7 +39,7 @@ async def test_remote_proxy_with_real_gateway_chat_settings_and_renewal(
     assets.mkdir()
     shell = "<!doctype html><title>Local smoke client</title>"
     (assets / "index.html").write_text(shell, encoding="utf-8")
-    monkeypatch.setattr("nanobot.webui.remote_proxy.LocalClientAssets", lambda: LocalClientAssets(assets))
+    monkeypatch.setattr("nujinagent.webui.remote_proxy.LocalClientAssets", lambda: LocalClientAssets(assets))
     ws_port, gateway_port = _free_port(), _free_port()
     workspace = tmp_path / "workspace"
     workspace.mkdir()
@@ -57,7 +57,7 @@ async def test_remote_proxy_with_real_gateway_chat_settings_and_renewal(
         async with httpx.AsyncClient(trust_env=False) as client:
             assert (await client.get(proxy.origin + "/")).text == shell
             first = (await client.get(proxy.origin + "/webui/bootstrap", headers={
-                "X-Nanobot-Auth": proxy.secret,
+                "X-NujinAgent-Auth": proxy.secret,
             })).json()
             assert _BOOTSTRAP_SECRET not in json.dumps(first)
             async with websockets.connect(first["ws_url"] + "?token=" + first["token"] + "&client_id=proxy-smoke") as ws:
@@ -76,7 +76,7 @@ async def test_remote_proxy_with_real_gateway_chat_settings_and_renewal(
                 assert mutation["ok"] is True, mutation
                 assert load_config(config_path).agents.defaults.max_tool_iterations == 2
             renewed = (await client.get(proxy.origin + "/webui/bootstrap", headers={
-                "X-Nanobot-Auth": proxy.secret,
+                "X-NujinAgent-Auth": proxy.secret,
             })).json()
             assert renewed["token"] != first["token"]
             response = await client.get(proxy.origin + "/api/sessions", headers={
@@ -195,7 +195,7 @@ def _start_gateway(config_path: Path, log_path: Path) -> subprocess.Popen[bytes]
             [
                 sys.executable,
                 "-m",
-                "nanobot",
+                "nujinagent",
                 "gateway",
                 "--config",
                 str(config_path),
@@ -238,7 +238,7 @@ def _get_json(url: str, *, token: str | None = None) -> dict:
 def _get_bootstrap(url: str) -> dict:
     response = httpx.get(
         url,
-        headers={"X-Nanobot-Auth": _BOOTSTRAP_SECRET},
+        headers={"X-NujinAgent-Auth": _BOOTSTRAP_SECRET},
         timeout=5.0,
         trust_env=False,
     )
@@ -644,7 +644,7 @@ async def test_real_gateway_goal_single_run_and_stop(tmp_path: Path, stop_during
     launcher = _TASK_DIAGNOSTICS + """
 import asyncio, faulthandler, httpx, sys
 from pathlib import Path
-from nanobot.session.state import SessionState
+from nujinagent.session.state import SessionState
 original = SessionState.checkpoint_view
 barrier_url = sys.argv[3]
 held = False
@@ -660,8 +660,8 @@ async def checkpoint(self, session, payload):
         await asyncio.Event().wait()
 SessionState.checkpoint_view = checkpoint
 home, config = sys.argv[1:3]
-sys.argv = ['nanobot', '--home', home, 'gateway', '--config', config]
-from nanobot.cli.entry import main
+sys.argv = ['nujinagent', '--home', home, 'gateway', '--config', config]
+from nujinagent.cli.entry import main
 with Path(config).with_name('gateway-stacks.log').open('w') as stacks:
     faulthandler.dump_traceback_later(10, repeat=True, file=stacks)
     try:
@@ -669,7 +669,7 @@ with Path(config).with_name('gateway-stacks.log').open('w') as stacks:
     finally:
         faulthandler.cancel_dump_traceback_later()
 """
-    env = {key: value for key, value in os.environ.items() if not key.startswith("NANOBOT_")}
+    env = {key: value for key, value in os.environ.items() if not key.startswith("NUJINAGENT_")}
     env.update({"HOME": str(home), "USERPROFILE": str(home), "APPDATA": str(home),
                 "LOCALAPPDATA": str(home), "TMP": str(tmp_path), "TEMP": str(tmp_path),
                 "NO_PROXY": "localhost,127.0.0.1", "no_proxy": "localhost,127.0.0.1"})

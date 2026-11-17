@@ -62,8 +62,8 @@ test("system theme stays live, explicit choices persist, and tabs agree", async 
 
 test("custom reading size previews, persists and survives preset changes", async ({ page }) => {
   await page.addInitScript(() => {
-    if (!localStorage.getItem("nanobot-webui.settings-preferences")) {
-      localStorage.setItem("nanobot-webui.settings-preferences", JSON.stringify({
+    if (!localStorage.getItem("nujinagent-webui.settings-preferences")) {
+      localStorage.setItem("nujinagent-webui.settings-preferences", JSON.stringify({
         schemaVersion: 1, notificationSound: true, browserNotifications: true, brandLogos: false,
       }));
     }
@@ -88,7 +88,7 @@ test("custom reading size previews, persists and survives preset changes", async
   await expect(input).toHaveValue("24");
   await expect(paragraph).toHaveCSS("font-size", "24px");
   await expect(title).toHaveCSS("font-size", titleSize);
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("nanobot-webui.settings-preferences")!))).toMatchObject({
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("nujinagent-webui.settings-preferences")!))).toMatchObject({
     readingTextSize: "custom", customReadingTextSize: 24, notificationSound: true, browserNotifications: true, brandLogos: false,
   });
 });
@@ -97,8 +97,8 @@ for (const narrow of [false, true]) {
   test(`appearance remains usable at maximum size: ${narrow ? "narrow dark" : "desktop light"}`, async ({ page }, info) => {
     await page.setViewportSize(narrow ? { width: 390, height: 844 } : { width: 1280, height: 1000 });
     await page.addInitScript((dark) => {
-      localStorage.setItem("nanobot.locale", "zh-CN");
-      localStorage.setItem("nanobot-webui.theme", dark ? "dark" : "light");
+      localStorage.setItem("nujinagent.locale", "zh-CN");
+      localStorage.setItem("nujinagent-webui.theme", dark ? "dark" : "light");
     }, narrow);
     await page.goto("/browser/fixture.html?case=appearance");
     await page.getByRole("spinbutton", { name: "自定义字号", exact: true }).click();
@@ -121,7 +121,7 @@ test("appearance explanations open on demand and follow the selected display mod
   await page.goto("/browser/fixture.html?case=appearance");
   const explanations = [
     ["Reading text size", "Adjust messages, code and the composer—not navigation."],
-    ["Activity display", "Choose how much detail appears as nanobot works."],
+    ["Activity display", "Choose how much detail appears as nujinagent works."],
     ["Activity details", "Keep details collapsed by default. Show the latest activity while working."],
     ["Edit preview", "Show changed files and line counts."],
   ];

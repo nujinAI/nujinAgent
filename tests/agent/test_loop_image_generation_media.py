@@ -6,15 +6,15 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.image_generation import register_image_generation_tool
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.config.loader import set_config_path
-from nanobot.config.schema import Config
-from nanobot.providers.base import LLMResponse, ToolCallRequest
-from nanobot.providers.image_generation import GeneratedImageResponse
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.image_generation import register_image_generation_tool
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.loader import set_config_path
+from nujinagent.config.schema import Config
+from nujinagent.providers.base import LLMResponse, ToolCallRequest
+from nujinagent.providers.image_generation import GeneratedImageResponse
 
 PNG_DATA_URL = (
     "data:image/png;base64,"
@@ -37,7 +37,7 @@ async def test_generate_image_does_not_attach_media_to_final_response(
 ) -> None:
     set_config_path(tmp_path / "config.json")
     monkeypatch.setattr(
-        "nanobot.agent.tools.image_generation.get_image_gen_provider",
+        "nujinagent.agent.tools.image_generation.get_image_gen_provider",
         lambda name: FakeImageClient if name == "openrouter" else None,
     )
     provider = MagicMock()

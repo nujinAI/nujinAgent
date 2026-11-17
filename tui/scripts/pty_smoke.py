@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ENTER_ALT_SCREEN = b"\x1b[?1049h"
 LEAVE_ALT_SCREEN = b"\x1b[?1049l"
-RESUME_COMMAND = b"Resume with: nanobot agent --session websocket:resume-chat"
+RESUME_COMMAND = b"Resume with: nujinagent agent --session websocket:resume-chat"
 
 
 def _resize(fd: int, rows: int, columns: int) -> None:
@@ -83,17 +83,17 @@ def smoke(executable: Path | None = None, *, cwd: Path = ROOT) -> float:
     command = [str(executable)] if executable else [bun, str(ROOT / "src/index.ts")]
     env = {
         **os.environ,
-        "NANOBOT_TUI_WS_URL": "ws://127.0.0.1:9/ws",
-        "NANOBOT_TUI_API_URL": "",
-        "NANOBOT_TUI_API_TOKEN": "",
-        "NANOBOT_TUI_CHAT_ID": "resume-chat",
-        "NANOBOT_TUI_MODEL": "test/model",
-        "NANOBOT_TUI_WORKSPACE": "/tmp/nanobot-tui-pty",
-        "NANOBOT_TUI_VERSION": "test",
-        "NANOBOT_TUI_ACCESS": "workspace access",
+        "NUJINAGENT_TUI_WS_URL": "ws://127.0.0.1:9/ws",
+        "NUJINAGENT_TUI_API_URL": "",
+        "NUJINAGENT_TUI_API_TOKEN": "",
+        "NUJINAGENT_TUI_CHAT_ID": "resume-chat",
+        "NUJINAGENT_TUI_MODEL": "test/model",
+        "NUJINAGENT_TUI_WORKSPACE": "/tmp/nujinagent-tui-pty",
+        "NUJINAGENT_TUI_VERSION": "test",
+        "NUJINAGENT_TUI_ACCESS": "workspace access",
         # A fixed theme keeps this test about PTY behavior rather than the
         # terminal emulator's optional OSC 10/11 response.
-        "NANOBOT_TUI_THEME": "dark",
+        "NUJINAGENT_TUI_THEME": "dark",
     }
     env.pop("HERDR_ENV", None)
     env.pop("HERDR_PANE_ID", None)
@@ -113,7 +113,7 @@ def smoke(executable: Path | None = None, *, cwd: Path = ROOT) -> float:
     reaped = False
     try:
         _resize(master, 24, 80)
-        output.extend(_wait_for(master, b"Ask nanobot anything", 10))
+        output.extend(_wait_for(master, b"Ask nujinagent anything", 10))
         first_screen_ms = (time.perf_counter() - started) * 1000
         if ENTER_ALT_SCREEN not in output:
             raise AssertionError("TUI did not enter its alternate screen")

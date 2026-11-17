@@ -1,10 +1,10 @@
 # Install and Quick Start
 
-This guide has one goal: get a normal nanobot reply in your browser. Do not add chat apps, MCP servers, fallback models, or deployment until this path works.
+This guide has one goal: get a normal nujinagent reply in your browser. Do not add chat apps, MCP servers, fallback models, or deployment until this path works.
 
 If terminals, Python, or API keys are unfamiliar, use the [beginner walkthrough](./start-without-technical-background.md), which explains each term and screen.
 
-These repository docs describe `main`, which can be newer than the released package. The installer below installs the latest stable release. Check `nanobot --version` and use the [matching stable guide](https://nanobot.wiki/docs/latest/getting-started/quick-start) if its setup screens differ from this page.
+These repository docs describe `main`, which can be newer than the released package. The installer below installs the latest stable release. Check `nujinagent --version` and use the [matching stable guide](https://nujinagent.wiki/docs/latest/getting-started/quick-start) if its setup screens differ from this page.
 
 ## What You Need
 
@@ -12,25 +12,25 @@ These repository docs describe `main`, which can be newer than the released pack
 - Access to one supported AI provider, company endpoint, or local model server.
 - The credential, endpoint URL, and model ID required by that service. Local providers such as Ollama may not require a key.
 
-Official platform packages include the WebUI and matching native TUI for macOS 13+ (Apple Silicon and Intel), glibc 2.17+ Linux (ARM64 and x64), and Windows x64; no frontend build tools are needed. Other platforms can use the WebUI or `nanobot --classic`; see [terminal requirements](./cli-reference.md#agent-cli). Source installs need Git and use Bun, which nanobot downloads when needed.
+Official platform packages include the WebUI and matching native TUI for macOS 13+ (Apple Silicon and Intel), glibc 2.17+ Linux (ARM64 and x64), and Windows x64; no frontend build tools are needed. Other platforms can use the WebUI or `nujinagent --classic`; see [terminal requirements](./cli-reference.md#agent-cli). Source installs need Git and use Bun, which nujinagent downloads when needed.
 
-## 1. Install nanobot
+## 1. Install nujinagent
 
-The recommended installer keeps nanobot out of the system Python environment. On a fresh local desktop, it starts the WebUI when installation finishes.
+The recommended installer keeps nujinagent out of the system Python environment. On a fresh local desktop, it starts the WebUI when installation finishes.
 
 **macOS / Linux**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/HKUDS/nujinagent/main/scripts/install.sh | sh
 ```
 
 **Windows PowerShell**
 
 ```powershell
-irm https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/HKUDS/nujinagent/main/scripts/install.ps1 | iex
 ```
 
-A fresh install uses a dedicated environment under `~/.nanobot/venv`, even if uv or pipx is on PATH. Existing installations keep their original manager; an active ordinary virtual environment remains an explicit target and is not adopted. The installer installs the stable PyPI release and prints the exact command it used to run nanobot. If `nanobot` is not on `PATH`, reuse that full command below.
+A fresh install uses a dedicated environment under `~/.nujinagent/venv`, even if uv or pipx is on PATH. Existing installations keep their original manager; an active ordinary virtual environment remains an explicit target and is not adopted. The installer installs the stable PyPI release and prints the exact command it used to run nujinagent. If `nujinagent` is not on `PATH`, reuse that full command below.
 
 If you prefer to inspect the scripts first, open [`install.sh`](../scripts/install.sh) or [`install.ps1`](../scripts/install.ps1).
 
@@ -47,26 +47,26 @@ The WebUI launcher creates or updates:
 
 | Path | Purpose |
 |---|---|
-| `~/.nanobot/config.json` | Provider, model, WebUI, channel, tool, and runtime settings |
-| `~/.nanobot/workspace/` | Memory, skills, automations, and generated files |
-| `~/.nanobot/sessions/<workspace-id>/` | Recent session history stored outside the workspace; the ID remains stable across workspace moves |
+| `~/.nujinagent/config.json` | Provider, model, WebUI, channel, tool, and runtime settings |
+| `~/.nujinagent/workspace/` | Memory, skills, automations, and generated files |
+| `~/.nujinagent/sessions/<workspace-id>/` | Recent session history stored outside the workspace; the ID remains stable across workspace moves |
 
 If the installer did not open the browser, run:
 
 ```bash
-nanobot webui
+nujinagent webui
 ```
 
 SSH, headless, existing-config, and older-release installs retain the terminal setup path:
 
 ```bash
-nanobot onboard --wizard
+nujinagent onboard --wizard
 ```
 
 ## 3. Check the Setup
 
 ```bash
-nanobot status
+nujinagent status
 ```
 
 You want:
@@ -79,7 +79,7 @@ Most other providers can say `not set`. This command validates local setup but d
 
 ## 4. Get the First Reply
 
-If the installer-started WebUI is no longer running, run `nanobot webui` again. The first-run WebUI is bound to localhost, so other devices on your network cannot reach it.
+If the installer-started WebUI is no longer running, run `nujinagent webui` again. The first-run WebUI is bound to localhost, so other devices on your network cannot reach it.
 
 Send:
 
@@ -87,38 +87,38 @@ Send:
 Hello!
 ```
 
-Any normal assistant answer is success. It proves that nanobot can load the config, reach the selected model, use the workspace, and serve the browser UI.
+Any normal assistant answer is success. It proves that nujinagent can load the config, reach the selected model, use the workspace, and serve the browser UI.
 
-Fresh official-installer environments start a persistent gateway: closing the browser or terminal does not stop it. Other installations keep their on-demand lifetime unless you explicitly use `nanobot webui --detach` or the gateway command below. An attached on-demand launcher must stay open; closing its last local client stops that gateway.
+Fresh official-installer environments start a persistent gateway: closing the browser or terminal does not stop it. Other installations keep their on-demand lifetime unless you explicitly use `nujinagent webui --detach` or the gateway command below. An attached on-demand launcher must stay open; closing its last local client stops that gateway.
 
 To start or inspect a persistent gateway:
 
 ```bash
-nanobot gateway --background
-nanobot gateway status
+nujinagent gateway --background
+nujinagent gateway status
 ```
 
-Use `nanobot gateway logs`, `restart`, and `stop` to manage that background gateway.
+Use `nujinagent gateway logs`, `restart`, and `stop` to manage that background gateway.
 
 ## Terminal-Only Check
 
 If you do not want the browser or need to isolate a WebUI problem, send one message directly:
 
 ```bash
-nanobot -m "Hello!"
+nujinagent -m "Hello!"
 ```
 
 Then start an interactive terminal chat with:
 
 ```bash
-nanobot
+nujinagent
 ```
 
-In interactive mode, `Enter` sends and `Shift+Enter` inserts a newline (`Ctrl+J` is the universal fallback). While nanobot is working, `Enter` sends immediately, `Tab` waits until the current response is finished, and `Option+Up` on macOS (`Alt+Up` on Windows/Linux) edits the latest waiting message. Exit with `exit`, `/exit`, `:q`, or `Ctrl+D`.
+In interactive mode, `Enter` sends and `Shift+Enter` inserts a newline (`Ctrl+J` is the universal fallback). While nujinagent is working, `Enter` sends immediately, `Tab` waits until the current response is finished, and `Option+Up` on macOS (`Alt+Up` on Windows/Linux) edits the latest waiting message. Exit with `exit`, `/exit`, `:q`, or `Ctrl+D`.
 
-## Continue with nanobot
+## Continue with nujinagent
 
-After the first reply works, describe one next goal in the same chat. With the built-in `nanobot-document` skill, nanobot can consult documentation bundled with your installation to explain features, guide configuration, and troubleshoot. Include where you are using nanobot and what already works, for example:
+After the first reply works, describe one next goal in the same chat. With the built-in `nujinagent-document` skill, nujinagent can consult documentation bundled with your installation to explain features, guide configuration, and troubleshoot. Include where you are using nujinagent and what already works, for example:
 
 - "I am already using the WebUI. Help me connect Telegram and allow only my account."
 - "Explain what is shared when I start a new topic or choose a different project."
@@ -127,10 +127,10 @@ After the first reply works, describe one next goal in the same chat. With the b
 To explicitly request the documentation skill, send:
 
 ```text
-$nanobot-document Explain how sessions, workspaces, and memory relate in this installation.
+$nujinagent-document Explain how sessions, workspaces, and memory relate in this installation.
 ```
 
-This requires a model that supports tools and an enabled `nanobot-document` skill under **Skills → Installed**. Enter credentials in the relevant settings forms when needed. If your installed release does not include the skill, or you prefer to read the steps yourself, choose a guide below. Add one capability and test it before moving on:
+This requires a model that supports tools and an enabled `nujinagent-document` skill under **Skills → Installed**. Enter credentials in the relevant settings forms when needed. If your installed release does not include the skill, or you prefer to read the steps yourself, choose a guide below. Add one capability and test it before moving on:
 
 | Goal | Recommended path |
 |---|---|
@@ -150,26 +150,26 @@ Use one method, then continue at [Configure Your Model](#2-configure-your-model)
 **uv**
 
 ```bash
-uv tool install nanobot-ai
-nanobot webui
+uv tool install nujinagent
+nujinagent webui
 ```
 
 **pip in a virtual environment**
 
 ```bash
-python -m pip install nanobot-ai
-nanobot webui
+python -m pip install nujinagent
+nujinagent webui
 ```
 
-If pip reports `externally-managed-environment`, use the recommended installer, `uv tool install nanobot-ai`, `pipx install nanobot-ai`, or create a virtual environment. Do not force a system-wide install.
+If pip reports `externally-managed-environment`, use the recommended installer, `uv tool install nujinagent`, `pipx install nujinagent`, or create a virtual environment. Do not force a system-wide install.
 
 **Current source**
 
-Clone the repository and install it in editable mode. nanobot downloads the pinned Bun runtime to run the checkout's matching TUI; Node is not required.
+Clone the repository and install it in editable mode. nujinagent downloads the pinned Bun runtime to run the checkout's matching TUI; Node is not required.
 
 ```bash
-git clone https://github.com/HKUDS/nanobot.git
-cd nanobot
+git clone https://github.com/HKUDS/nujinagent.git
+cd nujinagent
 python3 -m venv .venv
 ```
 
@@ -177,31 +177,31 @@ On Windows, use `py -3 -m venv .venv` instead of `python3`. Activate it with `so
 
 ```bash
 python -m pip install -e .
-nanobot webui
+nujinagent webui
 ```
 
-The source path follows current `main` and can be newer than the published package. The editable install keeps Python pointed at the checkout; `nanobot` runs `tui/` with Bun, and `nanobot webui` prompts to rebuild stale frontend assets, or warns in non-interactive sessions; `--yes` builds automatically. All normal commands remain the same as a stable install. For development details, follow [`../CONTRIBUTING.md`](../CONTRIBUTING.md).
+The source path follows current `main` and can be newer than the published package. The editable install keeps Python pointed at the checkout; `nujinagent` runs `tui/` with Bun, and `nujinagent webui` prompts to rebuild stale frontend assets, or warns in non-interactive sessions; `--yes` builds automatically. All normal commands remain the same as a stable install. For development details, follow [`../CONTRIBUTING.md`](../CONTRIBUTING.md).
 
-If the shell cannot find `nanobot`, reuse the installer's printed command or run Python from the existing installation. For uv or pipx, locate that environment with the original manager; do not start a temporary tool environment to manage it. The official installer's default paths are:
+If the shell cannot find `nujinagent`, reuse the installer's printed command or run Python from the existing installation. For uv or pipx, locate that environment with the original manager; do not start a temporary tool environment to manage it. The official installer's default paths are:
 
 ```bash
-~/.nanobot/venv/bin/python -I -m nanobot --version
+~/.nujinagent/venv/bin/python -I -m nujinagent --version
 ```
 
 Windows PowerShell:
 
 ```powershell
-& "$HOME\.nanobot\venv\Scripts\python.exe" -I -m nanobot --version
+& "$HOME\.nujinagent\venv\Scripts\python.exe" -I -m nujinagent --version
 ```
 
-Replace `--version` with `webui`, `onboard --wizard`, or the arguments you need. Use plain `python -m nanobot` only when that Python belongs to the installed environment.
+Replace `--version` with `webui`, `onboard --wizard`, or the arguments you need. Use plain `python -m nujinagent` only when that Python belongs to the installed environment.
 
 ## Manual Configuration Fallback
 
 <details>
 <summary>Manual configuration</summary>
 
-Use this only when the wizard is unavailable or you intentionally manage JSON. First run `nanobot onboard`, then merge a provider and a named model preset into `~/.nanobot/config.json`.
+Use this only when the wizard is unavailable or you intentionally manage JSON. First run `nujinagent onboard`, then merge a provider and a named model preset into `~/.nujinagent/config.json`.
 
 A generic OpenAI-compatible setup has this shape:
 
@@ -233,13 +233,13 @@ Replace the provider, endpoint, and model together. Do not pair a credential fro
 
 ## Updating
 
-Open **Settings → About → Update**. Supported installations can update and restart there; others show instructions for their original package manager or deployment. Follow [Updating nanobot](./updating.md) for Preview selection, backups and recovery. Do not switch installation methods to work around an error.
+Open **Settings → About → Update**. Supported installations can update and restart there; others show instructions for their original package manager or deployment. Follow [Updating nujinagent](./updating.md) for Preview selection, backups and recovery. Do not switch installation methods to work around an error.
 
 For an ordinary Python virtual environment, the [CLI updater](./cli-reference.md#updating) is also available:
 
 ```bash
-nanobot update --check
-nanobot update
+nujinagent update --check
+nujinagent update
 ```
 
 Stop affected processes and back up configuration and data first; restart and verify the running version afterward. Source checkouts should preserve local changes and follow the [development instructions](../CONTRIBUTING.md).
@@ -249,18 +249,18 @@ Stop affected processes and back up configuration and data first; restart and ve
 Do not change several settings at once. Start with:
 
 ```bash
-nanobot --version
-nanobot status
-nanobot agent -m "Hello!"
+nujinagent --version
+nujinagent status
+nujinagent agent -m "Hello!"
 ```
 
 | Symptom | First check |
 |---|---|
-| `nanobot: command not found` | Reuse the installer command or method-specific runner described under [Other Install Methods](#other-install-methods) |
+| `nujinagent: command not found` | Reuse the installer command or method-specific runner described under [Other Install Methods](#other-install-methods) |
 | JSON parse error | Check commas and braces; remember that docs examples are usually snippets |
 | `401` or invalid API key | Verify the selected provider owns that key and remove accidental spaces |
 | Model not found | Use a model ID available from the provider selected in the active preset |
 | CLI works but WebUI does not open | Use port `8765`, not gateway health port `18790` |
-| WebUI works but a chat app does not | Check **Channels**, then run `nanobot channels status` |
+| WebUI works but a chat app does not | Check **Channels**, then run `nujinagent channels status` |
 
 Continue with the ordered [Troubleshooting guide](./troubleshooting.md) if the cause is still unclear.

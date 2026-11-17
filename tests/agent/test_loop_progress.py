@@ -5,13 +5,13 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.session_helpers import run_session, save_completed_subagent
-from nanobot.agent.context import TranscriptInput
-from nanobot.agent.hooks import create_file_edit_activity_hook
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.context import current_request_context
-from nanobot.agent.tools.filesystem import WriteFileTool
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.outbound_events import (
+from nujinagent.agent.context import TranscriptInput
+from nujinagent.agent.hooks import create_file_edit_activity_hook
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.context import current_request_context
+from nujinagent.agent.tools.filesystem import WriteFileTool
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.outbound_events import (
     GoalStatusEvent,
     ProgressEvent,
     SessionUpdatedEvent,
@@ -20,12 +20,12 @@ from nanobot.bus.outbound_events import (
     StreamEndEvent,
     TurnEndEvent,
 )
-from nanobot.bus.queue import MessageBus
-from nanobot.providers.base import LLMResponse, ToolCallRequest
-from nanobot.providers.factory import ProviderSnapshot
-from nanobot.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
-from nanobot.utils.progress_events import output_events
-from nanobot.webui.metadata import (
+from nujinagent.bus.queue import MessageBus
+from nujinagent.providers.base import LLMResponse, ToolCallRequest
+from nujinagent.providers.factory import ProviderSnapshot
+from nujinagent.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
+from nujinagent.utils.progress_events import output_events
+from nujinagent.webui.metadata import (
     WEBSOCKET_TURN_OWNER_METADATA_KEY,
     WEBUI_TURN_METADATA_KEY,
 )
@@ -160,7 +160,7 @@ class TestToolEventProgress:
             pass
 
         monkeypatch.setattr(
-            "nanobot.agent.hooks.file_edit_activity.prepare_file_edit_trackers",
+            "nujinagent.agent.hooks.file_edit_activity.prepare_file_edit_trackers",
             prepare_file_edit_trackers,
         )
 
@@ -337,7 +337,7 @@ class TestToolEventProgress:
 
         provider.chat_stream_with_retry = chat_stream_with_retry
         provider.chat_with_retry = AsyncMock()
-        from nanobot.goal.assembly import install_goal
+        from nujinagent.goal.assembly import install_goal
 
         loop = AgentLoop(
             bus=bus,
@@ -1124,7 +1124,7 @@ class TestToolEventProgress:
             return False
 
         monkeypatch.setattr(
-            "nanobot.session.webui_turns.maybe_generate_webui_title",
+            "nujinagent.session.webui_turns.maybe_generate_webui_title",
             fake_generate_title,
         )
         scheduled_title: list[object] = []

@@ -22,24 +22,24 @@ from uuid import uuid4
 
 import pytest
 
-import nanobot
-from nanobot.config.home import get_selected_home_path, set_home_path
-from nanobot.data_access import DataStartupGrant, data_access, profile_data_paths
-from nanobot.gateway.runtime import GatewayInstance, GatewayRuntime
-from nanobot.installation_lock import (
+import nujinagent
+from nujinagent.config.home import get_selected_home_path, set_home_path
+from nujinagent.data_access import DataStartupGrant, data_access, profile_data_paths
+from nujinagent.gateway.runtime import GatewayInstance, GatewayRuntime
+from nujinagent.installation_lock import (
     InstallationBusyError,
     installation_access,
     installation_state_dir,
     pending_update_path,
 )
-from nanobot.release_feed import ReleaseTarget
-from nanobot.releases import ReleaseArtifact
-from nanobot.update_backup import BackupSource, unique_sources
-from nanobot.update_jobs import _worker_archive
-from nanobot.update_plan import InstallationSnapshot, UpdatePlan
-from nanobot.update_profiles import inspect_profiles, verify_restarted_profile
-from nanobot.update_restart import GatewayStartup, run_restarts
-from nanobot.update_worker import (
+from nujinagent.release_feed import ReleaseTarget
+from nujinagent.releases import ReleaseArtifact
+from nujinagent.update_backup import BackupSource, unique_sources
+from nujinagent.update_jobs import _worker_archive
+from nujinagent.update_plan import InstallationSnapshot, UpdatePlan
+from nujinagent.update_profiles import inspect_profiles, verify_restarted_profile
+from nujinagent.update_restart import GatewayStartup, run_restarts
+from nujinagent.update_worker import (
     EnvironmentSnapshot,
     JobStatus,
     Phase,
@@ -91,12 +91,12 @@ def _job(previous, *, legacy_scope=False):
     identifier = str(uuid4())
     directory = installation_state_dir() / "jobs" / identifier
     directory.mkdir(parents=True)
-    version = nanobot.__version__
-    filename = f"nanobot_ai-{version}-py3-none-win_amd64.whl"
+    version = nujinagent.__version__
+    filename = f"nujinagent_ai-{version}-py3-none-win_amd64.whl"
     snapshot = InstallationSnapshot(
         environment=str(Path(sys.prefix).resolve()), python=sys.executable,
-        installed_version=version, running_version=version, package_path=nanobot.__file__,
-        running_package=nanobot.__file__, owner="venv", records={},
+        installed_version=version, running_version=version, package_path=nujinagent.__file__,
+        running_package=nujinagent.__file__, owner="venv", records={},
     )
     profiles = inspect_profiles(sys.prefix)
     plan = UpdatePlan(
@@ -117,7 +117,7 @@ def _job(previous, *, legacy_scope=False):
         _worker_archive(directory / "worker.pyz"),
         EnvironmentSnapshot(snapshot.environment, sys.executable, sys.executable,
                             "0" * 64, {}, {}, version, {}), version,
-        (StagedWheel(filename, "nanobot-ai", version, 1, "0" * 64),), sources, (previous.id,),
+        (StagedWheel(filename, "nujinagent", version, 1, "0" * 64),), sources, (previous.id,),
     )
     spec.save(directory)
     JobStatus(identifier, Phase.RESTARTING, 1, True, "Fixture: package verification completed", int(time.time())).save(directory)
@@ -131,7 +131,7 @@ def _job(previous, *, legacy_scope=False):
 @pytest.mark.skipif(os.name == "nt", reason="Native Windows lifecycle execution requires a Windows runner")
 @pytest.mark.parametrize("legacy_scope", [False, True])
 def test_actual_gateway_is_parked_until_exact_runtime_activation(private_home, tmp_path, monkeypatch, legacy_scope):
-    from nanobot import update_restart
+    from nujinagent import update_restart
 
     profile = tmp_path / "gateway home"
     workspace = tmp_path / "中文 workspace"
@@ -152,11 +152,11 @@ def test_actual_gateway_is_parked_until_exact_runtime_activation(private_home, t
     bootstrap = (
         f"import sys, runpy; sys.path.insert(0, {str(source)!r})\n"
         "from pathlib import Path\nimport os\n"
-        "from nanobot.cli import gateway_runtime\n"
-        "from nanobot.agent.tools.mcp import MCPProvider\n"
+        "from nujinagent.cli import gateway_runtime\n"
+        "from nujinagent.agent.tools.mcp import MCPProvider\n"
         "gateway_runtime.warmup_token_encoding = lambda: None\n"
         "async def observe_connect(self):\n"
-        "    assert 'NANOBOT_UPDATE_STARTUP_TOKEN' not in os.environ\n"
+        "    assert 'NUJINAGENT_UPDATE_STARTUP_TOKEN' not in os.environ\n"
         f"    Path({str(marker)!r}).touch()\n"
         "MCPProvider.connect = observe_connect\n"
     )
@@ -170,7 +170,7 @@ def test_actual_gateway_is_parked_until_exact_runtime_activation(private_home, t
             # production -I -S flags; no application import may bypass them.
             script = (
                 "import sys, runpy\nsys.argv = sys.argv[1:]\nsys.path.insert(0, sys.argv[0])\n"
-                "from _nanobot_update import update_worker\n"
+                "from _nujinagent_update import update_worker\n"
                 "initialize = update_worker.initialize_runtime\n"
                 "def initialize_fixture(python, environment):\n"
                 "    initialize(python, environment)\n"
@@ -180,8 +180,8 @@ def test_actual_gateway_is_parked_until_exact_runtime_activation(private_home, t
             )
             assert command[1:3] == ["-I", "-S"]
             command = [command[0], "-I", "-S", "-c", script, *command[3:]]
-        elif command[1:3] == ["-m", "nanobot"]:
-            script = bootstrap + "from nanobot.cli.entry import main\nmain()\n"
+        elif command[1:3] == ["-m", "nujinagent"]:
+            script = bootstrap + "from nujinagent.cli.entry import main\nmain()\n"
             command = [command[0], "-c", script, *command[3:]]
             kwargs["cwd"] = cwd
         else:
@@ -284,7 +284,7 @@ async def test_activation_is_bound_to_new_run_not_just_profile(tmp_path):
     directory = tmp_path / identifier
     directory.mkdir()
     startup = GatewayStartup(directory, SimpleNamespace(id=participant), DataStartupGrant(identifier, participant, "b" * 64))
-    from nanobot.gateway.runtime import GatewayHealthIdentity
+    from nujinagent.gateway.runtime import GatewayHealthIdentity
 
     identity = GatewayHealthIdentity(participant, "c" * 32, "0.3.5")
     JobStatus(identifier, Phase.ACTIVATING, 1, True, "test activation", int(time.time())).save(directory)

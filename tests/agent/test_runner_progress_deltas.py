@@ -4,17 +4,17 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.runner_helpers import make_run_spec
-from nanobot.agent.hooks import FileEditActivityHook
-from nanobot.agent.progress_hook import AgentProgressHook
-from nanobot.agent.runner import AgentRunner
-from nanobot.agent.tools.apply_patch import ApplyPatchTool
-from nanobot.agent.tools.filesystem import EditFileTool, WriteFileTool
-from nanobot.bus.outbound_events import ProgressEvent, StreamDeltaEvent, StreamEndEvent
-from nanobot.config.schema import AgentDefaults
-from nanobot.events import EventSink
-from nanobot.providers.base import LLMResponse, ToolCallRequest
-from nanobot.utils.file_edit_events import Indel
-from nanobot.utils.progress_events import output_events
+from nujinagent.agent.hooks import FileEditActivityHook
+from nujinagent.agent.progress_hook import AgentProgressHook
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.agent.tools.apply_patch import ApplyPatchTool
+from nujinagent.agent.tools.filesystem import EditFileTool, WriteFileTool
+from nujinagent.bus.outbound_events import ProgressEvent, StreamDeltaEvent, StreamEndEvent
+from nujinagent.config.schema import AgentDefaults
+from nujinagent.events import EventSink
+from nujinagent.providers.base import LLMResponse, ToolCallRequest
+from nujinagent.utils.file_edit_events import Indel
+from nujinagent.utils.progress_events import output_events
 
 _MAX_TOOL_RESULT_CHARS = AgentDefaults().max_tool_result_chars
 
@@ -74,7 +74,7 @@ async def test_runner_routes_hosted_tool_events_to_structured_progress():
             "phase": "start",
             "call_id": "x-search-1",
             "name": "x_search",
-            "arguments": {"query": "nanobot oauth"},
+            "arguments": {"query": "nujinagent oauth"},
             "result": None,
         })
         await on_tool_call_delta({
@@ -82,7 +82,7 @@ async def test_runner_routes_hosted_tool_events_to_structured_progress():
             "phase": "end",
             "call_id": "x-search-1",
             "name": "x_search",
-            "arguments": {"query": "nanobot oauth"},
+            "arguments": {"query": "nujinagent oauth"},
             "result": {"name": "x_semantic_search"},
         })
         await on_content_delta("done")
@@ -130,7 +130,7 @@ async def test_runner_routes_hosted_tool_events_to_structured_progress():
             "phase": "start",
             "call_id": "x-search-1",
             "name": "x_search",
-            "arguments": {"query": "nanobot oauth"},
+            "arguments": {"query": "nujinagent oauth"},
             "result": None,
             "error": None,
             "files": [],
@@ -141,7 +141,7 @@ async def test_runner_routes_hosted_tool_events_to_structured_progress():
             "phase": "end",
             "call_id": "x-search-1",
             "name": "x_search",
-            "arguments": {"query": "nanobot oauth"},
+            "arguments": {"query": "nujinagent oauth"},
             "result": {"name": "x_semantic_search"},
             "error": None,
             "files": [],
@@ -165,7 +165,7 @@ async def test_runner_fails_pending_hosted_tool_when_model_request_fails():
             "phase": "start",
             "call_id": "x-search-failed",
             "name": "x_search",
-            "arguments": {"query": "nanobot oauth"},
+            "arguments": {"query": "nujinagent oauth"},
             "result": None,
         })
         return LLMResponse(
@@ -207,7 +207,7 @@ async def test_runner_fails_pending_hosted_tool_when_model_request_fails():
         "phase": "error",
         "call_id": "x-search-failed",
         "name": "x_search",
-        "arguments": {"query": "nanobot oauth"},
+        "arguments": {"query": "nujinagent oauth"},
         "result": None,
         "error": "hosted search backend failed",
         "files": [],

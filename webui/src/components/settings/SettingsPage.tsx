@@ -29,7 +29,7 @@ import { TokenUsageOverview } from "@/components/settings/TokenUsageOverview";
 import { NotificationSettings } from "@/components/settings/notifications/NotificationSettings";
 import { SettingsSidebar, standaloneSectionTitle } from "@/components/settings/SettingsSidebar";
 import {
-  NanobotFeatureInstallDialog,
+  NujinAgentFeatureInstallDialog,
   SettingsGroup,
   SettingsRow,
   SettingsSectionTitle,
@@ -47,7 +47,7 @@ import { RuntimeConfigSettings } from "@/components/settings/system/RuntimeConfi
 import { useClient } from "@/providers/ClientProvider";
 import { RuntimeSettings } from "@/components/settings/system/RuntimeSettings";
 import type { SettingsController } from "@/components/settings/useSettingsController";
-import type { SendAttachment, SendOptions } from "@/hooks/useNanobotStream";
+import type { SendAttachment, SendOptions } from "@/hooks/useNujinAgentStream";
 import type { ThemePreference } from "@/hooks/useTheme";
 import type { ChatSummary, SessionAutomationJob, SkillSummary } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -346,9 +346,9 @@ export function SettingsPage({
                 }
               }}
               settings={settings}
-              nanobotFeatures={systemState.nanobotFeatures}
-              featureAction={systemState.nanobotFeatureAction}
-              capabilityError={systemState.nanobotFeaturesError}
+              nujinagentFeatures={systemState.nujinagentFeatures}
+              featureAction={systemState.nujinagentFeatureAction}
+              capabilityError={systemState.nujinagentFeaturesError}
               providerForms={modelState.providerForms}
               visibleProviderKeys={modelState.visibleProviderKeys}
               editingProviderKeys={modelState.editingProviderKeys}
@@ -452,8 +452,8 @@ export function SettingsPage({
               isRestarting={restartInProgress}
               requiresRestartPending={pendingRestartSections.browser}
               olostepFeature={featureCatalog.find((feature) => feature.name === "olostep")}
-              olostepInstalling={systemState.nanobotFeatureAction === "enable:olostep"}
-              capabilityError={systemState.nanobotFeaturesError}
+              olostepInstalling={systemState.nujinagentFeatureAction === "enable:olostep"}
+              capabilityError={systemState.nujinagentFeaturesError}
             >
               {settings.runtime_config ? runtimeConfiguration("network") : null}
             </WebSettings>
@@ -470,9 +470,9 @@ export function SettingsPage({
               isRestarting={restartInProgress}
               requiresRestartPending={pendingRestartSections.runtime}
               langfuseFeature={featureCatalog.find((feature) => feature.name === "langfuse")}
-              capabilitiesLoading={systemState.nanobotFeaturesLoading}
-              capabilityAction={systemState.nanobotFeatureAction}
-              capabilityError={systemState.nanobotFeaturesError}
+              capabilitiesLoading={systemState.nujinagentFeaturesLoading}
+              capabilityAction={systemState.nujinagentFeatureAction}
+              capabilityError={systemState.nujinagentFeaturesError}
               onInstallCapability={(name) => void systemActions.installCapabilities([name])}
             />
           </div>
@@ -501,17 +501,17 @@ export function SettingsPage({
               selectSection("apps");
             }}
             token={token}
-            nanobotFeatures={systemState.nanobotFeatures}
-            loading={systemState.nanobotFeaturesLoading}
-            actionKey={systemState.nanobotFeatureAction}
+            nujinagentFeatures={systemState.nujinagentFeatures}
+            loading={systemState.nujinagentFeaturesLoading}
+            actionKey={systemState.nujinagentFeatureAction}
             chatAppsDocsUrl={settings?.docs?.chat_apps_url}
             showBrandLogos={localPrefs.brandLogos}
-            error={systemState.nanobotFeaturesError}
+            error={systemState.nujinagentFeaturesError}
             requiresRestartPending={pendingRestartSections.runtime}
-            onAction={systemActions.handleNanobotFeatureAction}
-            onFeaturesUpdate={systemState.setNanobotFeatures}
+            onAction={systemActions.handleNujinAgentFeatureAction}
+            onFeaturesUpdate={systemState.setNujinAgentFeatures}
             onDismissStatus={() => {
-              systemState.setNanobotFeaturesError(null);
+              systemState.setNujinAgentFeaturesError(null);
             }}
             onRestart={restartViaSettingsSurface}
             isRestarting={restartInProgress}
@@ -697,16 +697,16 @@ export function SettingsPage({
         onClose={closeProviderOAuthFlow}
       />
 
-      <NanobotFeatureInstallDialog
-        feature={systemState.nanobotFeatureConfirm?.feature ?? null}
-        installOnly={systemState.nanobotFeatureConfirm?.installOnly ?? false}
-        installing={systemState.nanobotFeatureAction === `${systemState.nanobotFeatureConfirm?.installOnly ? "install" : "enable"}:${systemState.nanobotFeatureConfirm?.feature.name ?? ""}`}
+      <NujinAgentFeatureInstallDialog
+        feature={systemState.nujinagentFeatureConfirm?.feature ?? null}
+        installOnly={systemState.nujinagentFeatureConfirm?.installOnly ?? false}
+        installing={systemState.nujinagentFeatureAction === `${systemState.nujinagentFeatureConfirm?.installOnly ? "install" : "enable"}:${systemState.nujinagentFeatureConfirm?.feature.name ?? ""}`}
         onOpenChange={(open) => {
-          if (!open) systemState.setNanobotFeatureConfirm(null);
+          if (!open) systemState.setNujinAgentFeatureConfirm(null);
         }}
-        onConfirm={(feature) => systemActions.handleNanobotFeatureAction("enable", feature.name, {
+        onConfirm={(feature) => systemActions.handleNujinAgentFeatureAction("enable", feature.name, {
           confirmed: true,
-          installOnly: systemState.nanobotFeatureConfirm?.installOnly,
+          installOnly: systemState.nujinagentFeatureConfirm?.installOnly,
         })}
       />
 

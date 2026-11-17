@@ -12,7 +12,7 @@ import {
 } from "@/components/settings/shared/SettingsControls";
 import { Button } from "@/components/ui/button";
 import { getRuntimeHost, isNativeRuntime } from "@/lib/runtime";
-import type { NanobotFeatureInfo, SettingsPayload } from "@/lib/types";
+import type { NujinAgentFeatureInfo, SettingsPayload } from "@/lib/types";
 
 export function RuntimeSettings({
   form,
@@ -31,7 +31,7 @@ export function RuntimeSettings({
   onRestart?: () => void;
   isRestarting?: boolean;
   requiresRestartPending: boolean;
-  langfuseFeature?: NanobotFeatureInfo;
+  langfuseFeature?: NujinAgentFeatureInfo;
   capabilitiesLoading: boolean;
   capabilityAction: string | null;
   capabilityError: string | null;
@@ -174,7 +174,7 @@ export function RuntimeSettings({
                 ? undefined
                 : tx(
                     "settings.observability.environment",
-                    "Set LANGFUSE_SECRET_KEY and LANGFUSE_PUBLIC_KEY, then restart nanobot.",
+                    "Set LANGFUSE_SECRET_KEY and LANGFUSE_PUBLIC_KEY, then restart nujinagent.",
                   )
             }
           >

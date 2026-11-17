@@ -16,7 +16,7 @@ vi.mock("@/components/thread/ThreadShell", () => ({
 
 const profile = {
   id: "3b968d52-081d-4898-9970-ff0a1fc93817", name: "Team server", host: "ubuntu@example.test",
-  port: 22, config_path: "~/.nanobot/config.json", ssh_config: "", identity_file: "", runtime_user: "", connected: false,
+  port: 22, config_path: "~/.nujinagent/config.json", ssh_config: "", identity_file: "", runtime_user: "", connected: false,
 };
 const connection = {
   ...profile, hostname: "team-host", gateway_id: "gateway-1",
@@ -44,7 +44,7 @@ class TestSocket {
     if (frame.type !== "webui_request") return;
     if (frame.action === "remote.connect") TestSocket.connected = true;
     const result = frame.action === "remote.connect" ? connection
-      : frame.action === "remote.pair_start" ? { id: "test-pair", command: "nanobot remote pair nbpr1.test", expires: Date.now() / 1000 + 600 }
+      : frame.action === "remote.pair_start" ? { id: "test-pair", command: "nujinagent remote pair nbpr1.test", expires: Date.now() / 1000 + 600 }
       : frame.action === "remote.discover" ? { hosts: [], files: [], incomplete: false } : {};
     queueMicrotask(() => this.receive({
       event: "webui_response", request_id: frame.request_id, ok: true, result,
@@ -89,7 +89,7 @@ async function manageConnections() {
 }
 
 function managementSkeleton() {
-  const status = screen.getByText("Loading nanobot…", { selector: "[role=status]" });
+  const status = screen.getByText("Loading nujinagent…", { selector: "[role=status]" });
   const skeleton = status.closest("section");
   expect(skeleton).toBeVisible();
   expect(skeleton).toHaveAttribute("aria-busy", "true");
@@ -186,8 +186,8 @@ describe("lazy remote management", () => {
     managementSkeleton();
     await finishManagementImport();
     await screen.findByRole("heading", { name: "Remote connections" });
-    fireEvent.click(screen.getByRole("button", { name: "Connect to remote nanobot" }));
-    await screen.findByText("nanobot remote pair nbpr1.test");
+    fireEvent.click(screen.getByRole("button", { name: "Connect to remote nujinagent" }));
+    await screen.findByText("nujinagent remote pair nbpr1.test");
     fireEvent.pointerDown(screen.getByRole("button", { name: "Other ways" }), { button: 0, ctrlKey: false });
     fireEvent.click(screen.getByRole("menuitem", { name: "SSH connection" }));
     expect(await screen.findByRole("textbox", { name: "SSH address" })).toBeVisible();
@@ -211,7 +211,7 @@ describe("lazy remote management", () => {
     expect(draft).toHaveValue("Unsent local draft");
     await finishManagementImport();
     expect(screen.queryByRole("region", { name: "Remote connections" })).not.toBeInTheDocument();
-    expect(screen.queryByText("Loading nanobot…")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading nujinagent…")).not.toBeInTheDocument();
     expect(TestSocket.current.sent.filter((frame) => frame.type === "webui_request" && frame.action.startsWith("remote."))).toEqual([]);
   });
 
@@ -221,7 +221,7 @@ describe("lazy remote management", () => {
     const { App, loaded } = await loadApp(true);
     render(<App />);
     await readyShell();
-    const frame = await screen.findByTitle("nanobot on Team server");
+    const frame = await screen.findByTitle("nujinagent on Team server");
     await act(async () => { fireEvent.load(frame); });
     await waitFor(() => expect(readSelectedRemote()?.id).toBe(profile.id));
     expect(loaded).not.toHaveBeenCalled();
@@ -232,7 +232,7 @@ describe("lazy remote management", () => {
     await waitFor(() => expect(loaded).toHaveBeenCalledTimes(1));
     managementSkeleton();
     expect(screen.getByTestId("remote-management-surface")).toBeVisible();
-    expect(screen.getByTitle("nanobot on Team server")).toBe(frame);
+    expect(screen.getByTitle("nujinagent on Team server")).toBe(frame);
     expect(readSelectedRemote()?.id).toBe(profile.id);
     expect(window.location.hash).toBe(hash);
     expect(document.title).toBe(title);
@@ -247,7 +247,7 @@ describe("lazy remote management", () => {
     expect(host).toHaveAttribute("aria-current", "true");
     expect(within(host).getByRole("status")).toHaveTextContent("Connected");
     fireEvent.click(within(page).getByRole("button", { name: "Back" }));
-    expect(screen.getByTitle("nanobot on Team server")).toBe(frame);
+    expect(screen.getByTitle("nujinagent on Team server")).toBe(frame);
     expect(frame).toBeVisible();
     expect(frame).toHaveAttribute("src", connection.url);
     expect(readSelectedRemote()?.id).toBe(profile.id);

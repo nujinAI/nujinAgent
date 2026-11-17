@@ -5,7 +5,7 @@ import type { McpPresetInfo } from "@/lib/types";
 
 const parameters = new URLSearchParams(location.search);
 const unbrandedPlugin: McpPresetInfo = {
-  name: "plugin-nanobot-workflows", display_name: "Nanobot Workflows", category: "Workflow",
+  name: "plugin-nujinagent-workflows", display_name: "NujinAgent Workflows", category: "Workflow",
   description: "Engineering workflows", docs_url: "", requires: "Project files", note: "", connection_summary: "",
   transport: "stdio", install_supported: false, installed: true, configured: true,
   enabled: true, available: true, status: "enabled", required_fields: [], source: "agent-plugin",

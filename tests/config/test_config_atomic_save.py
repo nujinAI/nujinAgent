@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.config.loader import load_config, save_config
-from nanobot.config.schema import Config
+from nujinagent.config.loader import load_config, save_config
+from nujinagent.config.schema import Config
 
 
 def test_save_config_round_trips(tmp_path: Path) -> None:

@@ -1,5 +1,5 @@
 [project]
-name = "nanobot-ai"
+name = "nujinagent"
 version = "0.4.1"
 description = "A lightweight personal AI assistant framework"
 readme = { file = "README.md", content-type = "text/markdown" }
@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "Xubin Ren"},
-    {name = "the nanobot contributors"}
+    {name = "the nujinagent contributors"}
 ]
 keywords = ["ai", "agent", "chatbot"]
 classifiers = [
@@ -125,8 +125,8 @@ dev = [
 ]
 
 [project.scripts]
-nanobot = "nanobot.cli.entry:main"
-nanobot-desktop-tui = "nanobot.cli.desktop_tui:main"
+nujinagent = "nujinagent.cli.entry:main"
+nujinagent-desktop-tui = "nujinagent.cli.desktop_tui:main"
 
 [build-system]
 requires = ["hatchling", "filelock>=3.25.2"]
@@ -139,42 +139,42 @@ allow-direct-references = true
 
 [tool.hatch.build]
 include = [
-    "nanobot/**/*.py",
-    "nanobot/cli/assets/*.png",
-    "nanobot/update_contract.json",
-    "nanobot/webui/mcp_presets.json",
-    "nanobot/templates/**/*.md",
-    "nanobot/skills/**/*.md",
-    "nanobot/skills/**/*.sh",
-    "nanobot/channels/*/webui/**/*",
-    "nanobot/web/dist/**/*",
+    "nujinagent/**/*.py",
+    "nujinagent/cli/assets/*.png",
+    "nujinagent/update_contract.json",
+    "nujinagent/webui/mcp_presets.json",
+    "nujinagent/templates/**/*.md",
+    "nujinagent/skills/**/*.md",
+    "nujinagent/skills/**/*.sh",
+    "nujinagent/channels/*/webui/**/*",
+    "nujinagent/web/dist/**/*",
 ]
-# nanobot/web/dist/ is produced by `cd webui && bun run build` and is
+# nujinagent/web/dist/ is produced by `cd webui && bun run build` and is
 # git-ignored. List it as an artifact so hatch ships it in both wheel and
 # sdist even though VCS does not track it.
 artifacts = [
-    "nanobot/web/dist/**/*",
+    "nujinagent/web/dist/**/*",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["nanobot"]
-exclude = ["nanobot/channels/*/tests/**"]
+packages = ["nujinagent"]
+exclude = ["nujinagent/channels/*/tests/**"]
 
 [tool.hatch.build.targets.wheel.sources]
-"nanobot" = "nanobot"
+"nujinagent" = "nujinagent"
 
 [tool.hatch.build.targets.sdist]
 include = [
     "docs/**/*.md",
-    "nanobot/",
-    "nanobot/web/dist/",
+    "nujinagent/",
+    "nujinagent/web/dist/",
     "hatch_build.py",
     "README.md",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "pyproject.toml",
 ]
-exclude = ["nanobot/channels/*/tests/**", "docs/plans/**", "docs/superpowers/**"]
+exclude = ["nujinagent/channels/*/tests/**", "docs/plans/**", "docs/superpowers/**"]
 
 [tool.ruff]
 line-length = 100
@@ -185,17 +185,17 @@ select = ["E", "F", "I", "N", "W"]
 ignore = ["E501"]
 
 [tool.basedpyright]
-include = ["nanobot"]
+include = ["nujinagent"]
 exclude = ["**/tests"]
 typeCheckingMode = "strict"
 pythonVersion = "3.11"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["tests", "nanobot/channels"]
+testpaths = ["tests", "nujinagent/channels"]
 
 [tool.coverage.run]
-source = ["nanobot"]
+source = ["nujinagent"]
 omit = ["tests/*", "**/tests/*"]
 
 [tool.coverage.report]

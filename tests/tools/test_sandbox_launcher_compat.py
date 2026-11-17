@@ -10,13 +10,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from nanobot.agent.tools.base import ToolResult
-from nanobot.agent.tools.exec_session import ExecSessionManager
-from nanobot.agent.tools.sandbox_check import check_sandbox, sandbox_settings_status
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.agent.tools.shell_config import ExecToolConfig
-from nanobot.config.loader import resolve_config_env_vars
-from nanobot.security.sandbox_launcher import SandboxLauncherError, resolve_sandbox_launcher
+from nujinagent.agent.tools.base import ToolResult
+from nujinagent.agent.tools.exec_session import ExecSessionManager
+from nujinagent.agent.tools.sandbox_check import check_sandbox, sandbox_settings_status
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.shell_config import ExecToolConfig
+from nujinagent.config.loader import resolve_config_env_vars
+from nujinagent.security.sandbox_launcher import SandboxLauncherError, resolve_sandbox_launcher
 
 
 @pytest.mark.skipif(os.name != "posix", reason="requires Unix launcher preparation")
@@ -35,7 +35,7 @@ async def test_nonstandard_bwrap_is_not_silently_run_without_sandbox(tmp_path, m
     monkeypatch.setattr(os, "defpath", str(default_bin))
     monkeypatch.setattr(sys, "platform", "linux")
     monkeypatch.setenv("PATH", str(extra_bin))
-    monkeypatch.setattr("nanobot.execution.sandbox.get_media_dir", lambda: workspace)
+    monkeypatch.setattr("nujinagent.execution.sandbox.get_media_dir", lambda: workspace)
     tool = ExecTool(working_dir=str(workspace), sandbox="bwrap")
 
     result = await tool.execute(command="printf ran > command-ran")
@@ -54,7 +54,7 @@ async def test_nonstandard_bwrap_is_not_silently_run_without_sandbox(tmp_path, m
 async def test_writable_custom_launcher_is_rejected_before_execution(tmp_path, location):
     workspace = tmp_path / "workspace"
     workspace.mkdir()
-    installation = workspace if location == "workspace" else tmp_path / "apphome" / "nanobot" / "bin"
+    installation = workspace if location == "workspace" else tmp_path / "apphome" / "nujinagent" / "bin"
     installation.mkdir(parents=True, exist_ok=True)
     launcher = installation / "bwrap"
     marker = tmp_path / "launcher-ran"
@@ -86,14 +86,14 @@ def test_root_owned_override_and_expanded_writable_bind(monkeypatch):
 
 
 @pytest.mark.skipif(os.name != "posix", reason="Unix absolute paths")
-@pytest.mark.parametrize("path,reason", [("bin/bwrap", "path_not_absolute"), ("/nonexistent-nanobot-launcher", "path_unavailable")])
+@pytest.mark.parametrize("path,reason", [("bin/bwrap", "path_not_absolute"), ("/nonexistent-nujinagent-launcher", "path_unavailable")])
 def test_custom_launcher_requires_existing_absolute_file(path, reason):
     with pytest.raises(SandboxLauncherError, match=reason):
         resolve_sandbox_launcher("bwrap", path)
 
 
 def test_copied_custom_launcher_config_does_not_assume_unix_permissions_on_windows(monkeypatch):
-    monkeypatch.setattr("nanobot.security.sandbox_launcher.os", SimpleNamespace(name="nt"))
+    monkeypatch.setattr("nujinagent.security.sandbox_launcher.os", SimpleNamespace(name="nt"))
     with pytest.raises(SandboxLauncherError, match="platform_unsupported"):
         resolve_sandbox_launcher("bwrap", "C:\\tools\\bwrap.exe")
 
@@ -143,7 +143,7 @@ async def test_native_probe_checks_isolation_without_touching_workspace(tmp_path
     result = await check_sandbox(config, workspace)
     if backend == "bwrap":
         # An installed launcher is not proof that the host permits namespaces.
-        # Establish this independently of nanobot's wrapper and probe. In that
+        # Establish this independently of nujinagent's wrapper and probe. In that
         # environment, detection must report failure and execution stay closed.
         baseline = subprocess.run(
             [status["launcher"], "--ro-bind", "/", "/", "--", "/bin/true"],
@@ -249,7 +249,7 @@ async def test_probe_reaps_its_process_on_timeout_or_request_cancellation(tmp_pa
         process.returncode = -9
         exited.set()
 
-    monkeypatch.setattr("nanobot.agent.tools.sandbox_check._PROBE_TIMEOUT_S", 0.01)
+    monkeypatch.setattr("nujinagent.agent.tools.sandbox_check._PROBE_TIMEOUT_S", 0.01)
     monkeypatch.setattr(asyncio, "create_subprocess_exec", spawn)
     monkeypatch.setattr(os, "killpg", kill)
     task = asyncio.create_task(check_sandbox(ExecToolConfig(sandbox="bwrap"), tmp_path))

@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.agent.context import ContextBuilder, TranscriptInput
-from nanobot.runtime_context import RuntimeContextBlock
+from nujinagent.agent.context import ContextBuilder, TranscriptInput
+from nujinagent.runtime_context import RuntimeContextBlock
 
 
 def _builder(tmp_path: Path, **kw) -> ContextBuilder:
@@ -139,7 +139,7 @@ class TestLoadBootstrapFiles:
         assert "default workspace rules" not in result
 
     def test_unmodified_agents_and_user_templates_are_skipped(self, tmp_path):
-        from nanobot.utils.helpers import sync_workspace_templates
+        from nujinagent.utils.helpers import sync_workspace_templates
 
         sync_workspace_templates(tmp_path, silent=True)
 
@@ -150,7 +150,7 @@ class TestLoadBootstrapFiles:
         assert "## SOUL.md" in result
 
     def test_customized_user_template_is_loaded(self, tmp_path):
-        from nanobot.utils.helpers import sync_workspace_templates
+        from nujinagent.utils.helpers import sync_workspace_templates
 
         sync_workspace_templates(tmp_path, silent=True)
         (tmp_path / "USER.md").write_text("User prefers Chinese.", encoding="utf-8")
@@ -167,7 +167,7 @@ class TestIsTemplateContent:
 
     def test_content_matching_template(self):
         from importlib.resources import files as pkg_files
-        tpl = pkg_files("nanobot") / "templates" / "memory" / "MEMORY.md"
+        tpl = pkg_files("nujinagent") / "templates" / "memory" / "MEMORY.md"
         if not tpl.is_file():
             pytest.skip("MEMORY.md template not bundled")
         original = tpl.read_text(encoding="utf-8")
@@ -175,7 +175,7 @@ class TestIsTemplateContent:
 
     def test_modified_content_returns_false(self):
         from importlib.resources import files as pkg_files
-        tpl = pkg_files("nanobot") / "templates" / "memory" / "MEMORY.md"
+        tpl = pkg_files("nujinagent") / "templates" / "memory" / "MEMORY.md"
         if not tpl.is_file():
             pytest.skip("MEMORY.md template not bundled")
         assert ContextBuilder._is_template_content("totally different", "memory/MEMORY.md") is False
@@ -185,7 +185,7 @@ class TestBundledToolContract:
     def test_tool_contract_contains_shared_execution_policy(self):
         from importlib.resources import files as pkg_files
 
-        tpl = pkg_files("nanobot") / "templates" / "agent" / "tool_contract.md"
+        tpl = pkg_files("nujinagent") / "templates" / "agent" / "tool_contract.md"
         content = tpl.read_text(encoding="utf-8")
 
         assert "clear user request as authorization" in content
@@ -238,8 +238,8 @@ class TestBuildUserContent:
         assert result[2]["text"] == "hello"
 
     def test_images_keep_paired_paths_in_provider_visible_content(self, tmp_path):
-        from nanobot.providers.base import LLMProvider
-        from nanobot.providers.openai_responses.converters import convert_user_message
+        from nujinagent.providers.base import LLMProvider
+        from nujinagent.providers.openai_responses.converters import convert_user_message
 
         paths = [tmp_path / "original.png", tmp_path / "uploaded.png"]
         for index, path in enumerate(paths):
@@ -343,7 +343,7 @@ class TestBuildMessages:
         assert "hello" in str(messages[1]["content"])
 
     def test_public_builder_preserves_assistant_role_compatibility(self, tmp_path):
-        from nanobot.agent import ContextBuilder as PublicContextBuilder
+        from nujinagent.agent import ContextBuilder as PublicContextBuilder
 
         builder = PublicContextBuilder(tmp_path)
         messages = builder.build_messages(

@@ -11,11 +11,11 @@ const fixtureCase = parameters.get("case");
 const historyPreview = parameters.get("preview");
 
 async function withClient(fixture: ReactElement, webuiCapabilities?: string[]) {
-  const [{ ClientProvider }, { NanobotClient }] = await Promise.all([
+  const [{ ClientProvider }, { NujinAgentClient }] = await Promise.all([
     import("@/providers/ClientProvider"),
-    import("@/lib/nanobot-client"),
+    import("@/lib/nujinagent-client"),
   ]);
-  const client = new NanobotClient({ url: "ws://127.0.0.1:8765", reconnect: false });
+  const client = new NujinAgentClient({ url: "ws://127.0.0.1:8765", reconnect: false });
   return <ClientProvider client={client} token="fixture" webuiCapabilities={webuiCapabilities}>{fixture}</ClientProvider>;
 }
 

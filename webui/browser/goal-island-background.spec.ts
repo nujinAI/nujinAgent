@@ -42,7 +42,7 @@ async function expectBackgroundToCover(page: Page, owner: Locator) {
 for (const reducedMotion of ["no-preference", "reduce"] as const) {
   test(`goal background covers the content without registered properties (${reducedMotion})`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion });
-    await page.addInitScript(() => { localStorage.setItem("nanobot.locale", "en"); });
+    await page.addInitScript(() => { localStorage.setItem("nujinagent.locale", "en"); });
     await disableGoalPropertyRegistration(page);
     await page.goto("/browser/fixture.html?case=session-transition&preview&topic=goal");
     await page.addStyleTag({ content: '[data-testid="thread-header"] { background: black !important; }' });

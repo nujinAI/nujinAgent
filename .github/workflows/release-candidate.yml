@@ -1,8 +1,8 @@
 name: Verify Release Candidate
 run-name: >-
-  ${{ github.event_name == 'schedule' && vars.NANOBOT_DAILY_CANDIDATES_ENABLED != 'true' &&
+  ${{ github.event_name == 'schedule' && vars.NUJINAGENT_DAILY_CANDIDATES_ENABLED != 'true' &&
       'Disabled daily candidate' || format('Candidate {0} {1} from {2}',
-      inputs.channel || 'preview', inputs.next_stable || vars.NANOBOT_PREVIEW_BASE, github.sha) }}
+      inputs.channel || 'preview', inputs.next_stable || vars.NUJINAGENT_PREVIEW_BASE, github.sha) }}
 
 # Preparation only: no tags, GitHub Releases, PyPI or channel-feed writes.
 # Daily preparation is opt-in and remains disabled until maintainers enable the variable.
@@ -41,8 +41,8 @@ jobs:
   plan:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.repository == 'HKUDS/nanobot' && github.ref == 'refs/heads/main' &&
-       vars.NANOBOT_DAILY_CANDIDATES_ENABLED == 'true')
+      (github.repository == 'HKUDS/nujinagent' && github.ref == 'refs/heads/main' &&
+       vars.NUJINAGENT_DAILY_CANDIDATES_ENABLED == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -68,7 +68,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_COMMIT: ${{ github.sha }}
-          NEXT_STABLE: ${{ inputs.next_stable || vars.NANOBOT_PREVIEW_BASE }}
+          NEXT_STABLE: ${{ inputs.next_stable || vars.NUJINAGENT_PREVIEW_BASE }}
           CANDIDATE_CHANNEL: ${{ inputs.channel || 'preview' }}
           PREVIEW_SEQUENCE: ${{ github.run_number }}
         run: |
@@ -188,13 +188,13 @@ jobs:
       - name: Ad-hoc sign macOS arm64
         uses: indygreg/apple-code-sign-action@44d0985b7f4363198e80b6fea63ac3e9dd3e9957
         with:
-          input_path: ${{ env.CANDIDATE_DIR }}/tui/dist/nanobot-tui-darwin-arm64
+          input_path: ${{ env.CANDIDATE_DIR }}/tui/dist/nujinagent-tui-darwin-arm64
           rcodesign_version: 0.29.0
 
       - name: Ad-hoc sign macOS x64
         uses: indygreg/apple-code-sign-action@44d0985b7f4363198e80b6fea63ac3e9dd3e9957
         with:
-          input_path: ${{ env.CANDIDATE_DIR }}/tui/dist/nanobot-tui-darwin-x64
+          input_path: ${{ env.CANDIDATE_DIR }}/tui/dist/nujinagent-tui-darwin-x64
           rcodesign_version: 0.29.0
 
       - name: Package licensed native archives
@@ -211,8 +211,8 @@ jobs:
         run: |
           version="$CANDIDATE_VERSION"
           python -m scripts.release_candidate assemble --source-commit "$SOURCE_COMMIT" \
-            --wheel "$RUNNER_TEMP/python-dist/nanobot_ai-${version}-py3-none-any.whl" \
-            --sdist "$RUNNER_TEMP/python-dist/nanobot_ai-${version}.tar.gz" \
+            --wheel "$RUNNER_TEMP/python-dist/nujinagent_ai-${version}-py3-none-any.whl" \
+            --sdist "$RUNNER_TEMP/python-dist/nujinagent_ai-${version}.tar.gz" \
             --tui-dir tui/dist --output "$RUNNER_TEMP/release-artifacts"
           python -m twine check "$RUNNER_TEMP/release-artifacts/"*.whl \
             "$RUNNER_TEMP/release-artifacts/"*.tar.gz

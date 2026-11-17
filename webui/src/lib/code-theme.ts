@@ -1,7 +1,7 @@
 import type { Theme } from "@pierre/highlights";
 import type { ThemeRegistration } from "shiki";
 
-export const CODE_THEME_NAME = "nanobot-code";
+export const CODE_THEME_NAME = "nujinagent-code";
 export const CODE_THEME: Theme = {
   name: CODE_THEME_NAME, appearance: "dark", cssVariables: { prefix: "--code-" },
   style: {

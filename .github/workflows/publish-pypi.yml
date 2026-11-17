@@ -28,7 +28,7 @@ concurrency:
 jobs:
   verify:
     if: >-
-      github.repository == 'HKUDS/nanobot' && github.ref == 'refs/heads/main' &&
+      github.repository == 'HKUDS/nujinagent' && github.ref == 'refs/heads/main' &&
       (github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'release' &&
@@ -80,7 +80,7 @@ jobs:
           [[ "$destination" == pypi || "$destination" == testpypi ]] || { echo 'Invalid destination.' >&2; exit 1; }
           [[ "$release_actor" =~ ^[A-Za-z0-9-]+$ ]] || { echo 'A human release actor is required.' >&2; exit 1; }
           tag="v$VERSION"
-          gh release view "$tag" --repo HKUDS/nanobot --json tagName,isDraft,isPrerelease \
+          gh release view "$tag" --repo HKUDS/nujinagent --json tagName,isDraft,isPrerelease \
             | jq -e --arg tag "$tag" '.tagName == $tag and .isDraft == false and .isPrerelease == false' >/dev/null
           git fetch --no-tags origin "refs/tags/$tag:refs/tags/$tag"
           commit="$(git rev-parse "refs/tags/$tag^{commit}")"
@@ -90,10 +90,10 @@ jobs:
           echo "release_actor=$release_actor" >> "$GITHUB_OUTPUT"
           echo "release_version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "destination=$destination" >> "$GITHUB_OUTPUT"
-          gh release download "$tag" --repo HKUDS/nanobot --dir "$RUNNER_TEMP/release" \
+          gh release download "$tag" --repo HKUDS/nujinagent --dir "$RUNNER_TEMP/release" \
             --pattern 'release-manifest.json' --pattern 'release-manifest.json.sigstore.json' \
-            --pattern 'nanobot_ai-*.whl' --pattern 'nanobot_ai-*.tar.gz' \
-            --pattern 'nanobot-tui-*.zip' --pattern 'nanobot-tui-*.zip.sha256'
+            --pattern 'nujinagent_ai-*.whl' --pattern 'nujinagent_ai-*.tar.gz' \
+            --pattern 'nujinagent-tui-*.zip' --pattern 'nujinagent-tui-*.zip.sha256'
           python -m scripts.prepare_pypi_release --release-dir "$RUNNER_TEMP/release" \
             --output "$RUNNER_TEMP/pypi" --version "$VERSION" --tag-commit "$commit"
       - name: Check for an interrupted upload
@@ -146,7 +146,7 @@ jobs:
             exit 0
           fi
           [[ "$DESTINATION" == pypi ]]
-          gh api "repos/HKUDS/nanobot/actions/runs/$GITHUB_RUN_ID/approvals" | jq -e \
+          gh api "repos/HKUDS/nujinagent/actions/runs/$GITHUB_RUN_ID/approvals" | jq -e \
             --arg actor "$RELEASE_ACTOR" \
             'any(.[]; .state == "approved" and ([.environments[]?.name] | index("pypi")) != null and (.user.login | ascii_downcase) != ($actor | ascii_downcase))' >/dev/null \
             || { echo 'A different maintainer must approve this release in the pypi environment.' >&2; exit 1; }

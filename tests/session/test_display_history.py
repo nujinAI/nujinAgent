@@ -7,13 +7,13 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.session.display_history import HistoryFact, HistoryKind
-from nanobot.session.location import SessionLocation
-from nanobot.session.manager import SessionManager
-from nanobot.session.sqlite_store import SessionConflictError
-from nanobot.webui.forking import create_webui_chat_fork
-from nanobot.webui.history import HISTORY_IMPORT_MARKER, collect_legacy_history
-from nanobot.webui.transcript import WebUITranscriptRecorder, build_webui_thread_response
+from nujinagent.session.display_history import HistoryFact, HistoryKind
+from nujinagent.session.location import SessionLocation
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.sqlite_store import SessionConflictError
+from nujinagent.webui.forking import create_webui_chat_fork
+from nujinagent.webui.history import HISTORY_IMPORT_MARKER, collect_legacy_history
+from nujinagent.webui.transcript import WebUITranscriptRecorder, build_webui_thread_response
 
 
 def _manager(tmp_path: Path) -> SessionManager:
@@ -104,7 +104,7 @@ async def test_fork_rolls_back_both_histories_if_display_copy_fails(tmp_path, mo
     source.add_message("user", "question")
     source.add_message("assistant", "answer")
     await sessions.state.finish_turn(source)
-    monkeypatch.setattr("nanobot.webui.forking.uuid.uuid4", lambda: "failed-fork")
+    monkeypatch.setattr("nujinagent.webui.forking.uuid.uuid4", lambda: "failed-fork")
     original = sessions._store.append_history
 
     def fail(key, facts, *, expected_generation):
@@ -221,7 +221,7 @@ async def test_real_process_exit_cannot_split_fork_model_and_display_histories(t
     child = tmp_path / "crash.py"
     child.write_text('''import asyncio, os, sys
 from pathlib import Path
-from nanobot.session.manager import SessionManager
+from nujinagent.session.manager import SessionManager
 root = Path(sys.argv[1])
 sessions = SessionManager(root / "workspace", sessions_root=root / "sessions")
 original = sessions._store.append_history
@@ -251,7 +251,7 @@ asyncio.run(run())
 async def test_legacy_import_waits_for_unmigrated_workspace_owner(tmp_path, monkeypatch):
     root = tmp_path / "sessions"
     directory = tmp_path / "webui"
-    monkeypatch.setattr("nanobot.webui.history.get_webui_dir", lambda: directory)
+    monkeypatch.setattr("nujinagent.webui.history.get_webui_dir", lambda: directory)
     locations = {}
     sources = {}
     for name in ("first", "second"):
@@ -298,7 +298,7 @@ async def test_legacy_import_waits_for_unmigrated_workspace_owner(tmp_path, monk
 
 @pytest.mark.asyncio
 async def test_legacy_import_owner_survives_delete_and_new_workspace(tmp_path):
-    from nanobot.webui.history import collect_legacy_history
+    from nujinagent.webui.history import collect_legacy_history
 
     root = tmp_path / "sessions"
     legacy = tmp_path / "webui"
@@ -324,7 +324,7 @@ async def test_legacy_import_owner_survives_delete_and_new_workspace(tmp_path):
 async def test_large_display_fact_serialization_and_copy_stay_off_runtime_loop(tmp_path, monkeypatch):
     import threading
 
-    import nanobot.session.state as state_module
+    import nujinagent.session.state as state_module
 
     sessions = _manager(tmp_path)
     session = await sessions.state.get_header("websocket:large-activity")
@@ -353,7 +353,7 @@ async def test_large_display_fact_serialization_and_copy_stay_off_runtime_loop(t
 
 
 def test_message_projection_adapter_preserves_reply_and_agent_activity():
-    from nanobot.webui.history import fact_from_record, record_from_fact
+    from nujinagent.webui.history import fact_from_record, record_from_fact
 
     record = {
         "event": "message", "chat_id": "activity", "kind": "progress",
@@ -367,7 +367,7 @@ def test_message_projection_adapter_preserves_reply_and_agent_activity():
 async def test_legacy_activity_without_record_timestamps_preserves_file_time(tmp_path):
     import os
 
-    from nanobot.webui.session_list_index import list_webui_sessions
+    from nujinagent.webui.session_list_index import list_webui_sessions
 
     sessions = _manager(tmp_path)
     session = await sessions.state.get_header("websocket:old-activity")
@@ -391,7 +391,7 @@ async def test_legacy_activity_without_record_timestamps_preserves_file_time(tmp
 async def test_new_fork_activity_uses_creation_time_not_inherited_history(tmp_path, stored_display):
     from datetime import datetime
 
-    from nanobot.webui.session_list_index import list_webui_sessions
+    from nujinagent.webui.session_list_index import list_webui_sessions
 
     sessions = _manager(tmp_path)
     source = await sessions.state.get("websocket:old-source")

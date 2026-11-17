@@ -12,9 +12,9 @@ from sigstore.models import Bundle, TrustedRoot
 from sigstore.verify import Verifier
 from sigstore.verify.policy import Identity
 
-from nanobot import release_feed, release_trust
-from nanobot.release_feed import CATALOGUE_URL, PYPI_URL, ReleaseFeed, ReleaseFeedError
-from nanobot.releases import (
+from nujinagent import release_feed, release_trust
+from nujinagent.release_feed import CATALOGUE_URL, PYPI_URL, ReleaseFeed, ReleaseFeedError
+from nujinagent.releases import (
     RELEASE_DOWNLOAD,
     ReleaseArtifact,
     ReleaseCatalogue,
@@ -133,7 +133,7 @@ async def test_download_and_handoff_require_approval_before_any_staging(tmp_path
             return httpx.Response(200, content=catalogue.model_dump_json())
         if url.startswith(PYPI_URL):
             return httpx.Response(200, json={
-                "info": {"name": "nanobot-ai", "version": version, "requires_python": ">=3.11"},
+                "info": {"name": "nujinagent", "version": version, "requires_python": ">=3.11"},
                 "urls": [{"filename": item.filename, "size": item.size, "yanked": False,
                           "url": f"https://files.pythonhosted.org/packages/{item.filename}",
                           "digests": {"sha256": item.sha256}} for item in manifest.artifacts
@@ -187,7 +187,7 @@ def test_approval_workflow_is_manual_gated_and_has_no_publication_permission():
     assert job["environment"] == "release-approval"
     assert job["permissions"] == {"contents": "read", "id-token": "write"}
     assert "github.ref == 'refs/heads/main'" in job["if"]
-    assert "vars.NANOBOT_RELEASE_SIGNING_ENABLED == 'true'" in job["if"]
+    assert "vars.NUJINAGENT_RELEASE_SIGNING_ENABLED == 'true'" in job["if"]
     for step in job["steps"]:
         if "uses" in step:
             assert re.fullmatch(r"[\w-]+/[\w-]+@[0-9a-f]{40}", step["uses"])

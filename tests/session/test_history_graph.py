@@ -5,16 +5,16 @@ import zlib
 
 import pytest
 
-from nanobot.session.display_history import HistoryFact, HistoryKind
-from nanobot.session.history_graph import (
+from nujinagent.session.display_history import HistoryFact, HistoryKind
+from nujinagent.session.history_graph import (
     decode_graph,
     decode_graph_parts,
     encode_graph,
     graph_decoding,
 )
-from nanobot.session.manager import SessionManager
-from nanobot.webui.history import fact_from_record, record_from_fact
-from nanobot.webui.transcript import build_webui_thread_response
+from nujinagent.session.manager import SessionManager
+from nujinagent.webui.history import fact_from_record, record_from_fact
+from nujinagent.webui.transcript import build_webui_thread_response
 
 
 def graph(count=5):
@@ -58,7 +58,7 @@ def test_invalid_graph_does_not_replace_it_with_a_valid_empty_graph(value):
 
 
 def test_byte_limit_still_applies_before_graph_compression(monkeypatch):
-    monkeypatch.setattr("nanobot.session.display_history.MAX_HISTORY_FACT_BYTES", 2000)
+    monkeypatch.setattr("nujinagent.session.display_history.MAX_HISTORY_FACT_BYTES", 2000)
     with pytest.raises(ValueError, match="8 MiB"):
         HistoryFact(HistoryKind.MODEL_REQUEST, {"context_graph": graph(100)}).encode()
     parts = {"kind": "context_graph_parts", "stage": graph(30), "system": graph(30), "reads": graph(30)}
@@ -68,7 +68,7 @@ def test_byte_limit_still_applies_before_graph_compression(monkeypatch):
 
 @pytest.mark.parametrize("compressed", [False, True])
 def test_each_page_validates_identical_graph_once(monkeypatch, compressed):
-    import nanobot.session.history_graph as codec
+    import nujinagent.session.history_graph as codec
     value = encode_graph(graph()) if compressed else graph()
     method = "columns" if compressed else "inline"
     original = getattr(codec.GraphDecoder, method)
@@ -92,7 +92,7 @@ def test_each_page_validates_identical_graph_once(monkeypatch, compressed):
 
 
 async def test_storage_compresses_off_loop_and_replay_retains_each_request(tmp_path, monkeypatch):
-    import nanobot.session.history_graph as codec
+    import nujinagent.session.history_graph as codec
     sessions = SessionManager(tmp_path / "workspace", sessions_root=tmp_path / "sessions")
     session = await sessions.state.get("websocket:graph")
     loop_thread = threading.get_ident()
@@ -157,8 +157,8 @@ def test_compact_graph_rejects_invalid_edge_indices(indices):
 
 
 async def test_recorder_batch_encodes_once_off_loop_and_keeps_valid_members(tmp_path, monkeypatch):
-    from nanobot.session.display_history import HISTORY_GENERATION_METADATA_KEY
-    from nanobot.webui.transcript import WebUITranscriptRecorder
+    from nujinagent.session.display_history import HISTORY_GENERATION_METADATA_KEY
+    from nujinagent.webui.transcript import WebUITranscriptRecorder
 
     sessions = SessionManager(tmp_path / "workspace", sessions_root=tmp_path / "sessions")
     session = await sessions.state.get("websocket:batch")
@@ -192,6 +192,6 @@ def test_storage_limit_includes_compression_size_metadata(monkeypatch):
     raw = json.loads(encoded)
     # Small graphs can expand in storage; the final envelope still obeys the cap.
     assert raw["uncompressed_bytes"] < len(encoded.encode("utf-8")) - 1
-    monkeypatch.setattr("nanobot.session.display_history.MAX_HISTORY_FACT_BYTES", len(encoded.encode("utf-8")) - 1)
+    monkeypatch.setattr("nujinagent.session.display_history.MAX_HISTORY_FACT_BYTES", len(encoded.encode("utf-8")) - 1)
     with pytest.raises(ValueError, match="8 MiB"):
         fact.encode()

@@ -13,15 +13,15 @@ from urllib.parse import parse_qs, urlsplit
 import pytest
 from websockets.datastructures import Headers
 
-from nanobot.bus.queue import MessageBus
-from nanobot.config.loader import get_config_path
-from nanobot.config.network import NetworkConfig
-from nanobot.config.schema import MCPServerConfig
-from nanobot.runtime_admission import RuntimeBusyError
-from nanobot.webui.http_utils import http_json_response
-from nanobot.webui.mcp_presets_api import custom_mcp_action
-from nanobot.webui.settings_routes import WebUISettingsRouter
-from nanobot.webui.settings_services import WebUISettingsServices
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.loader import get_config_path
+from nujinagent.config.network import NetworkConfig
+from nujinagent.config.schema import MCPServerConfig
+from nujinagent.runtime_admission import RuntimeBusyError
+from nujinagent.webui.http_utils import http_json_response
+from nujinagent.webui.mcp_presets_api import custom_mcp_action
+from nujinagent.webui.settings_routes import WebUISettingsRouter
+from nujinagent.webui.settings_services import WebUISettingsServices
 
 
 def _router(
@@ -60,9 +60,9 @@ def _router(
 
 def _mutation_request(path: str, payload: dict[str, object]) -> SimpleNamespace:
     request = SimpleNamespace(path=path, headers=Headers())
-    request._nanobot_webui_mutation_request = True
-    request._nanobot_webui_mutation_payload = payload
-    request._nanobot_trusted_proxy_authenticated = True
+    request._nujinagent_webui_mutation_request = True
+    request._nujinagent_webui_mutation_payload = payload
+    request._nujinagent_trusted_proxy_authenticated = True
     return request
 
 
@@ -80,7 +80,7 @@ async def test_sandbox_check_is_authenticated_explicit_and_serialized(tmp_path, 
         await release.wait()
         return {"state": "passed", "reason": "", "launcher": "/usr/bin/bwrap", "revision": "test", "supported_backend": "bwrap"}
 
-    monkeypatch.setattr("nanobot.webui.settings_system.check_sandbox", probe)
+    monkeypatch.setattr("nujinagent.webui.settings_system.check_sandbox", probe)
     first = asyncio.create_task(router.dispatch(None, _mutation_request(path, {}), path))
     await asyncio.wait_for(started.wait(), 2)
     try:
@@ -92,9 +92,9 @@ async def test_sandbox_check_is_authenticated_explicit_and_serialized(tmp_path, 
 
 
 @pytest.mark.asyncio
-async def test_nanobot_update_requires_auth_local_permission_and_websocket(tmp_path, monkeypatch):
+async def test_nujinagent_update_requires_auth_local_permission_and_websocket(tmp_path, monkeypatch):
     router = _router(config_path=tmp_path / "config.json")
-    path = "/api/settings/nanobot-update/job/prepare"
+    path = "/api/settings/nujinagent-update/job/prepare"
     request = SimpleNamespace(path=path, headers=Headers())
     response = await router.dispatch(None, request, path)
     assert response.status_code == 405
@@ -149,11 +149,11 @@ async def test_provider_login_keeps_maintenance_busy_until_worker_exits(tmp_path
         assert release.wait(3)
         return SimpleNamespace(access="late-fixture-token")
 
-    monkeypatch.setattr("nanobot.providers.github_copilot_oauth.login_github_copilot", login)
-    monkeypatch.setattr("nanobot.providers.github_copilot_provider.get_storage", lambda: SimpleNamespace(
+    monkeypatch.setattr("nujinagent.providers.github_copilot_oauth.login_github_copilot", login)
+    monkeypatch.setattr("nujinagent.providers.github_copilot_provider.get_storage", lambda: SimpleNamespace(
         get_token_path=lambda: tmp_path / "copilot.json", save=saved.append,
     ))
-    monkeypatch.setattr("nanobot.webui.settings_api.settings_payload", lambda **_: {})
+    monkeypatch.setattr("nujinagent.webui.settings_api.settings_payload", lambda **_: {})
     path = "/api/settings/provider/oauth-login"
     response = await router.dispatch(None, _mutation_request(path, {"provider": "github_copilot"}), path)
     assert response.status_code == 200
@@ -191,7 +191,7 @@ async def test_provider_login_keeps_maintenance_busy_until_worker_exits(tmp_path
 
 @pytest.mark.asyncio
 async def test_failed_codex_login_start_still_owns_late_worker(tmp_path, monkeypatch):
-    import nanobot.providers.openai_codex_oauth as oauth
+    import nujinagent.providers.openai_codex_oauth as oauth
 
     router = _router(config_path=tmp_path / "config.json")
     entered, release = threading.Event(), threading.Event()
@@ -245,7 +245,7 @@ async def test_channel_setup_blocks_maintenance_until_confirmed_cleanup(
 
     connector = Connector()
     monkeypatch.setattr(
-        "nanobot.webui.settings_routes.load_channel_plugin",
+        "nujinagent.webui.settings_routes.load_channel_plugin",
         lambda _: SimpleNamespace(load_connector=lambda: connector),
     )
     path = "/api/settings/channels/whatsapp/connect/start"
@@ -278,7 +278,7 @@ async def test_legacy_connector_can_connect_but_cannot_claim_maintenance_idle(tm
     router = _router(config_path=tmp_path / "config.json")
     connector = SimpleNamespace(handle=AsyncMock(return_value={"status": "pending"}))
     monkeypatch.setattr(
-        "nanobot.webui.settings_routes.load_channel_plugin",
+        "nujinagent.webui.settings_routes.load_channel_plugin",
         lambda _: SimpleNamespace(load_connector=lambda: connector),
     )
     path = "/api/settings/channels/custom/connect/start"
@@ -338,7 +338,7 @@ async def test_usage_query_runs_off_the_event_loop(monkeypatch) -> None:
         worker_threads.append(threading.get_ident())
         return {"days": []}
 
-    monkeypatch.setattr("nanobot.webui.settings_routes.settings_usage_payload", usage_payload)
+    monkeypatch.setattr("nujinagent.webui.settings_routes.settings_usage_payload", usage_payload)
     request = SimpleNamespace(path="/api/settings/usage", headers=Headers())
 
     response = await _router().dispatch(None, request, request.path)
@@ -378,8 +378,8 @@ async def test_full_settings_query_runs_off_the_event_loop(monkeypatch) -> None:
 async def test_automatic_model_api_read_resolves_drafts_without_saving_or_probing(
     tmp_path, monkeypatch, provider, model, effort, expected,
 ) -> None:
-    from nanobot.config.loader import save_config
-    from nanobot.config.schema import Config
+    from nujinagent.config.loader import save_config
+    from nujinagent.config.schema import Config
 
     config_path = tmp_path / "config.json"
     save_config(Config.model_validate({"providers": {
@@ -417,7 +417,7 @@ async def test_mcp_reload_callback_is_bounded(
         return {"ok": True}
 
     monkeypatch.setattr(
-        "nanobot.webui.settings_routes._MCP_RELOAD_TIMEOUT_SECONDS",
+        "nujinagent.webui.settings_routes._MCP_RELOAD_TIMEOUT_SECONDS",
         0.01,
     )
     router = _router(mcp_reload=reload_mcp)
@@ -427,7 +427,7 @@ async def test_mcp_reload_callback_is_bounded(
     assert started.is_set()
     assert result == {
         "ok": False,
-        "message": "MCP hot reload timed out. Restart nanobot to pick up changes.",
+        "message": "MCP hot reload timed out. Restart nujinagent to pick up changes.",
         "requires_restart": True,
     }
 
@@ -438,10 +438,10 @@ async def test_settings_shutdown_joins_browser_authorization_and_releases_admiss
 ) -> None:
     config = MCPServerConfig(type="streamableHttp", auth="oauth", url="https://mcp.example/mcp")
     monkeypatch.setattr(
-        "nanobot.webui.settings_routes.ensure_mcp_oauth_server",
+        "nujinagent.webui.settings_routes.ensure_mcp_oauth_server",
         lambda _query, *, config_path=None: ("linear", config, NetworkConfig()),
     )
-    monkeypatch.setattr("nanobot.webui.mcp_oauth_api.validate_url_target", lambda _: (True, ""))
+    monkeypatch.setattr("nujinagent.webui.mcp_oauth_api.validate_url_target", lambda _: (True, ""))
     cleanup_started, allow_cleanup = asyncio.Event(), asyncio.Event()
 
     async def connect(_servers, _registry, *, oauth_handlers, network):
@@ -454,7 +454,7 @@ async def test_settings_shutdown_joins_browser_authorization_and_releases_admiss
             await allow_cleanup.wait()
         return {}
 
-    monkeypatch.setattr("nanobot.webui.mcp_oauth_api.connect_mcp_servers", connect)
+    monkeypatch.setattr("nujinagent.webui.mcp_oauth_api.connect_mcp_servers", connect)
     router = _router(config_path=tmp_path / "config.json")
     path = "/api/settings/mcp-oauth/start"
     response = await router.dispatch(None, _mutation_request(path, {"name": "linear"}), path)
@@ -485,7 +485,7 @@ async def test_mcp_oauth_start_uses_gateway_callback_and_requires_api_auth(monke
     )
     network = SimpleNamespace(proxy="http://shared.example:8080")
     monkeypatch.setattr(
-        "nanobot.webui.settings_routes.ensure_mcp_oauth_server",
+        "nujinagent.webui.settings_routes.ensure_mcp_oauth_server",
         lambda _query, *, config_path=None: ("xmind", config, network),
     )
     router = _router()
@@ -625,7 +625,7 @@ async def test_oauth_completion_reads_websocket_payload(
             "flow_id": "flow-123",
         }
 
-    monkeypatch.setattr("nanobot.webui.settings_routes.complete_oauth_provider", complete)
+    monkeypatch.setattr("nujinagent.webui.settings_routes.complete_oauth_provider", complete)
     router = _router()
     request = _mutation_request(
         "/api/settings/provider/oauth-login/complete",
@@ -719,7 +719,7 @@ async def test_runtime_config_mutation_routes_refresh_live_runtime(
         captured["query"] = query
         return {"routed": function_name}
 
-    monkeypatch.setattr(f"nanobot.webui.settings_routes.{function_name}", mutate)
+    monkeypatch.setattr(f"nujinagent.webui.settings_routes.{function_name}", mutate)
     request = _mutation_request(route_path, payload)
 
     response = await _router(
@@ -743,7 +743,7 @@ async def test_model_update_route_forwards_session_rename_dependency(monkeypatch
         captured.update(query=query, rename_model_preset=rename_model_preset)
         return {"updated": True}
 
-    monkeypatch.setattr("nanobot.webui.settings_routes.update_model_configuration", update)
+    monkeypatch.setattr("nujinagent.webui.settings_routes.update_model_configuration", update)
     path = "/api/settings/model-configurations/update"
     request = _mutation_request(path, {"name": "openai", "new_name": "Codex"})
 
@@ -809,13 +809,13 @@ async def test_settings_get_mutation_route_is_method_not_allowed() -> None:
             {
                 "currentVersion": "1.2.0",
                 "latestVersion": "1.3.0",
-                "pypiUrl": "https://pypi.org/project/nanobot-ai/",
+                "pypiUrl": "https://pypi.org/project/nujinagent/",
             },
             {
                 "updateAvailable": {
                     "currentVersion": "1.2.0",
                     "latestVersion": "1.3.0",
-                    "pypiUrl": "https://pypi.org/project/nanobot-ai/",
+                    "pypiUrl": "https://pypi.org/project/nujinagent/",
                 }
             },
         ),
@@ -828,7 +828,7 @@ async def test_version_check_route_returns_stable_payload(
     expected: dict[str, object],
 ) -> None:
     monkeypatch.setattr(
-        "nanobot.webui.settings_routes.check_for_update",
+        "nujinagent.webui.settings_routes.check_for_update",
         AsyncMock(return_value={"updateAvailable": update_info, "releaseStatus": {"state": "available" if update_info else "current"}}),
     )
     request = SimpleNamespace(path="/api/settings/version-check", headers=Headers())
@@ -844,12 +844,12 @@ async def test_version_check_and_mcp_requests_share_the_gateway_loop(monkeypatch
     import httpx
     from packaging.tags import Tag
 
-    import nanobot
-    from nanobot.release_feed import PYPI_URL, ReleaseFeed
-    from nanobot.releases import release_filenames
-    from nanobot.security import network
-    from nanobot.update_channel import UpdateChannel
-    from nanobot.webui import version_check
+    import nujinagent
+    from nujinagent.release_feed import PYPI_URL, ReleaseFeed
+    from nujinagent.releases import release_filenames
+    from nujinagent.security import network
+    from nujinagent.update_channel import UpdateChannel
+    from nujinagent.webui import version_check
 
     gateway_loop = asyncio.get_running_loop()
     entered = asyncio.Event()
@@ -869,7 +869,7 @@ async def test_version_check_and_mcp_requests_share_the_gateway_loop(monkeypatch
             return httpx.Response(200, json={})
         assert str(request.url) == f"{PYPI_URL}/json"
         return httpx.Response(200, json={
-            "info": {"name": "nanobot-ai", "version": "0.3.5", "requires_python": ">=3.11"},
+            "info": {"name": "nujinagent", "version": "0.3.5", "requires_python": ">=3.11"},
             "urls": [{"filename": name, "size": 123, "yanked": False,
                       "digests": {"sha256": "c" * 64},
                       "url": f"https://files.pythonhosted.org/packages/{name}"}
@@ -882,7 +882,7 @@ async def test_version_check_and_mcp_requests_share_the_gateway_loop(monkeypatch
 
     monkeypatch.setattr(network.PinnedDNSAsyncTransport, "_resolver_lock", asyncio.Lock())
     monkeypatch.setattr(network, "resolve_url_target", resolve)
-    monkeypatch.setattr(nanobot, "__version__", "0.3.5")
+    monkeypatch.setattr(nujinagent, "__version__", "0.3.5")
     monkeypatch.setattr(version_check, "read_update_channel", UpdateChannel)
     monkeypatch.setattr(version_check, "installation_state_dir", lambda: tmp_path)
     monkeypatch.setattr(version_check, "ReleaseFeed", lambda directory: ReleaseFeed(
@@ -914,7 +914,7 @@ async def test_version_check_route_enforces_auth_and_bounds_failures(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     check = AsyncMock(side_effect=RuntimeError("upstream secret body"))
-    monkeypatch.setattr("nanobot.webui.settings_routes.check_for_update", check)
+    monkeypatch.setattr("nujinagent.webui.settings_routes.check_for_update", check)
     request = SimpleNamespace(path="/api/settings/version-check", headers=Headers())
 
     unauthorized = await _router(authorized=False).dispatch(None, request, request.path)
@@ -935,7 +935,7 @@ async def test_channel_status_is_explicit_and_old_clients_never_report_false_suc
     result = {"updateAvailable": None, "releaseStatus": {
         "channel": "stable", "revision": 2, "currentVersion": "0.3.7.dev42", "state": state,
     }}
-    monkeypatch.setattr("nanobot.webui.settings_routes.check_for_update", AsyncMock(return_value=result))
+    monkeypatch.setattr("nujinagent.webui.settings_routes.check_for_update", AsyncMock(return_value=result))
     request = SimpleNamespace(path="/api/settings/version-check", headers=Headers())
     router = _router()
     response = await router.dispatch(None, request, request.path)
@@ -948,10 +948,10 @@ async def test_channel_status_is_explicit_and_old_clients_never_report_false_suc
 
 
 async def test_version_check_owner_is_additive_read_only_and_failure_is_not_a_release_failure(monkeypatch):
-    from nanobot.webui import settings_system
+    from nujinagent.webui import settings_system
 
     result = {"updateAvailable": None, "releaseStatus": {"state": "current"}}
-    monkeypatch.setattr("nanobot.webui.settings_routes.check_for_update", AsyncMock(return_value=result))
+    monkeypatch.setattr("nujinagent.webui.settings_routes.check_for_update", AsyncMock(return_value=result))
     inspect_owner = MagicMock(return_value=SimpleNamespace(owner="pipx", records={}))
     monkeypatch.setattr(settings_system, "inspect_update_installation", inspect_owner)
     request = SimpleNamespace(path="/api/settings/version-check", headers=Headers())
@@ -970,7 +970,7 @@ async def test_version_check_owner_is_additive_read_only_and_failure_is_not_a_re
 
 
 async def test_runtime_config_route_authentication_validation_and_restart(tmp_path):
-    from nanobot.config.loader import load_config
+    from nujinagent.config.loader import load_config
 
     path = "/api/settings/runtime-config/update"
     config_path = tmp_path / "config.json"
@@ -1063,8 +1063,8 @@ async def test_reverting_web_reader_preserves_unrelated_restart_reason(tmp_path)
 
 @pytest.mark.parametrize("enabled", [False, True])
 async def test_image_switch_round_trip_clears_restart(tmp_path, enabled):
-    from nanobot.config.loader import save_config
-    from nanobot.config.schema import Config
+    from nujinagent.config.loader import save_config
+    from nujinagent.config.schema import Config
 
     config = Config()
     config.providers.openrouter.api_key = "sk-test"
@@ -1086,7 +1086,7 @@ async def test_image_switch_round_trip_clears_restart(tmp_path, enabled):
 
 @pytest.mark.asyncio
 async def test_first_mcp_oauth_request_saves_proxy_flag_before_starting_flow(tmp_path) -> None:
-    from nanobot.config.loader import load_config
+    from nujinagent.config.loader import load_config
 
     config_path = tmp_path / "config.json"
     config_path.write_text(json.dumps({
@@ -1127,14 +1127,14 @@ async def test_mcp_proxy_mutation_persists_reloads_and_keeps_oauth_credentials(
     from mcp.shared.auth import OAuthToken
     from websockets.http11 import Request
 
-    from nanobot.agent.tools.mcp_oauth import MCPOAuthStorage
-    from nanobot.bus.queue import MessageBus
-    from nanobot.channels.websocket.runtime import WebSocketConfig
-    from nanobot.config.loader import load_config, save_config
-    from nanobot.config.schema import Config
-    from nanobot.webui.gateway_services import build_gateway_services
+    from nujinagent.agent.tools.mcp_oauth import MCPOAuthStorage
+    from nujinagent.bus.queue import MessageBus
+    from nujinagent.channels.websocket.runtime import WebSocketConfig
+    from nujinagent.config.loader import load_config, save_config
+    from nujinagent.config.schema import Config
+    from nujinagent.webui.gateway_services import build_gateway_services
 
-    monkeypatch.setattr("nanobot.agent.tools.mcp_oauth.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.agent.tools.mcp_oauth.get_data_dir", lambda: tmp_path)
     config_path = tmp_path / "config.json"
     config = Config.model_validate({
         "network": {"proxy": "http://proxy.example:8080"},
@@ -1193,7 +1193,7 @@ async def test_usage_query_supports_lazy_details_and_conditional_compressed_resp
         calls.append(kwargs["details"])
         return {**payload, "revision": "models" if kwargs["details"] else "overview"}
 
-    monkeypatch.setattr("nanobot.webui.settings_routes.settings_usage_payload", usage_payload)
+    monkeypatch.setattr("nujinagent.webui.settings_routes.settings_usage_payload", usage_payload)
     router = _router()
     path = "/api/settings/usage"
     request = SimpleNamespace(path=path, headers=Headers({"Accept-Encoding": "gzip"}))

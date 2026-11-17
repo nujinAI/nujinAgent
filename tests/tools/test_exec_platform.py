@@ -14,9 +14,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from nanobot.agent.tools.exec_session import ExecSessionManager, ExecSessionTool
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.execution import processes
+from nujinagent.agent.tools.exec_session import ExecSessionManager, ExecSessionTool
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.execution import processes
 
 _WINDOWS_ENV_KEYS = {
     "APPDATA", "LOCALAPPDATA", "ProgramData",
@@ -59,7 +59,7 @@ class _FakeWindowsJob:
 class TestBuildEnvUnix:
 
     def test_expected_keys(self):
-        with patch("nanobot.agent.tools.shell._IS_WINDOWS", False):
+        with patch("nujinagent.agent.tools.shell._IS_WINDOWS", False):
             env = ExecTool()._build_env()
         expected = {"HOME", "LANG", "TERM", "PYTHONUNBUFFERED"}
         assert expected <= set(env)
@@ -68,17 +68,17 @@ class TestBuildEnvUnix:
 
     def test_home_from_environ(self, monkeypatch):
         monkeypatch.setenv("HOME", "/Users/dev")
-        with patch("nanobot.agent.tools.shell._IS_WINDOWS", False):
+        with patch("nujinagent.agent.tools.shell._IS_WINDOWS", False):
             env = ExecTool()._build_env()
         assert env["HOME"] == "/Users/dev"
 
     def test_secrets_excluded(self, monkeypatch):
         monkeypatch.setenv("OPENAI_API_KEY", "sk-secret")
-        monkeypatch.setenv("NANOBOT_TOKEN", "tok-secret")
-        with patch("nanobot.agent.tools.shell._IS_WINDOWS", False):
+        monkeypatch.setenv("NUJINAGENT_TOKEN", "tok-secret")
+        with patch("nujinagent.agent.tools.shell._IS_WINDOWS", False):
             env = ExecTool()._build_env()
         assert "OPENAI_API_KEY" not in env
-        assert "NANOBOT_TOKEN" not in env
+        assert "NUJINAGENT_TOKEN" not in env
         for v in env.values():
             assert "secret" not in v.lower()
 
@@ -92,23 +92,23 @@ class TestBuildEnvWindows:
     }
 
     def test_expected_keys(self):
-        with patch("nanobot.agent.tools.shell._IS_WINDOWS", True):
+        with patch("nujinagent.agent.tools.shell._IS_WINDOWS", True):
             env = ExecTool()._build_env()
         assert set(env) == self._EXPECTED_KEYS
 
     def test_secrets_excluded(self, monkeypatch):
         monkeypatch.setenv("OPENAI_API_KEY", "sk-secret")
-        monkeypatch.setenv("NANOBOT_TOKEN", "tok-secret")
-        with patch("nanobot.agent.tools.shell._IS_WINDOWS", True):
+        monkeypatch.setenv("NUJINAGENT_TOKEN", "tok-secret")
+        with patch("nujinagent.agent.tools.shell._IS_WINDOWS", True):
             env = ExecTool()._build_env()
         assert "OPENAI_API_KEY" not in env
-        assert "NANOBOT_TOKEN" not in env
+        assert "NUJINAGENT_TOKEN" not in env
         for v in env.values():
             assert "secret" not in v.lower()
 
     def test_path_has_sensible_default(self):
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
             patch.dict("os.environ", {}, clear=True),
         ):
             env = ExecTool()._build_env()
@@ -116,7 +116,7 @@ class TestBuildEnvWindows:
 
     def test_systemroot_forwarded(self, monkeypatch):
         monkeypatch.setenv("SYSTEMROOT", r"D:\Windows")
-        with patch("nanobot.agent.tools.shell._IS_WINDOWS", True):
+        with patch("nujinagent.agent.tools.shell._IS_WINDOWS", True):
             env = ExecTool()._build_env()
         assert env["SYSTEMROOT"] == r"D:\Windows"
 
@@ -126,10 +126,10 @@ class TestArgumentVectorPath:
     def test_uses_parent_path_for_executable_lookup(self):
         parent_path = os.pathsep.join(("parent-bin", "system-bin"))
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", False),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", False),
             patch.dict(
                 "os.environ",
-                {"PATH": parent_path, "NANOBOT_SECRET_TOKEN": "super-secret-value"},
+                {"PATH": parent_path, "NUJINAGENT_SECRET_TOKEN": "super-secret-value"},
                 clear=True,
             ),
         ):
@@ -137,7 +137,7 @@ class TestArgumentVectorPath:
 
         assert not isinstance(prepared, str)
         assert prepared.env["PATH"] == parent_path
-        assert "NANOBOT_SECRET_TOKEN" not in prepared.env
+        assert "NUJINAGENT_SECRET_TOKEN" not in prepared.env
 
 
 class TestSpawnUnix:
@@ -384,16 +384,16 @@ class TestPathAppendPlatform:
             return processes.ProcessTree(mock_proc)
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", False),
-            patch("nanobot.agent.tools.shell.os.pathsep", ":"),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", False),
+            patch("nujinagent.agent.tools.shell.os.pathsep", ":"),
             patch.object(processes, "spawn_process_tree", side_effect=capture_spawn),
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
             tool = ExecTool(path_append="/opt/bin; echo INJECTED")
             await tool.execute(command="ls")
 
-        assert captured_cmd == 'export PATH="$PATH:$NANOBOT_PATH_APPEND"; ls'
-        assert captured_env["NANOBOT_PATH_APPEND"] == "/opt/bin; echo INJECTED"
+        assert captured_cmd == 'export PATH="$PATH:$NUJINAGENT_PATH_APPEND"; ls'
+        assert captured_env["NUJINAGENT_PATH_APPEND"] == "/opt/bin; echo INJECTED"
         assert "INJECTED" not in captured_cmd
 
     @pytest.mark.asyncio
@@ -412,16 +412,16 @@ class TestPathAppendPlatform:
             return processes.ProcessTree(mock_proc)
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", False),
-            patch("nanobot.agent.tools.shell.os.pathsep", ":"),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", False),
+            patch("nujinagent.agent.tools.shell.os.pathsep", ":"),
             patch.object(processes, "spawn_process_tree", side_effect=capture_spawn),
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
             tool = ExecTool(path_prepend="/venv/bin; echo INJECTED")
             await tool.execute(command="python --version")
 
-        assert captured_cmd == 'export PATH="$NANOBOT_PATH_PREPEND:$PATH"; python --version'
-        assert captured_env["NANOBOT_PATH_PREPEND"] == "/venv/bin; echo INJECTED"
+        assert captured_cmd == 'export PATH="$NUJINAGENT_PATH_PREPEND:$PATH"; python --version'
+        assert captured_env["NUJINAGENT_PATH_PREPEND"] == "/venv/bin; echo INJECTED"
         assert "INJECTED" not in captured_cmd
 
     @pytest.mark.asyncio
@@ -440,8 +440,8 @@ class TestPathAppendPlatform:
             return processes.ProcessTree(mock_proc)
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", False),
-            patch("nanobot.agent.tools.shell.os.pathsep", ":"),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", False),
+            patch("nujinagent.agent.tools.shell.os.pathsep", ":"),
             patch.object(processes, "spawn_process_tree", side_effect=capture_spawn),
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
@@ -449,10 +449,10 @@ class TestPathAppendPlatform:
             await tool.execute(command="python --version")
 
         assert captured_cmd == (
-            'export PATH="$NANOBOT_PATH_PREPEND:$PATH:$NANOBOT_PATH_APPEND"; python --version'
+            'export PATH="$NUJINAGENT_PATH_PREPEND:$PATH:$NUJINAGENT_PATH_APPEND"; python --version'
         )
-        assert captured_env["NANOBOT_PATH_PREPEND"] == "/venv/bin"
-        assert captured_env["NANOBOT_PATH_APPEND"] == "/usr/sbin"
+        assert captured_env["NUJINAGENT_PATH_PREPEND"] == "/venv/bin"
+        assert captured_env["NUJINAGENT_PATH_APPEND"] == "/usr/sbin"
 
     @pytest.mark.asyncio
     async def test_windows_modifies_env(self):
@@ -467,8 +467,8 @@ class TestPathAppendPlatform:
             return processes.ProcessTree(mock_proc)
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
-            patch("nanobot.agent.tools.shell.os.pathsep", ";"),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell.os.pathsep", ";"),
             patch.object(processes, "spawn_process_tree", side_effect=capture_spawn),
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
@@ -490,8 +490,8 @@ class TestPathAppendPlatform:
             return processes.ProcessTree(mock_proc)
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
-            patch("nanobot.agent.tools.shell.os.pathsep", ";"),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell.os.pathsep", ";"),
             patch.object(ExecTool, "_build_env", return_value={"PATH": r"C:\Windows\System32"}),
             patch.object(processes, "spawn_process_tree", side_effect=capture_spawn),
             patch.object(ExecTool, "_guard_command", return_value=None),
@@ -512,7 +512,7 @@ class TestSandboxPlatform:
         mock_proc = _CompletedProcess(b"ok")
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
             patch.object(processes, "spawn_process_tree", return_value=processes.ProcessTree(mock_proc)) as mock_spawn,
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
@@ -534,8 +534,8 @@ class TestSandboxPlatform:
         tool_cache = tmp_path / "tool-cache"
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", False),
-            patch("nanobot.execution.sandbox.resolve_sandbox_launcher", return_value=str(launcher)),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", False),
+            patch("nujinagent.execution.sandbox.resolve_sandbox_launcher", return_value=str(launcher)),
             patch.object(processes, "spawn_process_tree", return_value=processes.ProcessTree(mock_proc)) as mock_spawn,
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
@@ -581,7 +581,7 @@ class TestExecuteEndToEnd:
         job.creation_flags = 0x4
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
             patch.object(processes, "_IS_WINDOWS", True),
             patch.object(processes, "_create_windows_job", return_value=job),
             patch("asyncio.create_subprocess_exec", return_value=mock_proc) as mock_exec,
@@ -607,7 +607,7 @@ class TestExecuteEndToEnd:
         mock_proc = _CompletedProcess(b"hello world\n")
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", False),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", False),
             patch.object(processes, "spawn_process_tree", return_value=processes.ProcessTree(mock_proc)) as mock_spawn,
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
@@ -630,7 +630,7 @@ class TestExecuteEndToEnd:
             return processes.ProcessTree(_CompletedProcess(b"ok\n"))
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", False),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", False),
             patch.object(processes, "spawn_process_tree", side_effect=capture_spawn),
             patch.object(ExecTool, "_guard_command", return_value=None),
         ):
@@ -694,7 +694,7 @@ class TestWindowsMultilineExec:
         mock_proc = _CompletedProcess(b"1\n2\n")
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
             patch("asyncio.create_subprocess_exec", new_callable=AsyncMock) as mock_exec,
             patch.object(processes, "_IS_WINDOWS", True),
             patch.object(processes, "_create_windows_job", side_effect=_FakeWindowsJob),
@@ -715,7 +715,7 @@ class TestWindowsMultilineExec:
         mock_proc = _CompletedProcess(b"1\n")
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
             patch("asyncio.create_subprocess_exec", new_callable=AsyncMock) as mock_exec,
             patch.object(processes, "_IS_WINDOWS", True),
             patch.object(processes, "_create_windows_job", side_effect=_FakeWindowsJob),
@@ -736,7 +736,7 @@ class TestResolveShellWindows:
         mock_proc = _CompletedProcess(b"hello\n")
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
             patch("asyncio.create_subprocess_exec", new_callable=AsyncMock) as mock_exec,
             patch.object(processes, "_IS_WINDOWS", True),
             patch.object(processes, "_create_windows_job", side_effect=_FakeWindowsJob),
@@ -756,7 +756,7 @@ class TestResolveShellWindows:
         mock_proc = _CompletedProcess(b'"a & b"\n')
 
         with (
-            patch("nanobot.agent.tools.shell._IS_WINDOWS", True),
+            patch("nujinagent.agent.tools.shell._IS_WINDOWS", True),
             patch("asyncio.create_subprocess_shell", new_callable=AsyncMock) as mock_shell,
             patch.object(processes, "_IS_WINDOWS", True),
             patch.object(processes, "_create_windows_job", side_effect=_FakeWindowsJob),
@@ -772,7 +772,7 @@ class TestResolveShellWindows:
 
     @pytest.mark.asyncio
     async def test_shell_bash_rejected_on_windows(self):
-        with patch("nanobot.agent.tools.shell._IS_WINDOWS", True):
+        with patch("nujinagent.agent.tools.shell._IS_WINDOWS", True):
             tool = ExecTool()
             result = await tool.execute(command="echo hello", shell="bash")
 

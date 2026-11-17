@@ -9,23 +9,23 @@ import pytest
 from loguru import logger
 
 from agent.session_helpers import run_session, save_completed_subagent, visible_message
-from nanobot.agent.context import ContextBuilder, TranscriptInput
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.runner import AgentRunResult
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.outbound_events import (
+from nujinagent.agent.context import ContextBuilder, TranscriptInput
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.runner import AgentRunResult
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.outbound_events import (
     GoalStatusEvent,
     StreamDeltaEvent,
     StreamedResponseEvent,
     StreamEndEvent,
     TurnEndEvent,
 )
-from nanobot.bus.queue import MessageBus
-from nanobot.bus.runtime_events import TurnCompleted, TurnRunStatusChanged
-from nanobot.cron.session_turns import CRON_HISTORY_META, CRON_TRIGGER_META
-from nanobot.goal.assembly import install_goal
-from nanobot.providers.base import (
+from nujinagent.bus.queue import MessageBus
+from nujinagent.bus.runtime_events import TurnCompleted, TurnRunStatusChanged
+from nujinagent.cron.session_turns import CRON_HISTORY_META, CRON_TRIGGER_META
+from nujinagent.goal.assembly import install_goal
+from nujinagent.providers.base import (
     GenerationSettings,
     LLMProvider,
     LLMResponse,
@@ -33,8 +33,8 @@ from nanobot.providers.base import (
     ProviderConversationState,
     ToolCallRequest,
 )
-from nanobot.providers.factory import ProviderSnapshot
-from nanobot.runtime_context import (
+from nujinagent.providers.factory import ProviderSnapshot
+from nujinagent.runtime_context import (
     RUNTIME_CONTEXT_HISTORY_META,
     RUNTIME_CONTEXT_MESSAGE_META,
     RUNTIME_CONTEXT_TAG,
@@ -42,10 +42,10 @@ from nanobot.runtime_context import (
     append_runtime_context,
     public_history_message,
 )
-from nanobot.session.automation_turns import AUTOMATION_HISTORY_META
-from nanobot.session.goal_state import GOAL_STATE_KEY
-from nanobot.session.manager import Session
-from nanobot.session.recovery import (
+from nujinagent.session.automation_turns import AUTOMATION_HISTORY_META
+from nujinagent.session.goal_state import GOAL_STATE_KEY
+from nujinagent.session.manager import Session
+from nujinagent.session.recovery import (
     PENDING_FOLLOWUP_ID_KEY,
     PENDING_FOLLOWUPS_KEY,
     PROVIDER_STATE_CHECKPOINT_VERSION,
@@ -53,14 +53,14 @@ from nanobot.session.recovery import (
     RUNTIME_CHECKPOINT_KEY,
     restore_runtime_checkpoint,
 )
-from nanobot.session.summary import (
+from nujinagent.session.summary import (
     SUMMARY_CONTINUATION_TEXT,
     SessionSummaryCheckpoint,
 )
-from nanobot.session.turn_continuation import (
+from nujinagent.session.turn_continuation import (
     INTERNAL_CONTINUATION_META,
 )
-from nanobot.session.webui_turns import (
+from nujinagent.session.webui_turns import (
     TITLE_GENERATION_MAX_TOKENS,
     WEBUI_SESSION_METADATA_KEY,
     WEBUI_TITLE_METADATA_KEY,
@@ -68,7 +68,7 @@ from nanobot.session.webui_turns import (
     clean_generated_title,
     maybe_generate_webui_title,
 )
-from nanobot.triggers.local_session_turns import LOCAL_TRIGGER_META
+from nujinagent.triggers.local_session_turns import LOCAL_TRIGGER_META
 
 
 def _agent_run_result(
@@ -97,7 +97,7 @@ def _assembled_messages(
 
 def _mk_loop() -> AgentLoop:
     loop = AgentLoop.__new__(AgentLoop)
-    from nanobot.config.schema import AgentDefaults
+    from nujinagent.config.schema import AgentDefaults
 
     loop.max_tool_result_chars = AgentDefaults().max_tool_result_chars
     return loop
@@ -274,7 +274,7 @@ async def test_new_with_bot_suffix_does_not_persist_command(tmp_path: Path) -> N
             channel="websocket",
             sender_id="user",
             chat_id="chat-1",
-            content="/new@nanobot_bot",
+            content="/new@nujinagent_bot",
         )
     )
 
@@ -1633,7 +1633,7 @@ async def test_process_message_uses_explicit_session_for_goal_context(
 async def test_run_agent_loop_continuation_reads_latest_goal_metadata(
     tmp_path: Path,
 ) -> None:
-    from nanobot.agent.runner import AgentRunResult
+    from nujinagent.agent.runner import AgentRunResult
 
     loop = _make_full_loop(tmp_path)
     session = await loop.sessions.state.get("websocket:late-goal")
@@ -1750,8 +1750,8 @@ async def test_next_turn_after_crash_closes_pending_user_turn_before_new_input(t
 
 @pytest.mark.asyncio
 async def test_stop_preserves_runtime_checkpoint_for_next_turn(tmp_path: Path) -> None:
-    from nanobot.command.builtin import cmd_stop
-    from nanobot.command.router import CommandContext
+    from nujinagent.command.builtin import cmd_stop
+    from nujinagent.command.router import CommandContext
 
     loop = _make_full_loop(tmp_path)
 

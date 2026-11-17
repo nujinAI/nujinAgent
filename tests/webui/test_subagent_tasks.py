@@ -8,14 +8,14 @@ import pytest
 from websockets.datastructures import Headers
 from websockets.http11 import Request
 
-from nanobot.agent.memory import Consolidator
-from nanobot.agent.subagent import SubagentManager
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket.runtime import WebSocketConfig
-from nanobot.providers.base import GenerationSettings, LLMProvider
-from nanobot.session.manager import SessionManager
-from nanobot.utils.llm_runtime import LLMRuntime
-from nanobot.webui.gateway_services import build_gateway_services
+from nujinagent.agent.memory import Consolidator
+from nujinagent.agent.subagent import SubagentManager
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket.runtime import WebSocketConfig
+from nujinagent.providers.base import GenerationSettings, LLMProvider
+from nujinagent.session.manager import SessionManager
+from nujinagent.utils.llm_runtime import LLMRuntime
+from nujinagent.webui.gateway_services import build_gateway_services
 
 
 @pytest.mark.asyncio

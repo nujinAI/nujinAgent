@@ -1848,7 +1848,7 @@
   color: hsl(var(--foreground));
 }
 
-.nanobot-file-diff {
+.nujinagent-file-diff {
   --code-foreground: hsl(var(--foreground));
   --code-background: hsl(var(--background));
   display: block;
@@ -1869,7 +1869,7 @@
   --diffs-bg-deletion-emphasis-override: color-mix(in srgb, var(--diff-deleted-foreground) 15%, transparent);
 }
 
-.nanobot-diff-gap {
+.nujinagent-diff-gap {
   height: 26px;
   box-sizing: border-box;
   white-space: nowrap;
@@ -1910,7 +1910,7 @@ html[data-custom-background] [data-testid="file-edit-diff"] {
   background-color: hsl(var(--background) / 0.78);
   backdrop-filter: blur(12px);
 }
-html[data-custom-background] .nanobot-file-diff {
+html[data-custom-background] .nujinagent-file-diff {
   --code-background: transparent;
 }
 html[data-custom-background] .bg-settings-surface,

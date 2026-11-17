@@ -13,35 +13,35 @@ import pytest
 from websockets.datastructures import Headers
 from websockets.http11 import Request
 
-from nanobot.agent.memory import Consolidator
-from nanobot.agent.runner import AgentRunResult
-from nanobot.agent.subagent import SubagentControlError, SubagentManager
-from nanobot.agent.subagent_sessions import SUBAGENT, TASK_METADATA_KEY, SubagentSessions
-from nanobot.agent.subagent_status import SubagentStatus
-from nanobot.agent.tools.context import RequestContext, current_request_context, request_context
-from nanobot.agent.tools.session_messages import SendSessionMessageTool
-from nanobot.agent.tools.sessions import ReadSessionTool, SearchSessionsTool
-from nanobot.agent.tools.subagent import SubagentTool
-from nanobot.bus.queue import MessageBus
-from nanobot.bus.runtime_events import SubagentTaskChanged
-from nanobot.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
-from nanobot.providers.base import (
+from nujinagent.agent.memory import Consolidator
+from nujinagent.agent.runner import AgentRunResult
+from nujinagent.agent.subagent import SubagentControlError, SubagentManager
+from nujinagent.agent.subagent_sessions import SUBAGENT, TASK_METADATA_KEY, SubagentSessions
+from nujinagent.agent.subagent_status import SubagentStatus
+from nujinagent.agent.tools.context import RequestContext, current_request_context, request_context
+from nujinagent.agent.tools.session_messages import SendSessionMessageTool
+from nujinagent.agent.tools.sessions import ReadSessionTool, SearchSessionsTool
+from nujinagent.agent.tools.subagent import SubagentTool
+from nujinagent.bus.queue import MessageBus
+from nujinagent.bus.runtime_events import SubagentTaskChanged
+from nujinagent.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
+from nujinagent.providers.base import (
     GenerationSettings,
     LLMProvider,
     LLMResponse,
     ProviderConversationState,
     ToolCallRequest,
 )
-from nanobot.session.jsonl_migration import WORKSPACE_BACKUP_DIR
-from nanobot.session.location import SessionLocation
-from nanobot.session.manager import SessionManager, SessionPolicy
-from nanobot.session.session_handles import SessionHandleResolver
-from nanobot.session.sqlite_store import SqliteSessionStore
-from nanobot.session.summary import SessionSummaryCheckpoint, is_summary_checkpoint
-from nanobot.session.types import PARENT_SESSION_KEY, SESSION_TYPE_KEY
-from nanobot.session.webui_turns import WebuiTurnCoordinator
-from nanobot.utils.llm_runtime import LLMRuntime
-from nanobot.webui.gateway_services import build_gateway_services
+from nujinagent.session.jsonl_migration import WORKSPACE_BACKUP_DIR
+from nujinagent.session.location import SessionLocation
+from nujinagent.session.manager import SessionManager, SessionPolicy
+from nujinagent.session.session_handles import SessionHandleResolver
+from nujinagent.session.sqlite_store import SqliteSessionStore
+from nujinagent.session.summary import SessionSummaryCheckpoint, is_summary_checkpoint
+from nujinagent.session.types import PARENT_SESSION_KEY, SESSION_TYPE_KEY
+from nujinagent.session.webui_turns import WebuiTurnCoordinator
+from nujinagent.utils.llm_runtime import LLMRuntime
+from nujinagent.webui.gateway_services import build_gateway_services
 
 
 def manager_with_storage(workspace, sessions_root):
@@ -415,7 +415,7 @@ async def test_provider_hosted_activity_is_visible_before_response_and_replays_i
         assert all(not ({"tool_events", "file_edit_events"} & message.keys()) for message in messages)
         activity = {
             "kind": "hosted_tool", "call_id": "hosted-search", "name": "web_search",
-            "arguments": {"query": "nanobot"},
+            "arguments": {"query": "nujinagent"},
         }
         await on_tool_call_delta({**activity, "phase": "start"})
         entered.set()
@@ -556,14 +556,14 @@ async def test_abrupt_process_exit_preserves_terminal_records_and_interrupts_pen
         import asyncio, json, os, sys
         from pathlib import Path
         from unittest.mock import AsyncMock, MagicMock
-        from nanobot.agent.hook import AgentHookContext
-        from nanobot.agent.memory import Consolidator
-        from nanobot.agent.runner import AgentRunResult
-        from nanobot.agent.subagent import SubagentManager
-        from nanobot.bus.queue import MessageBus
-        from nanobot.providers.base import GenerationSettings, LLMProvider, LLMResponse, LLMUsage
-        from nanobot.session.manager import SessionManager
-        from nanobot.utils.llm_runtime import LLMRuntime
+        from nujinagent.agent.hook import AgentHookContext
+        from nujinagent.agent.memory import Consolidator
+        from nujinagent.agent.runner import AgentRunResult
+        from nujinagent.agent.subagent import SubagentManager
+        from nujinagent.bus.queue import MessageBus
+        from nujinagent.providers.base import GenerationSettings, LLMProvider, LLMResponse, LLMUsage
+        from nujinagent.session.manager import SessionManager
+        from nujinagent.utils.llm_runtime import LLMRuntime
 
         async def main():
             workspace = Path(sys.argv[1])

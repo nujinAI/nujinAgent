@@ -3,15 +3,15 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.bus.events import OutboundMessage
-from nanobot.bus.outbound_events import GoalStatusEvent
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket.runtime import WebSocketChannel
-from nanobot.providers.base import GenerationSettings, LLMResponse
-from nanobot.session import webui_turns as wth
-from nanobot.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
-from nanobot.webui.metadata import WEBSOCKET_TURN_OWNER_METADATA_KEY
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.bus.events import OutboundMessage
+from nujinagent.bus.outbound_events import GoalStatusEvent
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket.runtime import WebSocketChannel
+from nujinagent.providers.base import GenerationSettings, LLMResponse
+from nujinagent.session import webui_turns as wth
+from nujinagent.session.webui_turns import WebuiTurnCoordinator, WebuiTurnRoutePolicy
+from nujinagent.webui.metadata import WEBSOCKET_TURN_OWNER_METADATA_KEY
 
 
 def _make_loop(tmp_path):
@@ -125,7 +125,7 @@ async def test_process_direct_reuses_existing_session_lock(tmp_path) -> None:
 
 @pytest.mark.asyncio
 async def test_process_direct_applies_per_run_hooks(tmp_path) -> None:
-    from nanobot.agent.hook import AgentHook, AgentRunHookContext
+    from nujinagent.agent.hook import AgentHook, AgentRunHookContext
 
     loop = _make_loop(tmp_path)
     events: list[tuple[str, str | None]] = []

@@ -23,11 +23,11 @@ export function NewChatSkeletonFixture() {
           panes={[{ key: "one", title: "One" }, { key: "two", title: "Two" }, { key: "three", title: "Three" }]}
           activePaneKey="one" layout="columns" showLayoutControl={false} onActivatePane={noop} onAddPane={noop}
           onLayoutChange={noop} onPaneOrderChange={noop}
-          renderPane={(_pane, context) => <ThreadShell session={null} title="nanobot" onToggleSidebar={noop}
+          renderPane={(_pane, context) => <ThreadShell session={null} title="nujinagent" onToggleSidebar={noop}
             headerPortalTarget={context.headerPortalTarget} headerActive={context.active}
             composerPortalTarget={context.composerPortalTarget} composerActive={context.active} settingsSnapshot={settings}
             navigationFrame={context.navigationFrame} multiplePanes={context.multiplePanes} emptyComposerVariant="thread" />}
-        /> : <ThreadShell session={null} title="nanobot" onToggleSidebar={noop} theme={dark ? "dark" : "light"}
+        /> : <ThreadShell session={null} title="nujinagent" onToggleSidebar={noop} theme={dark ? "dark" : "light"}
           hideSidebarToggleForHostChrome onTemporaryChatEnabledChange={noop} settingsSnapshot={settings}
           workspaceScope={workspaceScope}
           workspaceDefaultScope={{ project_path: "/workspace", access_mode: "full" }}

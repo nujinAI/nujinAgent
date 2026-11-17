@@ -10,25 +10,25 @@ from loguru import logger
 from mcp import types
 from mcp.shared.exceptions import McpError
 
-from nanobot.agent.hook import AgentHook, AgentHookContext
-from nanobot.agent.runner import AgentRunner
-from nanobot.agent.tools.context import (
+from nujinagent.agent.hook import AgentHook, AgentHookContext
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.agent.tools.context import (
     RequestContext,
     request_context,
     tool_log_content_allowed,
 )
-from nanobot.agent.tools.execution import _classify_violation, execute_tool_calls
-from nanobot.agent.tools.mcp import (
+from nujinagent.agent.tools.execution import _classify_violation, execute_tool_calls
+from nujinagent.agent.tools.mcp import (
     MCPPromptWrapper,
     MCPProvider,
     MCPResourceWrapper,
     MCPToolWrapper,
 )
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.agent.tools.web import WebFetchTool, WebSearchTool, _redact_url_for_log
-from nanobot.agent.turn_hooks import AgentTurnHookSpec, build_agent_turn_hook
-from nanobot.config.schema import MCPServerConfig, WebSearchConfig
-from nanobot.providers.base import LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.agent.tools.web import WebFetchTool, WebSearchTool, _redact_url_for_log
+from nujinagent.agent.turn_hooks import AgentTurnHookSpec, build_agent_turn_hook
+from nujinagent.config.schema import MCPServerConfig, WebSearchConfig
+from nujinagent.providers.base import LLMProvider, LLMResponse, ToolCallRequest
 
 _SECRET = "synthetic-private-detail"
 
@@ -143,7 +143,7 @@ async def test_mcp_private_errors_exclude_exception_payloads(
         else:
             if kind == "retry":
                 error = ConnectionResetError(_SECRET)
-                monkeypatch.setattr("nanobot.agent.tools.mcp.asyncio.sleep", AsyncMock())
+                monkeypatch.setattr("nujinagent.agent.tools.mcp.asyncio.sleep", AsyncMock())
             session.call_tool = AsyncMock(side_effect=error)
     elif kind == "resource":
         tool = MCPResourceWrapper(session, "test", types.Resource(
@@ -179,12 +179,12 @@ async def test_web_private_diagnostics_keep_error_category_not_content(
     error = RuntimeError(url)
     with request_context(RequestContext(channel="websocket", chat_id="test", log_content=log_content)):
         if kind == "fetch":
-            monkeypatch.setattr("nanobot.agent.tools.web.httpx.AsyncClient", MagicMock(side_effect=error))
+            monkeypatch.setattr("nujinagent.agent.tools.web.httpx.AsyncClient", MagicMock(side_effect=error))
             result = await WebFetchTool()._fetch_readability(url, "text", 100)
             assert url in result
         elif kind == "jina":
             tool = WebSearchTool(config=WebSearchConfig(provider="jina", api_key="synthetic"))
-            monkeypatch.setattr("nanobot.agent.tools.web.httpx.AsyncClient", MagicMock(side_effect=error))
+            monkeypatch.setattr("nujinagent.agent.tools.web.httpx.AsyncClient", MagicMock(side_effect=error))
             monkeypatch.setattr(tool, "_search_duckduckgo", AsyncMock(return_value="fallback"))
             assert await tool._search_jina(_SECRET, 1) == "fallback"
         elif kind == "duckduckgo":

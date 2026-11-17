@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from nanobot.config.schema import Config, ProviderConfig, ProvidersConfig
-from nanobot.providers.factory import provider_signature
-from nanobot.providers.registry import create_dynamic_spec
+from nujinagent.config.schema import Config, ProviderConfig, ProvidersConfig
+from nujinagent.providers.factory import provider_signature
+from nujinagent.providers.registry import create_dynamic_spec
 
 
 class TestCustomProviderThinkingStyle:

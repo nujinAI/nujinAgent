@@ -34,146 +34,146 @@ class Violation:
 
 
 _ADAPTERS = (
-    "nanobot.channels",
-    "nanobot.cli",
-    "nanobot.gateway",
-    "nanobot.webui",
+    "nujinagent.channels",
+    "nujinagent.cli",
+    "nujinagent.gateway",
+    "nujinagent.webui",
 )
 
 _TOOL_CONFIG_MODULES = (
-    "nanobot.agent.tools.cli_apps_config",
-    "nanobot.agent.tools.filesystem_config",
-    "nanobot.agent.tools.image_generation_config",
-    "nanobot.agent.tools.self_config",
-    "nanobot.agent.tools.shell_config",
-    "nanobot.agent.tools.web_config",
+    "nujinagent.agent.tools.cli_apps_config",
+    "nujinagent.agent.tools.filesystem_config",
+    "nujinagent.agent.tools.image_generation_config",
+    "nujinagent.agent.tools.self_config",
+    "nujinagent.agent.tools.shell_config",
+    "nujinagent.agent.tools.web_config",
 )
 
 IMPORT_RULES = (
     ImportRule(
         "update-policy-direction",
-        ("nanobot.agent", "nanobot.session", "nanobot.runtime_admission",
-         "nanobot.data_access", "nanobot.installation_lock"),
-        ("nanobot.update_service", "nanobot.update_plan", "nanobot.update_jobs",
-         "nanobot.update_worker", "nanobot.update_stop", "nanobot.update_restart"),
+        ("nujinagent.agent", "nujinagent.session", "nujinagent.runtime_admission",
+         "nujinagent.data_access", "nujinagent.installation_lock"),
+        ("nujinagent.update_service", "nujinagent.update_plan", "nujinagent.update_jobs",
+         "nujinagent.update_worker", "nujinagent.update_stop", "nujinagent.update_restart"),
     ),
     ImportRule(
         "update-domain",
-        ("nanobot.update_service", "nanobot.update_plan", "nanobot.update_jobs",
-         "nanobot.update_worker", "nanobot.update_stop",
-         "nanobot.update_profiles", "nanobot.update_handoff", "nanobot.update_guidance"),
-        ("nanobot.agent", "nanobot.session", "nanobot.cli",
-         "nanobot.channels", "nanobot.webui"),
+        ("nujinagent.update_service", "nujinagent.update_plan", "nujinagent.update_jobs",
+         "nujinagent.update_worker", "nujinagent.update_stop",
+         "nujinagent.update_profiles", "nujinagent.update_handoff", "nujinagent.update_guidance"),
+        ("nujinagent.agent", "nujinagent.session", "nujinagent.cli",
+         "nujinagent.channels", "nujinagent.webui"),
     ),
     ImportRule(
         "update-restart-adapter",
-        ("nanobot.update_restart",),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.session"),
+        ("nujinagent.update_restart",),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.session"),
         # This protected-startup entry composes the existing CLI, not a second
         # agent runtime. Keep its frozen worker entry and launch semantics stable.
-        allowed_targets=("nanobot.gateway.runtime", "nanobot.cli.gateway_runtime._run_gateway",
-                         "nanobot.cli.entry.configure_windows_console",
-                         "nanobot.cli.process_identity.set_cli_process_identity",
-                         "nanobot.cli.runtime_config._load_runtime_config"),
+        allowed_targets=("nujinagent.gateway.runtime", "nujinagent.cli.gateway_runtime._run_gateway",
+                         "nujinagent.cli.entry.configure_windows_console",
+                         "nujinagent.cli.process_identity.set_cli_process_identity",
+                         "nujinagent.cli.runtime_config._load_runtime_config"),
     ),
     ImportRule(
         "core-execution",
-        ("nanobot.agent.loop", "nanobot.agent.runner", "nanobot.agent.turn_delivery"),
+        ("nujinagent.agent.loop", "nujinagent.agent.runner", "nujinagent.agent.turn_delivery"),
         _ADAPTERS,
-        allowed_targets=("nanobot.channels.notification_routes",),
+        allowed_targets=("nujinagent.channels.notification_routes",),
     ),
     ImportRule(
         "process-execution",
-        ("nanobot.execution.processes", "nanobot.execution._windows_job"),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.config", "nanobot.security", "nanobot.session"),
+        ("nujinagent.execution.processes", "nujinagent.execution._windows_job"),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.config", "nujinagent.security", "nujinagent.session"),
     ),
     ImportRule(
         "http-execution",
-        ("nanobot.execution.http",),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.config", "nanobot.providers", "nanobot.session"),
+        ("nujinagent.execution.http",),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.config", "nujinagent.providers", "nujinagent.session"),
     ),
     ImportRule(
         "sandbox-execution",
-        ("nanobot.execution.sandbox",),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.config", "nanobot.session"),
-        allowed_targets=("nanobot.config.paths.get_media_dir",),
+        ("nujinagent.execution.sandbox",),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.config", "nujinagent.session"),
+        allowed_targets=("nujinagent.config.paths.get_media_dir",),
     ),
     ImportRule(
         "channel-routing-contracts",
-        ("nanobot.channels.notification_routes",),
-        ("nanobot",),
+        ("nujinagent.channels.notification_routes",),
+        ("nujinagent",),
     ),
     ImportRule(
         "session-storage",
-        ("nanobot.session.manager", "nanobot.session.history", "nanobot.session.summary",
-         "nanobot.session.recovery"),
-        (*_ADAPTERS, "nanobot.agent"),
+        ("nujinagent.session.manager", "nujinagent.session.history", "nujinagent.session.summary",
+         "nujinagent.session.recovery"),
+        (*_ADAPTERS, "nujinagent.agent"),
     ),
     ImportRule(
         "security-primitives",
-        ("nanobot.security",),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.execution", "nanobot.session"),
+        ("nujinagent.security",),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.execution", "nujinagent.session"),
     ),
     ImportRule(
         "resource-execution",
-        ("nanobot.execution",),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.session"),
+        ("nujinagent.execution",),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.session"),
     ),
     ImportRule(
         "file-tool-execution",
-        ("nanobot.agent.tools.filesystem", "nanobot.agent.tools.apply_patch",
-         "nanobot.agent.tools.search", "nanobot.utils.file_edit_events"),
-        ("nanobot.security", "nanobot.agent.tools.path_utils", "os", "shutil", "glob"),
+        ("nujinagent.agent.tools.filesystem", "nujinagent.agent.tools.apply_patch",
+         "nujinagent.agent.tools.search", "nujinagent.utils.file_edit_events"),
+        ("nujinagent.security", "nujinagent.agent.tools.path_utils", "os", "shutil", "glob"),
     ),
     ImportRule(
         "websocket-transport",
-        ("nanobot.channels.websocket.runtime",),
+        ("nujinagent.channels.websocket.runtime",),
         (
-            "nanobot.bus.outbound_events",
-            "nanobot.command",
-            "nanobot.runtime_context",
-            "nanobot.security.workspace_access",
-            "nanobot.pairing.events",
-            "nanobot.session.goal_state",
-            "nanobot.session.webui_turns",
-            "nanobot.webui.metadata",
-            "nanobot.webui.outbound_wire",
-            "nanobot.webui.transcript",
-            "nanobot.webui.cli_apps_api",
-            "nanobot.webui.forking",
-            "nanobot.webui.mcp_presets_api",
-            "nanobot.webui.sidebar_state",
-            "nanobot.webui.transcription_ws",
+            "nujinagent.bus.outbound_events",
+            "nujinagent.command",
+            "nujinagent.runtime_context",
+            "nujinagent.security.workspace_access",
+            "nujinagent.pairing.events",
+            "nujinagent.session.goal_state",
+            "nujinagent.session.webui_turns",
+            "nujinagent.webui.metadata",
+            "nujinagent.webui.outbound_wire",
+            "nujinagent.webui.transcript",
+            "nujinagent.webui.cli_apps_api",
+            "nujinagent.webui.forking",
+            "nujinagent.webui.mcp_presets_api",
+            "nujinagent.webui.sidebar_state",
+            "nujinagent.webui.transcription_ws",
         ),
     ),
     ImportRule(
         "tool-config-base",
-        ("nanobot.agent.tools", "nanobot.channels"),
-        ("nanobot.config.schema.Base",),
+        ("nujinagent.agent.tools", "nujinagent.channels"),
+        ("nujinagent.config.schema.Base",),
     ),
     ImportRule(
         "configuration-contracts",
-        ("nanobot.config", "nanobot.config_base"),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.apps", "nanobot.session"),
+        ("nujinagent.config", "nujinagent.config_base"),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.apps", "nujinagent.session"),
         allowed_targets=_TOOL_CONFIG_MODULES,
     ),
     ImportRule(
         "tool-configuration-contracts",
         _TOOL_CONFIG_MODULES,
-        (*_ADAPTERS, "nanobot.agent", "nanobot.apps", "nanobot.session", "nanobot.config"),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.apps", "nujinagent.session", "nujinagent.config"),
         allowed_targets=_TOOL_CONFIG_MODULES,
     ),
     ImportRule(
         "shared-primitives",
-        ("nanobot.utils.file_io", "nanobot.agent.skill_metadata", "nanobot.providers.generation",
-         "nanobot.llm_usage.types", "nanobot.session.automation_spec"),
-        (*_ADAPTERS, "nanobot.agent", "nanobot.apps", "nanobot.session", "nanobot.config"),
+        ("nujinagent.utils.file_io", "nujinagent.agent.skill_metadata", "nujinagent.providers.generation",
+         "nujinagent.llm_usage.types", "nujinagent.session.automation_spec"),
+        (*_ADAPTERS, "nujinagent.agent", "nujinagent.apps", "nujinagent.session", "nujinagent.config"),
     ),
     ImportRule(
         "oauth-catalog-cache",
-        ("nanobot.providers.oauth_catalog_cache",),
-        ("nanobot.providers.oauth_model_catalog", "nanobot.providers.openai_codex_provider",
-         "nanobot.providers.github_copilot_provider", "nanobot.providers.xai_grok_provider"),
+        ("nujinagent.providers.oauth_catalog_cache",),
+        ("nujinagent.providers.oauth_model_catalog", "nujinagent.providers.openai_codex_provider",
+         "nujinagent.providers.github_copilot_provider", "nujinagent.providers.xai_grok_provider"),
     ),
 )
 
@@ -233,7 +233,7 @@ class ImportCollector(ast.NodeVisitor):
                         self.builtin_import_calls.add(binding)
 
     def _add(self, target: str, line: int) -> None:
-        if _within(target, "nanobot"):
+        if _within(target, "nujinagent"):
             self.edges.append(ImportEdge(target, line, self.type_only))
 
     def visit_Import(self, node: ast.Import) -> None:
@@ -301,7 +301,7 @@ def find_violations(
 def check_repository(root: Path) -> tuple[int, list[str]]:
     checked = 0
     violations: list[str] = []
-    for path in sorted((root / "nanobot").rglob("*.py")):
+    for path in sorted((root / "nujinagent").rglob("*.py")):
         relative = path.relative_to(root)
         if "tests" in relative.parts:
             continue
@@ -327,11 +327,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--root", type=Path, default=Path(__file__).resolve().parents[1],
-        help="repository root containing nanobot/",
+        help="repository root containing nujinagent/",
     )
     args = parser.parse_args()
-    if not (args.root / "nanobot").is_dir():
-        parser.error(f"{args.root} does not contain nanobot/")
+    if not (args.root / "nujinagent").is_dir():
+        parser.error(f"{args.root} does not contain nujinagent/")
     checked, violations = check_repository(args.root)
     if checked == 0:
         parser.error(f"{args.root} contains no protected Python modules")

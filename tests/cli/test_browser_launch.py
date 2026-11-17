@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from nanobot.cli import desktop_target, webui_support
+from nujinagent.cli import desktop_target, webui_support
 
 
 @pytest.fixture

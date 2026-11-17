@@ -45,8 +45,8 @@ COUNTS = re.compile(
     r"([\d,]+) states generated, ([\d,]+) distinct states found, ([\d,]+) states left on queue"
 )
 IMPLEMENTATION_FILES = (
-    "webui/src/hooks/useReconnectRuns.ts", "webui/src/hooks/useNanobotStream.ts",
-    "webui/src/lib/client-run-ledger.ts", "webui/src/lib/nanobot-client.ts",
+    "webui/src/hooks/useReconnectRuns.ts", "webui/src/hooks/useNujinAgentStream.ts",
+    "webui/src/lib/client-run-ledger.ts", "webui/src/lib/nujinagent-client.ts",
     "webui/src/lib/canonical-run-snapshot.ts", "webui/src/lib/latest-thread-request.ts",
     "webui/src/lib/thread-transcript.ts", "webui/src/lib/webui-thread-cache.ts",
     "webui/src/components/thread/ThreadShell.tsx",
@@ -75,7 +75,7 @@ def main() -> int:
         parser.error("workers/timeout must be positive and heap must be at least 64 MiB")
     checkout = next((path for path in SOURCE.parents if (path / ".git").exists()), SOURCE)
     if args.output_root is None:
-        output = Path(tempfile.mkdtemp(prefix="nanobot-turn-sync-tlc-"))
+        output = Path(tempfile.mkdtemp(prefix="nujinagent-turn-sync-tlc-"))
     else:
         output = args.output_root.resolve()
         if output == checkout or checkout in output.parents:

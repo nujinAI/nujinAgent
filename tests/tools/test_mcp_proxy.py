@@ -10,14 +10,14 @@ import pytest
 import pytest_asyncio
 from aiohttp import web
 
-from nanobot.agent.tools.mcp import MCPProvider, MCPToolWrapper, connect_mcp_servers
-from nanobot.agent.tools.mcp_oauth import MCPOAuthStorage
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.config.network import NetworkConfig
-from nanobot.config.schema import MCPServerConfig
-from nanobot.runtime_admission import RuntimeAdmission
-from nanobot.security import network as security_network
-from nanobot.webui.mcp_oauth_api import McpOAuthManager
+from nujinagent.agent.tools.mcp import MCPProvider, MCPToolWrapper, connect_mcp_servers
+from nujinagent.agent.tools.mcp_oauth import MCPOAuthStorage
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.config.network import NetworkConfig
+from nujinagent.config.schema import MCPServerConfig
+from nujinagent.runtime_admission import RuntimeAdmission
+from nujinagent.security import network as security_network
+from nujinagent.webui.mcp_oauth_api import McpOAuthManager
 
 _PROXY_ENV_VARS = (
     "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY",
@@ -124,7 +124,7 @@ async def recording_mcp_proxy(tmp_path, monkeypatch: pytest.MonkeyPatch):
     for name in _PROXY_ENV_VARS:
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setattr(security_network, "getproxies", getproxies_environment)
-    monkeypatch.setattr("nanobot.agent.tools.mcp_oauth.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.agent.tools.mcp_oauth.get_data_dir", lambda: tmp_path)
     previous_whitelist = [str(cidr) for cidr in security_network._allowed_networks]
     security_network.configure_ssrf_whitelist(["127.0.0.1/32"])
     fixture = _RecordingMCPProxy()

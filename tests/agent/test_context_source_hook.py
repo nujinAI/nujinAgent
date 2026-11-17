@@ -2,18 +2,18 @@ import asyncio
 
 import pytest
 
-from nanobot.events import EventSink
+from nujinagent.events import EventSink
 
 
 async def test_prompt_scopes_isolate_parallel_runs_and_cleanup_after_cancel(tmp_path):
     from unittest.mock import MagicMock
 
     from agent.runner_helpers import make_run_spec
-    from nanobot.agent.hook import AgentHook, CompositeHook
-    from nanobot.agent.runner import AgentRunner
-    from nanobot.context_sources import PromptSourcesEvent, capture_sources, record_source
-    from nanobot.providers.base import LLMResponse
-    from nanobot.webui.context_source_hook import ContextSourceHook
+    from nujinagent.agent.hook import AgentHook, CompositeHook
+    from nujinagent.agent.runner import AgentRunner
+    from nujinagent.context_sources import PromptSourcesEvent, capture_sources, record_source
+    from nujinagent.providers.base import LLMResponse
+    from nujinagent.webui.context_source_hook import ContextSourceHook
 
     entered = asyncio.Event()
     events = []
@@ -64,12 +64,12 @@ async def test_compaction_publishes_rebuilt_sources_and_success_before_cancellat
     from unittest.mock import AsyncMock, MagicMock
 
     from agent.runner_helpers import make_run_spec
-    from nanobot.agent.context import ContextBuilder, TranscriptInput
-    from nanobot.agent.runner import AgentRunner
-    from nanobot.context_sources import PromptSourcesEvent
-    from nanobot.events import ContextCompactionEvent
-    from nanobot.providers.base import LLMProvider
-    from nanobot.webui.context_source_hook import ContextSourceHook
+    from nujinagent.agent.context import ContextBuilder, TranscriptInput
+    from nujinagent.agent.runner import AgentRunner
+    from nujinagent.context_sources import PromptSourcesEvent
+    from nujinagent.events import ContextCompactionEvent
+    from nujinagent.providers.base import LLMProvider
+    from nujinagent.webui.context_source_hook import ContextSourceHook
 
     (tmp_path / "SOUL.md").write_text("Be precise.", encoding="utf-8")
     entered = asyncio.Event()
@@ -94,7 +94,7 @@ async def test_compaction_publishes_rebuilt_sources_and_success_before_cancellat
     def estimate(_provider, _model, messages, _tools):
         return (600 if any("previous work" in str(message.get("content", "")) for message in messages) else 100, "test-counter")
 
-    monkeypatch.setattr("nanobot.agent.context_governance.estimate_prompt_tokens_chain", estimate)
+    monkeypatch.setattr("nujinagent.agent.context_governance.estimate_prompt_tokens_chain", estimate)
 
     async def run():
         sink = EventSink(publish)

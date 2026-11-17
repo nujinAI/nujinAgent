@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from nanobot.agent.runner import AgentRunSpec
-from nanobot.config.schema import AgentDefaults
-from nanobot.providers.base import GenerationSettings, LLMProvider
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.runner import AgentRunSpec
+from nujinagent.config.schema import AgentDefaults
+from nujinagent.providers.base import GenerationSettings, LLMProvider
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 async def failed_test_consolidator(

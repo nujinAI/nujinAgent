@@ -54,7 +54,7 @@ export function AgentPluginDialog({
         <div className="flex justify-end">
           <Button type="button" disabled={busy} onClick={() => { onOpenChange(false); onAction(action, plugin.name); }}>
             {busy ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden /> : null}
-            {t(enabled ? "settings.nanobotFeatures.disable" : "settings.nanobotFeatures.enable")}
+            {t(enabled ? "settings.nujinagentFeatures.disable" : "settings.nujinagentFeatures.enable")}
           </Button>
         </div>
       </DialogContent>

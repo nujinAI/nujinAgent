@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 
 import {
   configureChannel,
-  disableNanobotFeature,
-  enableNanobotFeature,
+  disableNujinAgentFeature,
+  enableNujinAgentFeature,
 } from "@/lib/api";
-import type { NanobotChannelInstanceInfo, NanobotFeatureInfo, NanobotFeaturesPayload } from "@/lib/types";
+import type { NujinAgentChannelInstanceInfo, NujinAgentFeatureInfo, NujinAgentFeaturesPayload } from "@/lib/types";
 import { useClient } from "@/providers/ClientProvider";
 import {
   ChannelInstancesPanelView,
@@ -23,10 +23,10 @@ export function ChannelInstancesPanel({
   customization,
   renderView,
 }: {
-  feature: NanobotFeatureInfo;
+  feature: NujinAgentFeatureInfo;
   showBrandLogos: boolean;
-  instances?: NanobotChannelInstanceInfo[];
-  onFeaturesUpdate: (payload: NanobotFeaturesPayload) => void;
+  instances?: NujinAgentChannelInstanceInfo[];
+  onFeaturesUpdate: (payload: NujinAgentFeaturesPayload) => void;
   customization?: ChannelInstancesPanelCustomization;
   renderView?: (props: ChannelInstancesPanelViewProps) => ReactNode;
 }) {
@@ -38,8 +38,8 @@ export function ChannelInstancesPanel({
     customization,
     onToggleInstance: async (instance, checked) => {
       const payload = checked
-        ? await enableNanobotFeature(client, feature.name, { instanceId: instance.id })
-        : await disableNanobotFeature(client, feature.name, { instanceId: instance.id });
+        ? await enableNujinAgentFeature(client, feature.name, { instanceId: instance.id })
+        : await disableNujinAgentFeature(client, feature.name, { instanceId: instance.id });
       onFeaturesUpdate(payload);
     },
     onSaveInstance: async (instance, values) => {
@@ -47,7 +47,7 @@ export function ChannelInstancesPanel({
         enable: instance.enabled,
         instanceId: instance.id,
       });
-      if (payload.nanobot_features) onFeaturesUpdate(payload.nanobot_features);
+      if (payload.nujinagent_features) onFeaturesUpdate(payload.nujinagent_features);
     },
   };
   return renderView ? renderView(viewProps) : <ChannelInstancesPanelView {...viewProps} />;

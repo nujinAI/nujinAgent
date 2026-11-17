@@ -11,7 +11,7 @@ from pathlib import Path
 from packaging.version import Version
 from pydantic import BaseModel
 
-from nanobot.releases import release_version
+from nujinagent.releases import release_version
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,7 +37,7 @@ class WorkflowRuns(BaseModel):
 
 def workflow_runs(workflow: str, source: str, query: str) -> list[WorkflowRun]:
     result = subprocess.run(
-        ["gh", "api", f"repos/HKUDS/nanobot/actions/workflows/{workflow}/runs"
+        ["gh", "api", f"repos/HKUDS/nujinagent/actions/workflows/{workflow}/runs"
          f"?head_sha={source}&per_page=100&{query}"],
         check=True, capture_output=True, text=True, encoding="utf-8", timeout=60,
     )

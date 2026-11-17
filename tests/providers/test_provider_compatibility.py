@@ -5,12 +5,12 @@ import json
 import pytest
 from aiohttp import web
 
-from nanobot.agent.tools.exec_session import ExecSessionTool
-from nanobot.providers.azure_openai_provider import AzureOpenAIProvider
-from nanobot.providers.base import ProviderCallContext
-from nanobot.providers.model_api import ModelAPICapabilities
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.providers.registry import find_by_name
+from nujinagent.agent.tools.exec_session import ExecSessionTool
+from nujinagent.providers.azure_openai_provider import AzureOpenAIProvider
+from nujinagent.providers.base import ProviderCallContext
+from nujinagent.providers.model_api import ModelAPICapabilities
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.registry import find_by_name
 
 
 @pytest.fixture

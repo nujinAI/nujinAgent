@@ -87,7 +87,7 @@ describe("ThreadMessages", () => {
     "keeps completed %s edits visible when answer activity is toggled",
     (fileEditDisplayMode) => {
       localStorage.setItem(
-        "nanobot-webui.settings-preferences",
+        "nujinagent-webui.settings-preferences",
         JSON.stringify({ fileEditDisplayMode }),
       );
       const messages: UIMessage[] = [
@@ -143,7 +143,7 @@ describe("ThreadMessages", () => {
         rerender(<ThreadMessages messages={[messages[0], messages[2], messages[4]]} isStreaming={false} />);
         assertIndependentDiff();
       } finally {
-        localStorage.removeItem("nanobot-webui.settings-preferences");
+        localStorage.removeItem("nujinagent-webui.settings-preferences");
       }
     },
   );
@@ -1434,8 +1434,8 @@ describe("ThreadMessages", () => {
         id: "t1",
         role: "tool",
         kind: "trace",
-        content: "Searching query: HKUDS/nanobot GitHub stars",
-        traces: ["Searching query: HKUDS/nanobot GitHub stars"],
+        content: "Searching query: HKUDS/nujinagent GitHub stars",
+        traces: ["Searching query: HKUDS/nujinagent GitHub stars"],
         activitySegmentId: "seg-2",
         createdAt: 3,
       },

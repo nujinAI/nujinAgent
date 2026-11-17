@@ -1,10 +1,10 @@
-# Nanobot Python SDK: Run an AI Agent from Python
+# NujinAgent Python SDK: Run an AI Agent from Python
 
-This guide shows when to use the Nanobot Python SDK instead of calling a model directly. The SDK runs the same agent runtime used by the CLI: model routing, tools, workspace access, session history, memory, streaming events, and runtime helpers.
+This guide shows when to use the NujinAgent Python SDK instead of calling a model directly. The SDK runs the same agent runtime used by the CLI: model routing, tools, workspace access, session history, memory, streaming events, and runtime helpers.
 
 ## What you will build
 
-- a Python script that creates a `Nanobot`
+- a Python script that creates a `NujinAgent`
 - one agent run from code
 - an optional streamed run with tool visibility
 
@@ -21,11 +21,11 @@ Use an installation with a configured model that has already returned a reply. I
 ```python
 import asyncio
 
-from nanobot import Nanobot
+from nujinagent import NujinAgent
 
 
 async def main() -> None:
-    async with Nanobot.from_config() as bot:
+    async with NujinAgent.from_config() as bot:
         result = await bot.run("List the top-level files in this workspace.")
     print(result.content)
 
@@ -35,7 +35,7 @@ asyncio.run(main())
 
 ## Production notes
 
-- Reuse one `Nanobot` instance for related work.
+- Reuse one `NujinAgent` instance for related work.
 - Pass `session_key` when a job or eval case needs persistent history. Different keys share workspace files and long-term memory.
 - Use `bot.stream(...)` when the caller needs live text, tool, or failure events.
 - Use hooks for audit logs or custom observability.
@@ -49,12 +49,12 @@ asyncio.run(main())
 
 ## Troubleshooting
 
-- If SDK code fails, first run `nanobot agent -m "Hello!"` in the same environment.
+- If SDK code fails, first run `nujinagent agent -m "Hello!"` in the same environment.
 - Print `bot.runtime.workspace` and `bot.runtime.model` to confirm the expected config loaded.
 - Use explicit `config_path` and `workspace` when scripts run from services.
 
-## Related nanobot docs
+## Related nujinagent docs
 
-- [Nanobot Python SDK](../python-sdk.md)
+- [NujinAgent Python SDK](../python-sdk.md)
 - [Configuration](../configuration.md)
 - [Concepts](../concepts.md)

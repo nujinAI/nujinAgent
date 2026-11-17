@@ -9,12 +9,12 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.bus.queue import MessageBus
-from nanobot.goal.assembly import install_goal
-from nanobot.providers.base import LLMProvider, LLMResponse, ToolCallRequest
-from nanobot.runtime_context import public_history_messages
-from nanobot.session.goal_state import GOAL_STATE_KEY
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.bus.queue import MessageBus
+from nujinagent.goal.assembly import install_goal
+from nujinagent.providers.base import LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.runtime_context import public_history_messages
+from nujinagent.session.goal_state import GOAL_STATE_KEY
 
 _STOP_MARKER = "previous turn stopped at the tool-iteration limit"
 

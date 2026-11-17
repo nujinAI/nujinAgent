@@ -190,15 +190,15 @@ def allocated_bytes(path):
 async def main(args):
     started_at_utc = datetime.now(UTC).isoformat()
     sys.path.insert(0, str(args.repo.resolve()))
-    import nanobot.session.manager as session_module
-    from nanobot.config.loader import set_config_path
-    from nanobot.session.manager import Session, SessionManager
+    import nujinagent.session.manager as session_module
+    from nujinagent.config.loader import set_config_path
+    from nujinagent.session.manager import Session, SessionManager
 
     assert Path(session_module.__file__).is_relative_to(args.repo.resolve())
     sqlite = args.variant == "sqlite"
     durable = args.variant != "jsonl-default"
     if not sqlite:
-        from nanobot.session.io import call
+        from nujinagent.session.io import call
     records = []
     managers = []
     stamp = datetime(2026, 1, 1)

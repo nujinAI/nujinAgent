@@ -4,8 +4,8 @@ import sys
 
 import pytest
 
-from nanobot.agent.tools.exec_session import ExecSessionManager
-from nanobot.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.exec_session import ExecSessionManager
+from nujinagent.agent.tools.shell import ExecTool
 
 _UNIX_ONLY = pytest.mark.skipif(sys.platform == "win32", reason="Unix shell commands")
 
@@ -27,12 +27,12 @@ _UNIX_ONLY = pytest.mark.skipif(sys.platform == "win32", reason="Unix shell comm
 )
 async def test_exec_child_receives_filtered_env(monkeypatch, allowed_env_keys, expected_allowed, command_mode):
     monkeypatch.setenv("MY_CUSTOM_VAR", "hello-from-config")
-    monkeypatch.setenv("NANOBOT_SECRET_TOKEN", "super-secret-value")
+    monkeypatch.setenv("NUJINAGENT_SECRET_TOKEN", "super-secret-value")
     monkeypatch.delenv("NONEXISTENT_VAR_12345", raising=False)
     marker = "ENV_PROBE_COMPLETE "
     script = (
         "import json, os; "
-        "keys = ['MY_CUSTOM_VAR', 'NANOBOT_SECRET_TOKEN', 'NONEXISTENT_VAR_12345']; "
+        "keys = ['MY_CUSTOM_VAR', 'NUJINAGENT_SECRET_TOKEN', 'NONEXISTENT_VAR_12345']; "
         f"print({marker!r} + json.dumps({{key: os.environ.get(key) for key in keys}}))"
     )
     argv = [sys.executable, "-c", script]
@@ -50,7 +50,7 @@ async def test_exec_child_receives_filtered_env(monkeypatch, allowed_env_keys, e
     assert len(completed) == 1, result
     assert json.loads(completed[0]) == {
         "MY_CUSTOM_VAR": expected_allowed,
-        "NANOBOT_SECRET_TOKEN": None,
+        "NUJINAGENT_SECRET_TOKEN": None,
         "NONEXISTENT_VAR_12345": None,
     }
 

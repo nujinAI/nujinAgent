@@ -7,9 +7,9 @@ from click import unstyle
 from rich.console import Console
 from typer.testing import CliRunner
 
-from nanobot.cli.gateway import _resolved_config_selector, create_gateway_app
-from nanobot.config.schema import Config
-from nanobot.gateway import (
+from nujinagent.cli.gateway import _resolved_config_selector, create_gateway_app
+from nujinagent.config.schema import Config
+from nujinagent.gateway import (
     GatewayAlreadyRunningError,
     GatewayInstance,
     GatewayRuntimePaths,
@@ -17,7 +17,7 @@ from nanobot.gateway import (
     GatewayStatus,
     RuntimeResult,
 )
-from nanobot.gateway.service import GatewayServiceOptions, GatewayServiceResult
+from nujinagent.gateway.service import GatewayServiceOptions, GatewayServiceResult
 
 runner = CliRunner()
 
@@ -27,7 +27,7 @@ def test_default_config_has_the_same_gateway_identity_when_explicit(
     tmp_path: Path,
 ) -> None:
     config_path = tmp_path / "config.json"
-    monkeypatch.setattr("nanobot.config.loader._current_config_path", config_path)
+    monkeypatch.setattr("nujinagent.config.loader._current_config_path", config_path)
 
     assert _resolved_config_selector(None) == config_path
     assert _resolved_config_selector(str(config_path)) == config_path
@@ -96,9 +96,9 @@ class FakeServiceInstaller:
             True,
             "service_install_dry_run" if dry_run else "service_installed",
             "systemd",
-            self.tmp_path / "nanobot-gateway.service",
+            self.tmp_path / "nujinagent-gateway.service",
             (("systemctl", "--user", "daemon-reload"),),
-            "[Unit]\nDescription=Nanobot Gateway\n",
+            "[Unit]\nDescription=NujinAgent Gateway\n",
         )
 
     def uninstall(self, *, name: str, manager: str, dry_run: bool) -> GatewayServiceResult:
@@ -108,8 +108,8 @@ class FakeServiceInstaller:
             True,
             "service_uninstall_dry_run" if dry_run else "service_uninstalled",
             "systemd",
-            self.tmp_path / "nanobot-gateway.service",
-            (("systemctl", "--user", "disable", "--now", "nanobot-gateway.service"),),
+            self.tmp_path / "nujinagent-gateway.service",
+            (("systemctl", "--user", "disable", "--now", "nujinagent-gateway.service"),),
         )
 
 
@@ -338,7 +338,7 @@ def test_gateway_background_does_not_claim_a_foreground_gateway(tmp_path):
     assert "cannot be" in result.stdout
     assert "detached in place" in result.stdout
     assert "service manager" in result.stdout
-    assert "nanobot gateway stop" in result.stdout
+    assert "nujinagent gateway stop" in result.stdout
 
 
 def test_gateway_rejects_conflicting_modes(tmp_path):
@@ -410,7 +410,7 @@ def test_gateway_management_rejects_misplaced_selectors_before_side_effects(
     assert result.exit_code == 2, result.output
     output = " ".join(unstyle(result.output).split())
     assert "--config and --workspace must follow a management subcommand" in output
-    assert f"nanobot gateway {command[0]} --help" in output
+    assert f"nujinagent gateway {command[0]} --help" in output
     assert runtime.runtime_selectors == []
     assert runtime.config_selectors == []
     assert service.installed_options is None
@@ -496,7 +496,7 @@ def test_gateway_restart_does_not_create_a_persistent_gateway(tmp_path):
 
     assert result.exit_code == 1
     assert "there is nothing to restart" in result.stdout
-    assert "nanobot gateway --background" in result.stdout
+    assert "nujinagent gateway --background" in result.stdout
 
 
 def test_gateway_restart_explains_foreground_lifecycle(tmp_path):

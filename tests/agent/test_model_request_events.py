@@ -7,12 +7,12 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.runner_helpers import make_run_spec
-from nanobot.agent.hook import AgentHookContext
-from nanobot.agent.progress_hook import AgentProgressHook
-from nanobot.agent.runner import AgentRunner
-from nanobot.agent.tools.execution import execute_tool_calls
-from nanobot.events import EventSink, ModelRequestEvent
-from nanobot.providers.base import LLMResponse, LLMUsage, ToolCallRequest
+from nujinagent.agent.hook import AgentHookContext
+from nujinagent.agent.progress_hook import AgentProgressHook
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.agent.tools.execution import execute_tool_calls
+from nujinagent.events import EventSink, ModelRequestEvent
+from nujinagent.providers.base import LLMResponse, LLMUsage, ToolCallRequest
 
 
 def spec(provider, sink, **kwargs):
@@ -252,7 +252,7 @@ async def test_tool_cancellation_closes_started_call_without_masking_cancel():
 
 
 def test_model_requests_are_optional_for_non_webui_channels():
-    from nanobot.bus.notification_delivery import notification_is_deliverable
+    from nujinagent.bus.notification_delivery import notification_is_deliverable
 
     for channel in ("telegram", "slack", "cli", "discord"):
         assert not notification_is_deliverable(ModelRequestEvent, channel=channel, publish_lifecycle=True)
@@ -285,7 +285,7 @@ async def test_request_without_usage_does_not_reuse_previous_measurement():
 
 @pytest.mark.asyncio
 async def test_prepared_request_observers_run_before_request_event_and_provider():
-    from nanobot.agent.hook import AgentHook, CompositeHook
+    from nujinagent.agent.hook import AgentHook, CompositeHook
 
     order = []
     class Observer(AgentHook):

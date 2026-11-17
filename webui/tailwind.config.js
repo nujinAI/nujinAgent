@@ -9,7 +9,7 @@ export default {
     "./index.html",
     "./src/**/*.{ts,tsx}",
     ...(process.env.NODE_ENV === "production" ? ["!./src/dev/**"] : []),
-    "../nanobot/channels/*/webui/**/*.{ts,tsx}",
+    "../nujinagent/channels/*/webui/**/*.{ts,tsx}",
     "./node_modules/streamdown/dist/*.js",
   ],
   theme: {

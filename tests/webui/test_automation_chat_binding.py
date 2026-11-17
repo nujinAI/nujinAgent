@@ -10,29 +10,29 @@ import httpx
 import pytest
 import websockets
 
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.context import current_request_context
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
-from nanobot.config.schema import Config
-from nanobot.cron.binding import CronBinding, binding_revision
-from nanobot.cron.bound_runner import run_bound_cron_job
-from nanobot.cron.service import CronService
-from nanobot.cron.types import CronRunRecord, CronSchedule
-from nanobot.providers.base import GenerationSettings, LLMResponse, ToolCallRequest
-from nanobot.session.manager import SessionManager
-from nanobot.webui.automation_chats import automation_chats
-from nanobot.webui.automation_results import cron_run_response
-from nanobot.webui.gateway_services import build_gateway_services
-from nanobot.webui.session_automations import serialize_automation_jobs
-from nanobot.webui.workspaces import WebUIWorkspaceController
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.context import current_request_context
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket.runtime import WebSocketChannel, WebSocketConfig
+from nujinagent.config.schema import Config
+from nujinagent.cron.binding import CronBinding, binding_revision
+from nujinagent.cron.bound_runner import run_bound_cron_job
+from nujinagent.cron.service import CronService
+from nujinagent.cron.types import CronRunRecord, CronSchedule
+from nujinagent.providers.base import GenerationSettings, LLMResponse, ToolCallRequest
+from nujinagent.session.manager import SessionManager
+from nujinagent.webui.automation_chats import automation_chats
+from nujinagent.webui.automation_results import cron_run_response
+from nujinagent.webui.gateway_services import build_gateway_services
+from nujinagent.webui.session_automations import serialize_automation_jobs
+from nujinagent.webui.workspaces import WebUIWorkspaceController
 
 
 @pytest.fixture(autouse=True)
 def isolate(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path / "data")
-    monkeypatch.setattr("nanobot.config.loader._current_config_path", tmp_path / "config.json")
-    monkeypatch.setattr("nanobot.webui.workspaces.get_webui_dir", lambda: tmp_path / "webui")
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path / "data")
+    monkeypatch.setattr("nujinagent.config.loader._current_config_path", tmp_path / "config.json")
+    monkeypatch.setattr("nujinagent.webui.workspaces.get_webui_dir", lambda: tmp_path / "webui")
 
 
 def seed(tmp_path):
@@ -357,7 +357,7 @@ async def test_real_gateway_move_run_reload_and_previous_result(tmp_path, target
 
 @pytest.mark.asyncio
 async def test_late_subagent_result_stays_with_moved_task(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.agent.loop._SUBAGENT_TERMINAL_WAIT_SECONDS", 0.02)
+    monkeypatch.setattr("nujinagent.agent.loop._SUBAGENT_TERMINAL_WAIT_SECONDS", 0.02)
     # Real session writes are part of this routing check, not a latency requirement.
     timeout = 30
     sessions, cron, job = seed(tmp_path)

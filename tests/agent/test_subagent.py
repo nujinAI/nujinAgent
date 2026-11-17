@@ -4,28 +4,28 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.memory import Consolidator
-from nanobot.agent.runner import AgentRunResult
-from nanobot.agent.subagent import SubagentManager
-from nanobot.agent.tools.cli_apps import CliAppsTool
-from nanobot.agent.tools.cli_apps_config import CliAppsToolConfig
-from nanobot.agent.tools.filesystem import FileToolsConfig
-from nanobot.bus.queue import MessageBus
-from nanobot.config.schema import ToolsConfig
-from nanobot.context_sources import (
+from nujinagent.agent.memory import Consolidator
+from nujinagent.agent.runner import AgentRunResult
+from nujinagent.agent.subagent import SubagentManager
+from nujinagent.agent.tools.cli_apps import CliAppsTool
+from nujinagent.agent.tools.cli_apps_config import CliAppsToolConfig
+from nujinagent.agent.tools.filesystem import FileToolsConfig
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.schema import ToolsConfig
+from nujinagent.context_sources import (
     PromptSource,
     capture_sources,
     record_source,
     system_source_scope,
 )
-from nanobot.llm_usage.context import llm_usage_source
-from nanobot.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
-from nanobot.security.workspace_access import (
+from nujinagent.llm_usage.context import llm_usage_source
+from nujinagent.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.security.workspace_access import (
     bind_workspace_scope,
     build_workspace_scope,
     reset_workspace_scope,
 )
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 def _runtime(provider: LLMProvider) -> LLMRuntime:
@@ -104,7 +104,7 @@ def test_subagent_respects_file_tool_toggle(tmp_path):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("project_scoped", [False, True])
 async def test_subagent_respects_disabled_cli_apps_in_model_tools(tmp_path, project_scoped, monkeypatch):
-    monkeypatch.setattr("nanobot.apps.cli.service.get_runtime_subdir", lambda name: tmp_path / name)
+    monkeypatch.setattr("nujinagent.apps.cli.service.get_runtime_subdir", lambda name: tmp_path / name)
     provider = MagicMock(spec=LLMProvider)
     provider.chat_stream_with_retry = AsyncMock(return_value=LLMResponse(content="done"))
     manager = SubagentManager(
@@ -166,7 +166,7 @@ def test_subagent_prompt_keeps_agent_paths_for_selected_project(tmp_path):
     assert "one root and relative SKILL.md paths" in prompt
     assert "Join them when using `read_file`" in prompt
     assert str(project.resolve()) not in prompt
-    assert f"Nanobot's agent workspace: {agent_workspace.resolve()}" in prompt
+    assert f"NujinAgent's agent workspace: {agent_workspace.resolve()}" in prompt
     assert f"History log: {agent_workspace.resolve() / 'memory' / 'history.jsonl'}" in prompt
     assert "global-custom" in prompt
     assert "project-custom" not in prompt

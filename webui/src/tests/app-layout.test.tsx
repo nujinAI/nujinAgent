@@ -6,7 +6,7 @@ import type { Window as HappyWindow } from "happy-dom";
 import i18n from "@/i18n";
 import { DEFAULT_TRANSCRIPTION_SETTINGS } from "@/components/settings/capabilities/TranscriptionSettings";
 import { useSessions } from "@/hooks/useSessions";
-import type { NanobotClientOptions, RunState } from "@/lib/nanobot-client";
+import type { NujinAgentClientOptions, RunState } from "@/lib/nujinagent-client";
 import { activateReloadCache, clearReloadCache, writeReloadCache } from "@/lib/reload-cache";
 import type {
   ChatSummary,
@@ -19,7 +19,7 @@ import type {
 (window as unknown as HappyWindow).happyDOM.settings.disableIframePageLoading = true;
 
 const connectSpy = vi.fn();
-let clientOptions: NanobotClientOptions | undefined;
+let clientOptions: NujinAgentClientOptions | undefined;
 const refreshSpy = vi.fn();
 const createChatSpy = vi.fn().mockResolvedValue("chat-1");
 const deleteChatSpy = vi.fn();
@@ -250,10 +250,10 @@ vi.mock("@/lib/bootstrap", () => ({
   clearSavedSecret: vi.fn(),
 }));
 
-vi.mock("@/lib/nanobot-client", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/nanobot-client")>();
+vi.mock("@/lib/nujinagent-client", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/nujinagent-client")>();
   class MockClient {
-    constructor(options: NanobotClientOptions) { clientOptions = options; }
+    constructor(options: NujinAgentClientOptions) { clientOptions = options; }
     onTaskNotice = () => () => {};
     status = "idle" as const;
     defaultChatId = mockDefaultChatId;
@@ -314,7 +314,7 @@ vi.mock("@/lib/nanobot-client", async (importOriginal) => {
     updateMaxFrameBytes = vi.fn();
   }
 
-  return { ...actual, NanobotClient: MockClient };
+  return { ...actual, NujinAgentClient: MockClient };
 });
 
 import {
@@ -362,16 +362,16 @@ describe("App layout", () => {
     pairingChangeHandlers.clear();
     readyHandlers.clear();
     window.history.replaceState(null, "", "/");
-    sessionStorage.removeItem("nanobot.remote-instance");
-    Reflect.deleteProperty(window, "nanobotHost");
+    sessionStorage.removeItem("nujinagent.remote-instance");
+    Reflect.deleteProperty(window, "nujinagentHost");
     setNavigatorPlatform("Linux x86_64");
-    localStorage.removeItem("nanobot-webui.sidebar");
-    localStorage.removeItem("nanobot-webui.sidebar.width");
-    localStorage.removeItem("nanobot-webui.sidebar.completed-runs.v1");
-    localStorage.removeItem("nanobot-webui.sidebar.session-updates.v1");
-    localStorage.removeItem("nanobot-webui.collapsed-pane-groups.v1");
-    localStorage.removeItem("nanobot-webui.restartStartedAt");
-    localStorage.removeItem("nanobot-webui.restartRoute");
+    localStorage.removeItem("nujinagent-webui.sidebar");
+    localStorage.removeItem("nujinagent-webui.sidebar.width");
+    localStorage.removeItem("nujinagent-webui.sidebar.completed-runs.v1");
+    localStorage.removeItem("nujinagent-webui.sidebar.session-updates.v1");
+    localStorage.removeItem("nujinagent-webui.collapsed-pane-groups.v1");
+    localStorage.removeItem("nujinagent-webui.restartStartedAt");
+    localStorage.removeItem("nujinagent-webui.restartRoute");
     vi.mocked(fetchBootstrap).mockReset().mockResolvedValue({
       token: "tok",
       api_token: "api-tok",
@@ -386,7 +386,7 @@ describe("App layout", () => {
     cleanup();
     restoreBrowserFocus?.();
     restoreBrowserFocus = undefined;
-    Reflect.deleteProperty(window, "nanobotHost");
+    Reflect.deleteProperty(window, "nujinagentHost");
     vi.useRealTimers();
     vi.unstubAllGlobals();
   });
@@ -398,7 +398,7 @@ describe("App layout", () => {
       render(<App />);
       expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "true");
       expect(screen.getByRole("main")).toHaveAttribute("data-startup-surface", surface);
-      expect(screen.getByRole("status")).toHaveTextContent("Loading nanobot…");
+      expect(screen.getByRole("status")).toHaveTextContent("Loading nujinagent…");
     },
   );
 
@@ -444,7 +444,7 @@ describe("App layout", () => {
 
     render(<App />);
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Connect to nanobot" }))
+    expect(await screen.findByRole("heading", { level: 1, name: "Connect to nujinagent" }))
       .toBeInTheDocument();
     const password = screen.getByLabelText("WebUI password");
     expect(password).not.toHaveAttribute("aria-describedby");
@@ -472,12 +472,12 @@ describe("App layout", () => {
     await screen.findByRole("listbox");
     await user.keyboard("{ArrowDown}{Enter}");
 
-    expect(await screen.findByRole("heading", { name: "连接到 nanobot" }))
+    expect(await screen.findByRole("heading", { name: "连接到 nujinagent" }))
       .toBeInTheDocument();
     expect(screen.getByLabelText("WebUI 密码")).toHaveValue("draft-password");
     expect(screen.getByRole("button", { name: "连接" })).toBeEnabled();
     expect(document.documentElement.lang).toBe("zh-CN");
-    expect(localStorage.getItem("nanobot.locale")).toBe("zh-CN");
+    expect(localStorage.getItem("nujinagent.locale")).toBe("zh-CN");
     expect(fetchBootstrap).toHaveBeenCalledTimes(1);
     expect(connectSpy).not.toHaveBeenCalled();
   });
@@ -505,7 +505,7 @@ describe("App layout", () => {
 
     expect(help).toHaveAttribute("aria-expanded", "true");
     expect(content).not.toHaveAttribute("aria-hidden");
-    expect(content).toHaveTextContent("~/.nanobot/config.json");
+    expect(content).toHaveTextContent("~/.nujinagent/config.json");
     expect(content).toHaveTextContent("channels.websocket.tokenIssueSecret");
     expect(content).toHaveTextContent("If that value is empty, use channels.websocket.token.");
 
@@ -580,7 +580,7 @@ describe("App layout", () => {
 
     render(<App />);
 
-    expect(await screen.findByRole("heading", { level: 1, name: "Connect to nanobot" }))
+    expect(await screen.findByRole("heading", { level: 1, name: "Connect to nujinagent" }))
       .toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(connectSpy).not.toHaveBeenCalled();
@@ -749,7 +749,7 @@ describe("App layout", () => {
   it("opens Channels below Automations and supports its keyboard shortcut", async () => {
     mockFetchRoutes({
       "/api/settings": baseSettingsPayload(),
-      "/api/settings/nanobot-features": { features: [], enabled_count: 0 },
+      "/api/settings/nujinagent-features": { features: [], enabled_count: 0 },
     });
     render(<App />);
     await waitFor(() => expect(connectSpy).toHaveBeenCalled());
@@ -787,7 +787,7 @@ describe("App layout", () => {
     expect(screen.getByRole("main")).toContainElement(screen.getByRole("region", { name: "Remote connections" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(sidebar).toBeVisible();
-    fireEvent.click(await screen.findByRole("button", { name: "Connect to remote nanobot" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Connect to remote nujinagent" }));
     fireEvent.pointerDown(screen.getByRole("button", { name: "Other ways" }), { button: 0, ctrlKey: false });
     fireEvent.click(screen.getByRole("menuitem", { name: "SSH connection" }));
     const host = await screen.findByRole("textbox", { name: "SSH address" });
@@ -803,7 +803,7 @@ describe("App layout", () => {
       window.history.replaceState(null, "", "#/remote");
       window.dispatchEvent(new PopStateEvent("popstate"));
     });
-    expect(await screen.findByRole("button", { name: "Connect to remote nanobot" })).toBeVisible();
+    expect(await screen.findByRole("button", { name: "Connect to remote nujinagent" })).toBeVisible();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(within(sidebar).queryByRole("button", { name: "Remote connections" })).not.toBeInTheDocument();
   });
@@ -848,8 +848,8 @@ describe("App layout", () => {
     expect(await screen.findByRole("heading", { name: "Remote connections" })).toBeVisible();
     expect(window.location.hash).not.toBe("#/remote");
     expect(screen.queryByRole("button", { name: "Remote connections" })).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Connect to remote nanobot" }));
-    expect(await screen.findByRole("dialog", { name: "Connect to remote nanobot" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Connect to remote nujinagent" }));
+    expect(await screen.findByRole("dialog", { name: "Connect to remote nujinagent" })).toBeVisible();
   });
 
   it("releases the mobile sidebar modal when switching to a server", async () => {
@@ -861,7 +861,7 @@ describe("App layout", () => {
     })));
     const profile = { id: "3b968d52-081d-4898-9970-ff0a1fc93817", name: "Team server",
       host: "team", port: null, ssh_config: "", identity_file: "",
-      config_path: "~/.nanobot/config.json", runtime_user: "", connected: false };
+      config_path: "~/.nujinagent/config.json", runtime_user: "", connected: false };
     requestMutationSpy.mockResolvedValue({ ...profile, hostname: "team-host", gateway_id: "remote-gateway",
       url: "http://127.0.0.1:23456/#/?bootstrapSecret=test-only" });
     mockFetchRoutes({
@@ -873,7 +873,7 @@ describe("App layout", () => {
     const sheet = await screen.findByRole("dialog");
     await user.click(await within(sheet).findByRole("button", { name: "Switch host" }));
     await user.click(await screen.findByRole("menuitem", { name: "Team server team" }));
-    const frame = await screen.findByTitle("nanobot on Team server");
+    const frame = await screen.findByTitle("nujinagent on Team server");
     fireEvent.load(frame);
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     await waitFor(() => expect(document.body.style.pointerEvents).not.toBe("none"));
@@ -888,7 +888,7 @@ describe("App layout", () => {
       "/api/remote-instances": { available: true, profiles: [] },
     });
     render(<App />);
-    expect(await screen.findByRole("button", { name: "Connect to remote nanobot" })).toBeVisible();
+    expect(await screen.findByRole("button", { name: "Connect to remote nujinagent" })).toBeVisible();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Sidebar navigation" })).toBeVisible();
     expect(screen.queryByRole("navigation", { name: "Settings sections" })).not.toBeInTheDocument();
@@ -1300,12 +1300,12 @@ describe("App layout", () => {
   });
 
   it("restores the standalone Channels page from a legacy restart route", async () => {
-    localStorage.setItem("nanobot-webui.restartStartedAt", String(Date.now()));
-    localStorage.setItem("nanobot-webui.restartRoute", "#/settings?section=channels");
+    localStorage.setItem("nujinagent-webui.restartStartedAt", String(Date.now()));
+    localStorage.setItem("nujinagent-webui.restartRoute", "#/settings?section=channels");
     window.history.replaceState(null, "", "/#/new");
     mockFetchRoutes({
       "/api/settings": baseSettingsPayload(),
-      "/api/settings/nanobot-features": {
+      "/api/settings/nujinagent-features": {
         features: [{
           name: "websocket",
           display_name: "Websocket",
@@ -1340,9 +1340,9 @@ describe("App layout", () => {
     expect(sendSystemCommandSpy).toHaveBeenCalledWith("restart-fixture", "/restart");
     expect(screen.getByRole("button", { name: "Restarting..." })).toBeDisabled();
     act(() => {
-      if (clearWhen === "before disconnect") localStorage.removeItem("nanobot-webui.restartStartedAt");
+      if (clearWhen === "before disconnect") localStorage.removeItem("nujinagent-webui.restartStartedAt");
       for (const handler of statusHandlers) handler("reconnecting");
-      localStorage.removeItem("nanobot-webui.restartStartedAt");
+      localStorage.removeItem("nujinagent-webui.restartStartedAt");
       for (const handler of statusHandlers) handler("open");
     });
     await waitFor(() => expect(screen.getByRole("button", { name: "Restart" })).toBeEnabled());
@@ -1366,7 +1366,7 @@ describe("App layout", () => {
       requires_restart: false,
       restart_required_sections: [],
     };
-    localStorage.setItem("nanobot-webui.restartStartedAt", String(Date.now() - 2_000));
+    localStorage.setItem("nujinagent-webui.restartStartedAt", String(Date.now() - 2_000));
     window.history.replaceState(null, "", "/#/settings?section=runtime");
     mockFetchRoutes({
       "/api/settings": () => {
@@ -2220,7 +2220,7 @@ describe("App layout", () => {
     fireEvent.pointerUp(handle, { pointerId: 1, clientX: 360 });
     expect(sidebar).not.toHaveAttribute("data-resizing");
     expect(sidebar).toHaveStyle({ width: "360px" });
-    expect(localStorage.getItem("nanobot-webui.sidebar.width")).toBe("360");
+    expect(localStorage.getItem("nujinagent-webui.sidebar.width")).toBe("360");
     fireEvent.pointerDown(handle, { button: 0, pointerId: 2, clientX: 360 });
     fireEvent.pointerMove(handle, { pointerId: 2, clientX: 150 });
     expect(sidebar).toHaveStyle({ width: "56px" });
@@ -2340,7 +2340,7 @@ describe("App layout", () => {
   });
 
   it("uses native chrome when the host bridge overrides browser gateway metadata", async () => {
-    Reflect.set(window, "nanobotHost", { getRuntimeInfo: vi.fn() });
+    Reflect.set(window, "nujinagentHost", { getRuntimeInfo: vi.fn() });
     vi.mocked(fetchBootstrap).mockResolvedValue({
       token: "tok",
       api_token: "api-tok",
@@ -2958,7 +2958,7 @@ describe("App layout", () => {
       return Response.json({}, { status: 404 });
     }));
 
-    const markersKey = "nanobot-webui.sidebar.session-updates.v1";
+    const markersKey = "nujinagent-webui.sidebar.session-updates.v1";
     localStorage.setItem(markersKey, JSON.stringify(["chat-b", "deleted"]));
     render(<App />);
     await waitFor(() => expect(connectSpy).toHaveBeenCalled());
@@ -3025,7 +3025,7 @@ describe("App layout", () => {
         chatId: "new",
         createdAt: "2026-04-15T12:00:00Z",
         updatedAt: "2026-04-15T12:00:00Z",
-        preview: "hi nanobot",
+        preview: "hi nujinagent",
       },
       {
         key: "websocket:alpha",
@@ -3246,7 +3246,7 @@ describe("App layout", () => {
       },
     ];
     localStorage.setItem(
-      "nanobot-webui.sidebar.session-updates.v1",
+      "nujinagent-webui.sidebar.session-updates.v1",
       JSON.stringify(["chat-b"]),
     );
 
@@ -3395,7 +3395,7 @@ describe("App layout", () => {
       setup: { fields: [{ key: "channels.email.imapHost", field: "imapHost", kind: "string", required: true, choices: [] }], requirements: [] },
     };
     mockFetchRoutes({ "/api/settings": baseSettingsPayload(),
-      "/api/settings/nanobot-features": { features: [feature], enabled_count: 0 } });
+      "/api/settings/nujinagent-features": { features: [feature], enabled_count: 0 } });
     let resolveSave!: (value: unknown) => void;
     let rejectSave!: (error: Error) => void;
     requestMutationSpy.mockImplementationOnce(() => new Promise((resolve, reject) => { resolveSave = resolve; rejectSave = reject; }));
@@ -3468,7 +3468,7 @@ describe("App layout", () => {
     expect(system.getByText("Timezone")).toBeInTheDocument();
     expect(within(screen.getByRole("complementary")).getByRole("button", { name: "Restart" })).toBeInTheDocument();
     expect(
-      system.queryByText("Restart nanobot to apply runtime changes."),
+      system.queryByText("Restart nujinagent to apply runtime changes."),
     ).not.toBeInTheDocument();
   });
 
@@ -3577,7 +3577,7 @@ describe("App layout", () => {
     fireEvent.click(appsButton);
 
     expect(await screen.findByRole("heading", { name: "Apps" })).toBeInTheDocument();
-    expect(screen.queryByText("Add tools to nanobot, then @ them in chat.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Add tools to nujinagent, then @ them in chat.")).not.toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Sidebar navigation" })).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Settings sections" })).not.toBeInTheDocument();
     expect(within(sidebar).getByRole("button", { name: "Apps" })).toHaveAttribute(
@@ -3754,7 +3754,7 @@ describe("App layout", () => {
     await waitFor(() => expect(connectSpy).toHaveBeenCalled());
     const sidebar = screen.getByRole("navigation", { name: "Sidebar navigation" });
     fireEvent.click(within(sidebar).getByRole("button", { name: "New topic" }));
-    await waitFor(() => expect(document.title).toBe("nanobot"));
+    await waitFor(() => expect(document.title).toBe("nujinagent"));
 
     fireEvent.click(within(sidebar).getByRole("button", { name: "Settings" }));
     expect(
@@ -3762,7 +3762,7 @@ describe("App layout", () => {
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Back to chat" }));
 
-    await waitFor(() => expect(document.title).toBe("nanobot"));
+    await waitFor(() => expect(document.title).toBe("nujinagent"));
     expect(screen.getByTestId("thread-welcome-mark")).toBeInTheDocument();
   });
 

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { RuntimeConfigSettings, useRuntimeConfigSettings } from "@/components/settings/system/RuntimeConfigSettings";
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import type { SettingsPayload } from "@/lib/types";
 import { installSettingsViewTestHooks, renderSettingsView, requestMutationMock, settingsPayload } from "@/tests/settings-test-utils";
 
@@ -58,12 +58,12 @@ describe("Saved sandbox settings", () => {
     const sandbox = open();
     fireEvent.click(sandbox.getByRole("button", { name: "Advanced options" }));
     const input = sandbox.getByRole("textbox", { name: "Trusted launcher path" });
-    fireEvent.change(input, { target: { value: "/vol1/@apphome/nanobot/bin/bwrap" } });
+    fireEvent.change(input, { target: { value: "/vol1/@apphome/nujinagent/bin/bwrap" } });
     expect(sandbox.getByRole("button", { name: "Check sandbox" })).toBeDisabled();
     requestMutationMock.mockRejectedValueOnce(new Error("sandbox_launcher_unprotected_installation"));
     fireEvent.click(sandbox.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(sandbox.getAllByRole("alert")[0]).toHaveTextContent(/protected installation/));
-    expect(input).toHaveValue("/vol1/@apphome/nanobot/bin/bwrap");
+    expect(input).toHaveValue("/vol1/@apphome/nujinagent/bin/bwrap");
     expect(sandbox.queryByText("sandbox_launcher_unprotected_installation")).not.toBeInTheDocument();
   });
 
@@ -123,10 +123,10 @@ describe("Saved sandbox settings", () => {
 
   it("ignores a completed probe from the previously selected host", async () => {
     let finish!: (response: unknown) => void;
-    const first = { requestMutation: vi.fn(() => new Promise((resolve) => { finish = resolve; })) } as unknown as NanobotClient;
-    const next = { requestMutation: vi.fn() } as unknown as NanobotClient;
+    const first = { requestMutation: vi.fn(() => new Promise((resolve) => { finish = resolve; })) } as unknown as NujinAgentClient;
+    const next = { requestMutation: vi.fn() } as unknown as NujinAgentClient;
     const settings = payload();
-    function Harness({ client }: { client: NanobotClient }) {
+    function Harness({ client }: { client: NujinAgentClient }) {
       const state = useRuntimeConfigSettings(settings, client, () => {});
       return <RuntimeConfigSettings page="advanced" settings={settings} state={state} client={client} sandboxSupported isRestarting={false} remoteBrowserAccess={false} />;
     }
@@ -140,7 +140,7 @@ describe("Saved sandbox settings", () => {
 
   it("does not refocus the launcher when restart state changes", () => {
     const settings = payload();
-    const client = { requestMutation: vi.fn() } as unknown as NanobotClient;
+    const client = { requestMutation: vi.fn() } as unknown as NujinAgentClient;
     function Harness({ restarting }: { restarting: boolean }) {
       const state = useRuntimeConfigSettings(settings, client, () => {});
       return <><button>Keep focus here</button><RuntimeConfigSettings page="advanced" settings={settings} state={state}

@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.agent.tools.cron import CronTool
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.cron.service import CronService
-from nanobot.cron.types import CronJob, CronPayload, CronSchedule
+from nujinagent.agent.tools.cron import CronTool
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.cron.service import CronService
+from nujinagent.cron.types import CronJob, CronPayload, CronSchedule
 
 
 def _registry(service):

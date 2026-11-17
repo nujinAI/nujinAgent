@@ -9,10 +9,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from nanobot.agent.tools.exec_session import ExecSessionManager, ExecSessionTool, _ExecSession
-from nanobot.agent.tools.registry import is_tool_error_result
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.execution import processes
+from nujinagent.agent.tools.exec_session import ExecSessionManager, ExecSessionTool, _ExecSession
+from nujinagent.agent.tools.registry import is_tool_error_result
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.execution import processes
 
 
 def _python_command(code: str) -> str:
@@ -71,14 +71,14 @@ async def _cleanup_session(session: _ExecSession) -> None:
 
 
 def test_reap_pid_noops_without_waitpid():
-    with patch("nanobot.execution.processes.os") as mock_os:
+    with patch("nujinagent.execution.processes.os") as mock_os:
         mock_os.waitpid = None
         mock_os.WNOHANG = None
         processes._reap_pid(12345)
 
 
 def test_reap_pid_calls_waitpid_wnohang():
-    with patch("nanobot.execution.processes.os") as mock_os:
+    with patch("nujinagent.execution.processes.os") as mock_os:
         mock_os.waitpid = MagicMock(return_value=(12345, 0))
         mock_os.WNOHANG = 1
         processes._reap_pid(12345)
@@ -86,7 +86,7 @@ def test_reap_pid_calls_waitpid_wnohang():
 
 
 def test_reap_pid_swallows_already_reaped_errors():
-    with patch("nanobot.execution.processes.os") as mock_os:
+    with patch("nujinagent.execution.processes.os") as mock_os:
         mock_os.WNOHANG = 1
         mock_os.waitpid = MagicMock(side_effect=ChildProcessError("no child"))
         processes._reap_pid(99)
@@ -101,7 +101,7 @@ async def test_execute_reaps_after_normal_completion():
     manager = ExecSessionManager()
     with (
         patch.object(processes, "spawn_process_tree", return_value=_fake_tree(process)),
-        patch("nanobot.execution.processes._reap_pid") as reap,
+        patch("nujinagent.execution.processes._reap_pid") as reap,
     ):
         try:
             result = await ExecTool(session_manager=manager).execute(command="echo ok")
@@ -122,7 +122,7 @@ async def test_execute_timeout_kills_and_reaps():
     manager = ExecSessionManager()
     with (
         patch.object(processes, "spawn_process_tree", return_value=_fake_tree(process)) as spawn,
-        patch("nanobot.execution.processes._reap_pid") as reap,
+        patch("nujinagent.execution.processes._reap_pid") as reap,
     ):
         try:
             result = await asyncio.wait_for(
@@ -158,7 +158,7 @@ async def test_execute_cancellation_kills_process_tree():
     with (
         patch.object(processes, "spawn_process_tree", return_value=_fake_tree(process)) as spawn,
         patch.object(_ExecSession, "poll", new=initial_poll),
-        patch("nanobot.execution.processes._reap_pid") as reap,
+        patch("nujinagent.execution.processes._reap_pid") as reap,
     ):
         execution = asyncio.create_task(
             ExecTool(session_manager=manager).execute(command="sleep 99"),
@@ -189,7 +189,7 @@ async def test_exec_session_wait_cancellation_does_not_kill_process_tree():
     session_tool = ExecSessionTool(manager=manager)
     with (
         patch.object(processes, "spawn_process_tree", return_value=_fake_tree(process)),
-        patch("nanobot.execution.processes._reap_pid") as reap,
+        patch("nujinagent.execution.processes._reap_pid") as reap,
     ):
         observer = None
         try:
@@ -232,9 +232,9 @@ async def test_execute_exception_after_success_does_not_raise_on_dead_process():
     manager = ExecSessionManager()
     with (
         patch.object(processes, "spawn_process_tree", return_value=_fake_tree(process)),
-        patch("nanobot.execution.processes._reap_pid") as reap,
+        patch("nujinagent.execution.processes._reap_pid") as reap,
         patch(
-            "nanobot.agent.tools.shell.format_session_poll",
+            "nujinagent.agent.tools.shell.format_session_poll",
             side_effect=RuntimeError("boom after exit"),
         ) as formatter,
     ):
@@ -372,7 +372,7 @@ async def test_exec_session_kill_reaps():
         owner_session_key=None,
     )
     try:
-        with patch("nanobot.execution.processes._reap_pid") as reap:
+        with patch("nujinagent.execution.processes._reap_pid") as reap:
             await session.kill()
         process.kill.assert_called_once()
         process.wait.assert_awaited()
@@ -402,7 +402,7 @@ async def test_exec_session_kill_reaps_if_process_exits_before_kill():
         owner_session_key=None,
     )
     try:
-        with patch("nanobot.execution.processes._reap_pid") as reap:
+        with patch("nujinagent.execution.processes._reap_pid") as reap:
             await session.kill()
         process.kill.assert_called_once()
         process.wait.assert_awaited()
@@ -465,7 +465,7 @@ async def test_exec_session_poll_reaps_after_exit():
         owner_session_key=None,
     )
     try:
-        with patch("nanobot.execution.processes._reap_pid") as reap:
+        with patch("nujinagent.execution.processes._reap_pid") as reap:
             await asyncio.wait_for(session.wait_exit(), timeout=5)
             poll = await session.poll(yield_time_ms=0, max_output_chars=1000)
         assert poll.done is True

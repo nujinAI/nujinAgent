@@ -3,15 +3,15 @@ from typing import Any
 
 import pytest
 
-from nanobot.config.schema import Config, ModelPresetConfig
-from nanobot.providers.base import (
+from nujinagent.config.schema import Config, ModelPresetConfig
+from nujinagent.providers.base import (
     LLMProvider,
     LLMResponse,
     ProviderCallContext,
     ProviderConversationState,
 )
-from nanobot.providers.factory import make_provider, provider_signature
-from nanobot.providers.fallback_provider import FallbackProvider
+from nujinagent.providers.factory import make_provider, provider_signature
+from nujinagent.providers.fallback_provider import FallbackProvider
 
 _IMAGE = {"type": "image_url", "image_url": {"url": "data:image/png;base64,c3ludGhldGlj"}}
 

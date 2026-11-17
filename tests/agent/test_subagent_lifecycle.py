@@ -5,18 +5,18 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from nanobot.agent import SubagentManager
-from nanobot.agent.hook import AgentHookContext
-from nanobot.agent.memory import Consolidator
-from nanobot.agent.runner import AgentRunResult
-from nanobot.agent.subagent import (
+from nujinagent.agent import SubagentManager
+from nujinagent.agent.hook import AgentHookContext
+from nujinagent.agent.memory import Consolidator
+from nujinagent.agent.runner import AgentRunResult
+from nujinagent.agent.subagent import (
     SubagentStatus,
     _SubagentHook,
 )
-from nanobot.agent.tools.context import current_request_context
-from nanobot.bus.queue import MessageBus
-from nanobot.providers.base import GenerationSettings, LLMProvider, LLMUsage
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.tools.context import current_request_context
+from nujinagent.bus.queue import MessageBus
+from nujinagent.providers.base import GenerationSettings, LLMProvider, LLMUsage
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 def _manager(tmp_path: Path, **kw) -> SubagentManager:

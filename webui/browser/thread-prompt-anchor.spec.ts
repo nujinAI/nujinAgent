@@ -11,7 +11,7 @@ async function openThread(
 ) {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+  await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
   await page.route("**/api/**", (route) => route.fulfill({ status: 404, json: {} }));
   await page.route("**/api/commands", (route) => route.fulfill({ json: { commands: [] } }));
   const events: ThreadProjectionEvent[] = withHistory ? Array.from({ length: options.shortHistory ? 1 : 12 }, (_, index) => [

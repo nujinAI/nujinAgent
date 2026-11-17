@@ -5,10 +5,10 @@ import json
 import httpx
 import pytest
 
-from nanobot.config.schema import Config, ProvidersConfig
-from nanobot.providers.base import ProviderCallContext
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.providers.registry import PROVIDERS, ModelAPICapabilities, find_by_name
+from nujinagent.config.schema import Config, ProvidersConfig
+from nujinagent.providers.base import ProviderCallContext
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.registry import PROVIDERS, ModelAPICapabilities, find_by_name
 
 
 def test_opencode_config_fields_exist() -> None:
@@ -194,7 +194,7 @@ def test_opencode_affinity_matches_hostname(base, enabled):
 async def test_opencode_wire_affinity(monkeypatch, api_type, stream, configured_header):
     from openai import AsyncOpenAI
 
-    from nanobot.providers import openai_compat_provider
+    from nujinagent.providers import openai_compat_provider
 
     requests: list[httpx.Request] = []
     rejected: list[httpx.Request] = []

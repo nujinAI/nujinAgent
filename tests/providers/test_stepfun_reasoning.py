@@ -9,8 +9,8 @@ from unittest.mock import patch
 
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.providers.registry import ProviderSpec
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.registry import ProviderSpec
 
 _STEPFUN_SPEC = ProviderSpec(
     name="stepfun",
@@ -25,7 +25,7 @@ _STEPFUN_SPEC = ProviderSpec(
 
 
 def test_parse_dict_stepfun_reasoning_fallback() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider(spec=_STEPFUN_SPEC)
 
     response = {
@@ -45,7 +45,7 @@ def test_parse_dict_stepfun_reasoning_fallback() -> None:
 
 
 def test_parse_dict_stepfun_reasoning_priority() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider(spec=_STEPFUN_SPEC)
 
     response = {
@@ -85,7 +85,7 @@ def _make_sdk_response(content, reasoning=None, reasoning_content=None) -> ChatC
 
 
 def test_parse_sdk_stepfun_reasoning_fallback() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider(spec=_STEPFUN_SPEC)
 
     response = _make_sdk_response(content=None, reasoning="After analysis: result is 4.")
@@ -97,7 +97,7 @@ def test_parse_sdk_stepfun_reasoning_fallback() -> None:
 
 
 def test_parse_sdk_stepfun_reasoning_priority() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider(spec=_STEPFUN_SPEC)
 
     response = _make_sdk_response(
@@ -141,7 +141,7 @@ def test_parse_chunks_dict_stepfun_reasoning_fallback() -> None:
 
 
 def test_parse_dict_normal_model_with_reasoning_content_unaffected() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = {
@@ -161,7 +161,7 @@ def test_parse_dict_normal_model_with_reasoning_content_unaffected() -> None:
 
 
 def test_parse_dict_standard_model_no_reasoning_unaffected() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = {
@@ -246,7 +246,7 @@ def test_parse_chunks_sdk_reasoning_precedence() -> None:
 
 
 def test_parse_dict_non_stepfun_no_reasoning_as_content() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = {
@@ -266,7 +266,7 @@ def test_parse_dict_non_stepfun_no_reasoning_as_content() -> None:
 
 
 def test_parse_sdk_non_stepfun_no_reasoning_as_content() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = _make_sdk_response(content=None, reasoning="internal monologue")

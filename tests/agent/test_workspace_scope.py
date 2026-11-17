@@ -8,18 +8,18 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from nanobot.agent.context import ContextBuilder
-from nanobot.agent.tools.cli_apps import CliAppsTool
-from nanobot.agent.tools.context import RequestContext, ToolContext, request_context
-from nanobot.agent.tools.filesystem import ReadFileTool, WriteFileTool
-from nanobot.agent.tools.image_generation import ImageGenerationError, ImageGenerationTool
-from nanobot.agent.tools.message import MessageTool
-from nanobot.agent.tools.search import GrepTool
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.agent.tools.subagent import SubagentTool
-from nanobot.apps.cli.service import CliAppManager, CliAppsRuntimeConfig
-from nanobot.config.schema import ImageGenerationToolConfig, ProviderConfig, ToolsConfig
-from nanobot.security.workspace_access import (
+from nujinagent.agent.context import ContextBuilder
+from nujinagent.agent.tools.cli_apps import CliAppsTool
+from nujinagent.agent.tools.context import RequestContext, ToolContext, request_context
+from nujinagent.agent.tools.filesystem import ReadFileTool, WriteFileTool
+from nujinagent.agent.tools.image_generation import ImageGenerationError, ImageGenerationTool
+from nujinagent.agent.tools.message import MessageTool
+from nujinagent.agent.tools.search import GrepTool
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.subagent import SubagentTool
+from nujinagent.apps.cli.service import CliAppManager, CliAppsRuntimeConfig
+from nujinagent.config.schema import ImageGenerationToolConfig, ProviderConfig, ToolsConfig
+from nujinagent.security.workspace_access import (
     WORKSPACE_SCOPE_METADATA_KEY,
     WorkspaceScopeError,
     WorkspaceScopeResolver,
@@ -486,9 +486,9 @@ async def test_cli_app_scope_controls_working_dir(
     CliAppManager(workspace=project, data_dir=data_dir)._save_installed(
         {"demo": {"entry_point": "demo-cli"}}
     )
-    monkeypatch.setattr("nanobot.apps.cli.service.get_runtime_subdir", lambda _name: data_dir)
+    monkeypatch.setattr("nujinagent.apps.cli.service.get_runtime_subdir", lambda _name: data_dir)
     monkeypatch.setattr(
-        "nanobot.apps.cli.service.shutil.which",
+        "nujinagent.apps.cli.service.shutil.which",
         lambda entry: "/usr/bin/demo-cli" if entry == "demo-cli" else None,
     )
 
@@ -498,7 +498,7 @@ async def test_cli_app_scope_controls_working_dir(
         seen["cwd"] = kwargs["cwd"]
         return SimpleNamespace(returncode=0, stdout="ok", stderr="")
 
-    monkeypatch.setattr("nanobot.apps.cli.service.subprocess.run", fake_run)
+    monkeypatch.setattr("nujinagent.apps.cli.service.subprocess.run", fake_run)
     tool = CliAppsTool(
         workspace=tmp_path,
         restrict_to_workspace=True,

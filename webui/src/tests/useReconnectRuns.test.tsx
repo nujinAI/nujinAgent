@@ -3,9 +3,9 @@ import { useEffect, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useReconnectRuns } from "@/hooks/useReconnectRuns";
-import { useNanobotStream } from "@/hooks/useNanobotStream";
+import { useNujinAgentStream } from "@/hooks/useNujinAgentStream";
 import { useSessionHistory } from "@/hooks/useSessions";
-import { NanobotClient } from "@/lib/nanobot-client";
+import { NujinAgentClient } from "@/lib/nujinagent-client";
 import { projectThreadEvents } from "@/lib/thread-event-projection";
 import type { WebuiThreadPersistedPayload } from "@/lib/types";
 import { webuiThreadCache } from "@/lib/webui-thread-cache";
@@ -44,7 +44,7 @@ function response(body: WebuiThreadPersistedPayload): Response {
 
 function setup() {
   const sockets: TestSocket[] = [];
-  const client = new NanobotClient({
+  const client = new NujinAgentClient({
     url: "ws://test", reconnect: true, maxBackoffMs: 10,
     socketFactory: () => {
       const socket = new TestSocket();
@@ -92,7 +92,7 @@ describe("durable run recovery", () => {
     const wrapper = ({ children }: { children: ReactNode }) => (
       <ClientProvider client={client} token="renewed-token">{children}</ClientProvider>
     );
-    const mounted = renderHook(() => useNanobotStream("inactive", [], false,
+    const mounted = renderHook(() => useNujinAgentStream("inactive", [], false,
       undefined, undefined, [], { key: "websocket:inactive" }), { wrapper });
     const body: WebuiThreadPersistedPayload = {
       ...completedThread(), schemaVersion: 3,
@@ -249,7 +249,7 @@ describe("durable run recovery", () => {
     expect(client.getRunState(chatId).active).toBe(false);
 
     const wrapper = ({ children }: { children: ReactNode }) => <ClientProvider client={client} token="renewed-token">{children}</ClientProvider>;
-    const mounted = renderHook(() => useNanobotStream(chatId, [], false, undefined, undefined, [], { key: `websocket:${chatId}` }), { wrapper });
+    const mounted = renderHook(() => useNujinAgentStream(chatId, [], false, undefined, undefined, [], { key: `websocket:${chatId}` }), { wrapper });
     await act(async () => {});
     expect(mounted.result.current.messages.map((message) => message.content)).toContain("search(unpersisted)");
     expect(mounted.result.current.messages.map((message) => message.content)).toContain("Persisted answer");
@@ -338,7 +338,7 @@ describe("durable run recovery", () => {
     const { client, running, reopen, close } = setup();
     const wrapper = ({ children }: { children: ReactNode }) => <ClientProvider client={client} token="renewed-token">{children}</ClientProvider>;
     const mounted = renderHook(() => {
-      const stream = useNanobotStream(chatId, [], false, undefined, undefined, [], { key: `websocket:${chatId}` });
+      const stream = useNujinAgentStream(chatId, [], false, undefined, undefined, [], { key: `websocket:${chatId}` });
       useEffect(() => {
         let refreshOnOpen = false;
         return client.onStatus((status) => {
@@ -396,7 +396,7 @@ describe("durable run recovery", () => {
     vi.stubGlobal("fetch", fetchMock);
     const { client, sockets, running, close } = setup();
     const wrapper = ({ children }: { children: ReactNode }) => <ClientProvider client={client} token="token">{children}</ClientProvider>;
-    const mounted = renderHook(() => useNanobotStream(chatId, [], false, undefined, undefined, [],
+    const mounted = renderHook(() => useNujinAgentStream(chatId, [], false, undefined, undefined, [],
       { key: `websocket:${chatId}` }), { wrapper });
     act(() => {
       running();
@@ -460,7 +460,7 @@ describe("durable run recovery", () => {
     const { client, sockets, running, reopen, close } = setup();
     const wrapper = ({ children }: { children: ReactNode }) => <ClientProvider client={client} token="renewed-token">{children}</ClientProvider>;
     const mounted = renderHook(() => {
-      const stream = useNanobotStream(chatId, [], false, undefined, undefined, [], { key: `websocket:${chatId}` });
+      const stream = useNujinAgentStream(chatId, [], false, undefined, undefined, [], { key: `websocket:${chatId}` });
       useEffect(() => {
         let refreshOnOpen = false;
         return client.onStatus((status) => {
@@ -635,7 +635,7 @@ describe("durable run recovery", () => {
     );
     const mounted = renderHook(() => {
       const history = useSessionHistory("websocket:inactive");
-      const stream = useNanobotStream(
+      const stream = useNujinAgentStream(
         "inactive", history.messages, history.hasPendingToolCalls,
         undefined, undefined, history.completedTurnIds,
       );

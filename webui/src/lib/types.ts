@@ -1150,7 +1150,7 @@ export interface CliAppsPayload {
   };
 }
 
-export interface NanobotFeatureInfo {
+export interface NujinAgentFeatureInfo {
   name: string;
   display_name: string;
   capabilities?: string[];
@@ -1165,7 +1165,7 @@ export interface NanobotFeatureInfo {
   config_values?: Record<string, string>;
   configured_fields?: string[];
   setup?: ChannelSetupContract;
-  instances?: NanobotChannelInstanceInfo[];
+  instances?: NujinAgentChannelInstanceInfo[];
     installed: boolean;
     requires_dependencies?: boolean;
     ready: boolean;
@@ -1196,7 +1196,7 @@ interface ChannelSetupContractRequirement {
   alternatives: string[][];
 }
 
-export interface NanobotChannelInstanceInfo {
+export interface NujinAgentChannelInstanceInfo {
   id: string;
   name: string;
   display_name?: string;
@@ -1212,8 +1212,8 @@ export interface NanobotChannelInstanceInfo {
 
 export type ChannelRuntimeStatus = "running" | "starting" | "failed" | "stopped" | string;
 
-export interface NanobotFeaturesPayload {
-  features: NanobotFeatureInfo[];
+export interface NujinAgentFeaturesPayload {
+  features: NujinAgentFeatureInfo[];
   enabled_count: number;
   requires_restart?: boolean;
   last_action?: {
@@ -1392,14 +1392,14 @@ export interface ChannelConnectPayload {
   interval_ms?: number;
   expires_at_ms?: number;
   retrying?: boolean;
-  nanobot_features?: NanobotFeaturesPayload;
+  nujinagent_features?: NujinAgentFeaturesPayload;
 }
 
 export interface ChannelConfigurePayload {
   name: string;
   saved: boolean;
   saved_keys?: string[];
-  nanobot_features?: NanobotFeaturesPayload;
+  nujinagent_features?: NujinAgentFeaturesPayload;
 }
 
 export interface ModelConfigurationCreate {

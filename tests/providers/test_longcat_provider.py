@@ -1,5 +1,5 @@
-from nanobot.config.schema import ProvidersConfig
-from nanobot.providers.registry import PROVIDERS, find_by_name
+from nujinagent.config.schema import ProvidersConfig
+from nujinagent.providers.registry import PROVIDERS, find_by_name
 
 
 def test_longcat_config_field_exists():

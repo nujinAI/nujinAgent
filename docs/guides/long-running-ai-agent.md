@@ -1,6 +1,6 @@
-# How to Run a Long-Running AI Agent with nanobot
+# How to Run a Long-Running AI Agent with nujinagent
 
-nanobot supports sustained goals, persistent sessions, scheduled automations, and local triggers for work that needs more than a single answer.
+nujinagent supports sustained goals, persistent sessions, scheduled automations, and local triggers for work that needs more than a single answer.
 
 ## What you will build
 
@@ -25,13 +25,13 @@ Your running WebUI or TUI already uses a gateway. In that chat, start a sustaine
 /goal Review this workspace, identify missing tests, and propose the smallest next fix.
 ```
 
-For scheduled or trigger-based runs, create the automation from the target chat so nanobot can link it to the correct session and project context.
+For scheduled or trigger-based runs, create the automation from the target chat so nujinagent can link it to the correct session and project context.
 
 To keep work running after closing the interactive launcher, promote the existing gateway from a terminal:
 
 ```bash
-nanobot gateway --background
-nanobot gateway status
+nujinagent gateway --background
+nujinagent gateway status
 ```
 
 Use the same `--config` and explicit `--workspace` selectors as your instance. In the TUI, `/detach` also keeps the gateway running while closing the client. A background gateway does not survive a machine shutdown by itself; see [Deployment](../deployment.md) for service management. Review [schedule restart behavior](../automations.md#delivery-and-reliability) before relying on a timed task.
@@ -55,7 +55,7 @@ Use the same `--config` and explicit `--workspace` selectors as your instance. I
 - If an automation does not run, check that it is linked to a chat/session and that the gateway is still running.
 - If a local trigger fails, check the command copied from the WebUI Automations view.
 
-## Related nanobot docs
+## Related nujinagent docs
 
 - [Automations](../automations.md)
 - [WebUI Automations](../webui.md#automations)

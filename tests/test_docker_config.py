@@ -8,14 +8,14 @@ from pathlib import Path
 import pytest
 import yaml
 
-from nanobot.channels.websocket.runtime import WebSocketConfig
-from nanobot.config.loader import load_config, resolve_config_env_vars
+from nujinagent.channels.websocket.runtime import WebSocketConfig
+from nujinagent.config.loader import load_config, resolve_config_env_vars
 
 
 def _initialize(path: Path, web_token: str = "") -> subprocess.CompletedProcess[str]:
-    env = dict(os.environ, NANOBOT_WEB_TOKEN=web_token)
+    env = dict(os.environ, NUJINAGENT_WEB_TOKEN=web_token)
     return subprocess.run(
-        [sys.executable, "-m", "nanobot.cli.docker_bootstrap", str(path)],
+        [sys.executable, "-m", "nujinagent.cli.docker_bootstrap", str(path)],
         env=env, capture_output=True, text=True,
     )
 
@@ -23,7 +23,7 @@ def _initialize(path: Path, web_token: str = "") -> subprocess.CompletedProcess[
 def test_render_blueprint_starts_gateway_through_entrypoint():
     blueprint_path = Path(__file__).resolve().parents[1] / "render.yaml"
     blueprint = yaml.safe_load(blueprint_path.read_text(encoding="utf-8"))
-    service = next(service for service in blueprint["services"] if service["name"] == "nanobot")
+    service = next(service for service in blueprint["services"] if service["name"] == "nujinagent")
     assert shlex.split(service["dockerCommand"]) == ["/usr/local/bin/entrypoint.sh", "gateway"]
 
 
@@ -66,7 +66,7 @@ def test_restart_preserves_user_settings_and_credentials(tmp_path):
 def test_failed_write_does_not_leave_an_existing_config(tmp_path):
     from unittest.mock import patch
 
-    from nanobot.cli.docker_bootstrap import initialize_config
+    from nujinagent.cli.docker_bootstrap import initialize_config
 
     path = tmp_path / "config.json"
     with patch.object(Path, "replace", side_effect=PermissionError("read-only mount")):

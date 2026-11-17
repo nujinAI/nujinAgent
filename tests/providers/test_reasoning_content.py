@@ -2,12 +2,12 @@ from unittest.mock import patch
 
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.utils.helpers import build_assistant_message
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.utils.helpers import build_assistant_message
 
 
 def test_parse_dict_extracts_reasoning_content() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = {
@@ -28,7 +28,7 @@ def test_parse_dict_extracts_reasoning_content() -> None:
 
 
 def test_parse_dict_reasoning_content_none_when_absent() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = {
@@ -50,7 +50,7 @@ def test_parse_dict_reasoning_content_empty_string_preserved() -> None:
     be present in subsequent requests even when empty.  Coercing \"\" to
     None drops the key downstream and causes API errors.
     """
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = {
@@ -70,7 +70,7 @@ def test_parse_dict_reasoning_content_empty_string_preserved() -> None:
 
 
 def test_parse_sdk_reasoning_content_empty_string_preserved() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = ChatCompletion.model_validate({
@@ -92,7 +92,7 @@ def test_parse_sdk_reasoning_content_empty_string_preserved() -> None:
 
 
 def test_tool_call_history_preserves_empty_reasoning_content_after_sanitize() -> None:
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider()
 
     response = {

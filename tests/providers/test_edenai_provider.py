@@ -1,8 +1,8 @@
 from unittest.mock import patch
 
-from nanobot.config.schema import Config, ProvidersConfig
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.providers.registry import PROVIDERS, find_by_name
+from nujinagent.config.schema import Config, ProvidersConfig
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.registry import PROVIDERS, find_by_name
 
 
 def test_edenai_config_field_exists() -> None:
@@ -47,7 +47,7 @@ def test_edenai_forced_provider_uses_default_api_base() -> None:
 
 def test_edenai_preserves_model_id_and_reasoning_effort() -> None:
     spec = find_by_name("edenai")
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         provider = OpenAICompatProvider(
             api_key="eden-key",
             default_model="anthropic/claude-sonnet-4-5",

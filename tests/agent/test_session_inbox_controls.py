@@ -5,30 +5,30 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.session_helpers import run_session, stop_loop, visible_message
-from nanobot.agent.automation_turns import AutomationTurnError
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.context import current_request_context
-from nanobot.agent.tools.cron import CronTool
-from nanobot.bus.events import InboundMessage, OutboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.bus.runtime_events import TurnCompleted
-from nanobot.cron.service import CronService
-from nanobot.cron.session_turns import CRON_DEFER_UNTIL_IDLE_META, CRON_TRIGGER_META
-from nanobot.goal.assembly import install_goal
-from nanobot.providers.base import GenerationSettings, LLMResponse, LLMUsage, ToolCallRequest
-from nanobot.runtime_context import public_history_messages
-from nanobot.security.workspace_access import current_workspace_scope
-from nanobot.session.automation_turns import AUTOMATION_HISTORY_META
-from nanobot.session.goal_state import GOAL_STATE_KEY
-from nanobot.session.history_visibility import is_hidden_history_message
-from nanobot.session.manager import SessionManager
-from nanobot.session.recovery import (
+from nujinagent.agent.automation_turns import AutomationTurnError
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.context import current_request_context
+from nujinagent.agent.tools.cron import CronTool
+from nujinagent.bus.events import InboundMessage, OutboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.bus.runtime_events import TurnCompleted
+from nujinagent.cron.service import CronService
+from nujinagent.cron.session_turns import CRON_DEFER_UNTIL_IDLE_META, CRON_TRIGGER_META
+from nujinagent.goal.assembly import install_goal
+from nujinagent.providers.base import GenerationSettings, LLMResponse, LLMUsage, ToolCallRequest
+from nujinagent.runtime_context import public_history_messages
+from nujinagent.security.workspace_access import current_workspace_scope
+from nujinagent.session.automation_turns import AUTOMATION_HISTORY_META
+from nujinagent.session.goal_state import GOAL_STATE_KEY
+from nujinagent.session.history_visibility import is_hidden_history_message
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.recovery import (
     PENDING_FOLLOWUPS_KEY,
     REQUEST_ORIGIN_METADATA_KEY,
     pending_followups,
 )
-from nanobot.triggers.local_session_turns import LOCAL_TRIGGER_META
-from nanobot.webui.recovery import RecoveryCoordinator
+from nujinagent.triggers.local_session_turns import LOCAL_TRIGGER_META
+from nujinagent.webui.recovery import RecoveryCoordinator
 
 
 @pytest.fixture

@@ -97,8 +97,8 @@ type ChannelConfigOption = {
   label: string;
 };
 
-const NANOBOT_DOCS_URL = "https://nanobot.wiki/docs/latest";
-const CHAT_APPS_DOCS_URL = `${NANOBOT_DOCS_URL}/getting-started/chat-apps`;
+const NUJINAGENT_DOCS_URL = "https://nujinagent.wiki/docs/latest";
+const CHAT_APPS_DOCS_URL = `${NUJINAGENT_DOCS_URL}/getting-started/chat-apps`;
 
 export function chatAppGuideUrl(sectionId: string): string {
   return `${CHAT_APPS_DOCS_URL}#${sectionId}`;

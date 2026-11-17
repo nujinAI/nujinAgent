@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from openpyxl import Workbook
 
-from nanobot.agent.tools.search import GrepTool
+from nujinagent.agent.tools.search import GrepTool
 
 
 @pytest.mark.parametrize(

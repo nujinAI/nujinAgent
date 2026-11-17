@@ -166,7 +166,7 @@ test("a compact mobile composer preserves its placeholder, focus, and sizing", a
   const context = await browser.newContext({ baseURL, viewport: { width: 314, height: 844 }, hasTouch: true, isMobile: true, reducedMotion: "reduce" });
   try {
     const page = await context.newPage();
-    await page.addInitScript(() => localStorage.setItem("nanobot.locale", "fr"));
+    await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "fr"));
     await page.goto("/browser/fixture.html?case=composer-action&composerVariant=thread");
     await page.evaluate(() => document.fonts.ready);
     const input = page.locator(".thread-composer-input textarea");
@@ -201,7 +201,7 @@ test("a compact mobile composer preserves its placeholder, focus, and sizing", a
 for (const variant of ["hero", "thread"]) {
   test(`placeholder follows available input width in a ${variant} composer`, async ({ page }) => {
     await page.setViewportSize({ width: 1200, height: 900 });
-    await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+    await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
     await page.goto(`/browser/fixture.html?case=composer-action&composerVariant=${variant}`);
     await page.evaluate(() => document.fonts.ready);
     const container = page.locator("main");

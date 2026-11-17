@@ -12,7 +12,7 @@ import {
   installMarketplaceSkill,
   searchMarketplaceSkills,
 } from "@/lib/api";
-import type { NanobotClient } from "@/lib/nanobot-client";
+import type { NujinAgentClient } from "@/lib/nujinagent-client";
 import type { MarketplaceSkillSummary } from "@/lib/types";
 import { requestSkillsRefresh, SKILLS_CHANGED_EVENT } from "@/lib/skill-events";
 import { ClientProvider } from "@/providers/ClientProvider";
@@ -30,7 +30,7 @@ vi.mock("@/lib/api", async (importOriginal) => {
   };
 });
 
-const client = {} as NanobotClient;
+const client = {} as NujinAgentClient;
 
 function marketplace(token: string) {
   return (

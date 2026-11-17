@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.cron.service import CronService
-from nanobot.cron.types import CronJob, CronSchedule
+from nujinagent.cron.service import CronService
+from nujinagent.cron.types import CronJob, CronSchedule
 
 
 async def _wait_for_job_entry(timer: asyncio.Task[None], entered: asyncio.Event) -> None:

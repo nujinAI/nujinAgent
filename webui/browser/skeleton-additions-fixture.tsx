@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from "react";
 
-import { LinearMemberAccessView } from "../../nanobot/channels/linear/webui/LinearMemberAccessView";
-import type { LinearMembersPayload } from "../../nanobot/channels/linear/webui/types";
+import { LinearMemberAccessView } from "../../nujinagent/channels/linear/webui/LinearMemberAccessView";
+import type { LinearMembersPayload } from "../../nujinagent/channels/linear/webui/types";
 import { ChatList } from "@/components/ChatList";
 import { SettingsPage } from "@/components/settings/SettingsPage";
 import type { SettingsSectionKey } from "@/components/settings/contracts";
@@ -68,7 +68,7 @@ export function installSkeletonPreviewApi() {
     const bodies: Record<string, unknown> = {
       "/api/settings": previewSettings,
       "/api/settings/usage": { days: [] } satisfies NonNullable<SettingsPayload["usage"]>,
-      "/api/webui/automations": { jobs }, "/api/settings/nanobot-features": { features: [], enabled_count: 0, requires_restart: false },
+      "/api/webui/automations": { jobs }, "/api/settings/nujinagent-features": { features: [], enabled_count: 0, requires_restart: false },
       "/api/settings/cli-apps": { apps: [], installed_count: 0 }, "/api/settings/mcp-presets": { presets: [], installed_count: 0 },
     };
     return Response.json(bodies[url.pathname] ?? {});
@@ -129,7 +129,7 @@ function SkeletonSurface() {
         systemState: { ...controller.systemState,
           cliApps: empty ? null : { apps: [], installed_count: 0 }, cliAppsLoading: loading,
           mcpPresets: empty ? null : { presets: [], installed_count: 0 }, mcpPresetsLoading: loading,
-          nanobotFeatures: empty ? null : { features: [], enabled_count: 0, requires_restart: false }, nanobotFeaturesLoading: loading,
+          nujinagentFeatures: empty ? null : { features: [], enabled_count: 0, requires_restart: false }, nujinagentFeaturesLoading: loading,
           automations: empty ? null : { jobs }, automationsLoading: loading,
           automationsError: state === "error" ? "Preview read failed" : null,
         },

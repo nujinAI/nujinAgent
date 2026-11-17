@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: nanobot
+    name: nujinagent
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
@@ -20,18 +20,18 @@ services:
         sync: false
       # WebUI access secret — the gate for the public WebUI. Generate a strong
       # random value (e.g. `openssl rand -hex 32`) and keep it private.
-      - key: NANOBOT_WEB_TOKEN
+      - key: NUJINAGENT_WEB_TOKEN
         sync: false
       - key: PORT
         value: 8765
     # Persist sessions, memory, and the WebUI display transcripts across deploys.
-    # The entrypoint copies the config onto this mount, so nanobot's runtime
+    # The entrypoint copies the config onto this mount, so nujinagent's runtime
     # data_dir (config_path.parent) resolves here too — keeping webui/ (chat
     # history the UI renders), cron, media, and logs durable, not just session
     # files. Starter / 1 GB is the lean default; history persistence needs this
     # disk, not a bigger plan. Note: persistent disks require a paid service
     # (they are unavailable on Render's free tier).
     disk:
-      name: nanobot-data
-      mountPath: /home/nanobot/.nanobot
+      name: nujinagent-data
+      mountPath: /home/nujinagent/.nujinagent
       sizeGB: 1

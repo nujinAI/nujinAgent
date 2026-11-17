@@ -4,9 +4,9 @@ import threading
 
 import pytest
 
-from nanobot.bus.events import InboundMessage
-from nanobot.session.manager import SessionManager
-from nanobot.session.state import SessionOperationQueueFullError, SessionState
+from nujinagent.bus.events import InboundMessage
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.state import SessionOperationQueueFullError, SessionState
 
 
 @pytest.mark.parametrize("channel", ["cli", "telegram", "system"])
@@ -241,8 +241,8 @@ async def test_cancel_before_coroutine_starts_submits_no_command(tmp_path):
 
 
 async def test_followup_can_initialize_first_turn_but_cannot_revive_deleted_session(tmp_path):
-    from nanobot.session.recovery import pending_followups
-    from nanobot.session.sqlite_store import SessionConflictError
+    from nujinagent.session.recovery import pending_followups
+    from nujinagent.session.sqlite_store import SessionConflictError
 
     state = SessionManager(tmp_path).state
     message = InboundMessage(channel="websocket", sender_id="u", chat_id="a", content="second")
@@ -257,7 +257,7 @@ async def test_followup_can_initialize_first_turn_but_cannot_revive_deleted_sess
 
 
 async def test_followup_rejects_discarded_or_replaced_generation(tmp_path):
-    from nanobot.session.sqlite_store import SessionConflictError
+    from nujinagent.session.sqlite_store import SessionConflictError
 
     state = SessionManager(tmp_path).state
     session = await state.register_transient("websocket:private")
@@ -414,8 +414,8 @@ async def test_connection_open_failure_does_not_poison_the_owner(tmp_path, monke
 
 
 async def test_history_peek_does_not_hold_the_metadata_control_lock(tmp_path, monkeypatch):
-    import nanobot.session.state as owner
-    from nanobot.session.manager import Session
+    import nujinagent.session.state as owner
+    from nujinagent.session.manager import Session
 
     state = SessionManager(tmp_path).state
     await state.import_messages("chat:child", [{"role": "user", "content": "history"}])

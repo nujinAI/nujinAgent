@@ -1,8 +1,8 @@
-# nanobot Task Guides
+# nujinagent Task Guides
 
 Start with [Install and Quick Start](../quick-start.md) and get one reply before using a guide below. Each guide targets one outcome; linked reference pages hold the complete option tables and edge cases.
 
-You can ask nanobot to guide your next task using the built-in `nanobot-document` skill, or read a guide yourself. See [Continue with nanobot](../quick-start.md#continue-with-nanobot) for availability and examples. Each task guide describes its starting requirements, setup steps, and how to check the result; use the parts that match your current instance.
+You can ask nujinagent to guide your next task using the built-in `nujinagent-document` skill, or read a guide yourself. See [Continue with nujinagent](../quick-start.md#continue-with-nujinagent) for availability and examples. Each task guide describes its starting requirements, setup steps, and how to check the result; use the parts that match your current instance.
 
 ## Start and Use
 
@@ -50,4 +50,4 @@ Use **Channels** in the WebUI for guided setup. These guides explain the account
 | Improve Ollama tool prompt-cache reuse | [Configure Ollama prompt caching](./configure-ollama-prompt-cache.md) |
 | Add Langfuse tracing | [Configure Langfuse observability](./configure-langfuse-observability.md) |
 | Secure local tools | [Secure a local AI agent](./secure-local-ai-agent.md) |
-| Deploy the gateway | [Deploy nanobot gateway](./deploy-nanobot-gateway.md) |
+| Deploy the gateway | [Deploy nujinagent gateway](./deploy-nujinagent-gateway.md) |

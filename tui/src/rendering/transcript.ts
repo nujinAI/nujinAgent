@@ -150,7 +150,7 @@ export class Transcript {
   ) {
     this.codeRailColor = parseColor(theme.border)
     this.root = new ScrollBoxRenderable(renderer, {
-      id: "nanobot-tui-transcript",
+      id: "nujinagent-tui-transcript",
       width: "100%",
       minHeight: 0,
       flexGrow: 0,
@@ -218,7 +218,7 @@ export class Transcript {
       paddingLeft: 1,
       paddingRight: 1,
     })
-    const title = this.createText(`>_  nanobot  v${options.version}`, "text", true)
+    const title = this.createText(`>_  nujinagent  v${options.version}`, "text", true)
     const context = this.createText(["", options.workspace].join("\n"), "muted")
     row.add(title)
     row.add(context)

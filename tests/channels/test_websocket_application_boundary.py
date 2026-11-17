@@ -9,18 +9,18 @@ import pytest
 from websockets.datastructures import Headers
 from websockets.http11 import Request, Response
 
-from nanobot.bus.events import OutboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.channels.websocket import runtime
-from nanobot.webui.gateway_services import build_gateway_services
+from nujinagent.bus.events import OutboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.channels.websocket import runtime
+from nujinagent.webui.gateway_services import build_gateway_services
 
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-_SESSION_IDENTITY_PATH = _REPOSITORY_ROOT / "nanobot" / "webui" / "session_identity.py"
+_SESSION_IDENTITY_PATH = _REPOSITORY_ROOT / "nujinagent" / "webui" / "session_identity.py"
 
 
 @pytest.fixture
 async def channel(tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     config = runtime.WebSocketConfig(allow_from=["client-1"], websocket_requires_token=False)
     bus = MessageBus()
     gateway = build_gateway_services(
@@ -155,7 +155,7 @@ def _session_namespace_literal_lines(source: str) -> list[int]:
 
 def test_persisted_webui_session_prefix_has_one_production_owner() -> None:
     owners = {}
-    for path in (_REPOSITORY_ROOT / "nanobot").rglob("*.py"):
+    for path in (_REPOSITORY_ROOT / "nujinagent").rglob("*.py"):
         if "tests" in path.parts:
             continue
         lines = _session_namespace_literal_lines(path.read_text(encoding="utf-8"))

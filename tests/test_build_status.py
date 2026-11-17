@@ -1,5 +1,5 @@
-from nanobot.providers.base import LLMUsage
-from nanobot.utils.helpers import build_status_content
+from nujinagent.providers.base import LLMUsage
+from nujinagent.utils.helpers import build_status_content
 
 
 def test_status_shows_cache_hit_rate():

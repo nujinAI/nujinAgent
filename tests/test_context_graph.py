@@ -2,9 +2,9 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.context_graph import graph_from_sources
-from nanobot.context_sources import PromptSourcesEvent, capture_sources
-from nanobot.file_references import source_receipt
+from nujinagent.context_graph import graph_from_sources
+from nujinagent.context_sources import PromptSourcesEvent, capture_sources
+from nujinagent.file_references import source_receipt
 
 
 def graph_from_observations(sources):
@@ -60,7 +60,7 @@ def test_repeated_source_analysis_resolves_links_in_the_current_directory(tmp_pa
 def test_source_token_estimate_updates_when_tokenizer_becomes_available(tmp_path: Path, monkeypatch):
     import tiktoken
 
-    import nanobot.file_references as context_graph
+    import nujinagent.file_references as context_graph
 
     content = "Hello world"
     monkeypatch.setattr(context_graph, "get_token_encoding", lambda: None)
@@ -72,9 +72,9 @@ def test_source_token_estimate_updates_when_tokenizer_becomes_available(tmp_path
 
 @pytest.mark.asyncio
 async def test_prompt_working_set_reuses_analysis_and_invalidates_changed_content(tmp_path: Path, monkeypatch):
-    from nanobot.context_sources import PromptSource
-    from nanobot.file_references import MarkdownReferences
-    from nanobot.webui.context_observer import ContextGraphObserver
+    from nujinagent.context_sources import PromptSource
+    from nujinagent.file_references import MarkdownReferences
+    from nujinagent.webui.context_observer import ContextGraphObserver
 
     calls = []
     original = MarkdownReferences.references
@@ -105,7 +105,7 @@ async def test_prompt_working_set_reuses_analysis_and_invalidates_changed_conten
 def test_source_analysis_evicts_by_budget_and_preserves_recent_results(tmp_path: Path, monkeypatch):
     from collections import OrderedDict
 
-    import nanobot.file_references as references
+    import nujinagent.file_references as references
 
     calls = []
 
@@ -128,7 +128,7 @@ def test_source_analysis_evicts_by_budget_and_preserves_recent_results(tmp_path:
 
 
 def test_system_sources_track_actual_injection_and_skill_metadata(tmp_path: Path):
-    from nanobot.agent.context import ContextBuilder
+    from nujinagent.agent.context import ContextBuilder
 
     (tmp_path / "SOUL.md").write_text("Be precise", encoding="utf-8")
     skill = tmp_path / "skills" / "example"
@@ -142,8 +142,8 @@ def test_system_sources_track_actual_injection_and_skill_metadata(tmp_path: Path
 
 
 def test_default_workspace_files_are_discoverable_without_claiming_loaded(tmp_path: Path):
-    from nanobot.agent.context import ContextBuilder
-    from nanobot.utils.helpers import load_bundled_template
+    from nujinagent.agent.context import ContextBuilder
+    from nujinagent.utils.helpers import load_bundled_template
 
     (tmp_path / "memory").mkdir()
     for name in ("AGENTS.md", "USER.md", "memory/MEMORY.md"):
@@ -156,8 +156,8 @@ def test_default_workspace_files_are_discoverable_without_claiming_loaded(tmp_pa
 
 
 def test_graph_survives_webui_history_boundary(tmp_path: Path):
-    from nanobot.webui.history import fact_from_record, record_from_fact
-    from nanobot.webui.transcript import _client_projection_event
+    from nujinagent.webui.history import fact_from_record, record_from_fact
+    from nujinagent.webui.transcript import _client_projection_event
 
     content = "Read me"
     graph = graph_from_sources([source_receipt(tmp_path / "guide.md", content)])
@@ -170,7 +170,7 @@ def test_graph_survives_webui_history_boundary(tmp_path: Path):
 
 
 def test_explicit_skill_sources_in_current_message(tmp_path: Path):
-    from nanobot.agent.context import ContextBuilder
+    from nujinagent.agent.context import ContextBuilder
 
     skill = tmp_path / 'skills' / 'example'
     skill.mkdir(parents=True)
@@ -189,12 +189,12 @@ async def test_queued_skill_sources_reach_the_request(tmp_path: Path):
     import asyncio
     from unittest.mock import AsyncMock, MagicMock
 
-    from nanobot.agent.context import TranscriptInput
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.agent.tools.context import RequestContext
-    from nanobot.bus.events import InboundMessage
-    from nanobot.bus.queue import MessageBus
-    from nanobot.providers.base import LLMResponse
+    from nujinagent.agent.context import TranscriptInput
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.agent.tools.context import RequestContext
+    from nujinagent.bus.events import InboundMessage
+    from nujinagent.bus.queue import MessageBus
+    from nujinagent.providers.base import LLMResponse
 
     skill = tmp_path / 'skills' / 'example'
     skill.mkdir(parents=True)
@@ -212,8 +212,8 @@ async def test_queued_skill_sources_reach_the_request(tmp_path: Path):
     blocks = await loop._resolve_runtime_context_for_request(request, loop.tools)
     assert await loop._persist_user_message_early(message, session, runtime_context_blocks=blocks)
     expected_path = str(skill / 'SKILL.md')
-    from nanobot.events import EventSink
-    from nanobot.webui.context_source_hook import create_context_source_hook
+    from nujinagent.events import EventSink
+    from nujinagent.webui.context_source_hook import create_context_source_hook
     events = []
     async def publish(event):
         events.append(event)
@@ -233,8 +233,8 @@ async def test_queued_skill_sources_reach_the_request(tmp_path: Path):
 
 
 async def test_read_file_ignores_invalid_markdown_link_targets(tmp_path: Path):
-    from nanobot.agent.tools.filesystem import ReadFileTool
-    from nanobot.webui.context_observer import read_source
+    from nujinagent.agent.tools.filesystem import ReadFileTool
+    from nujinagent.webui.context_observer import read_source
 
     path = tmp_path / "guide.md"
     path.write_text("[Invalid](foo%00.md)\n[Guide](valid.md)", encoding="utf-8")
@@ -245,7 +245,7 @@ async def test_read_file_ignores_invalid_markdown_link_targets(tmp_path: Path):
 
 
 def test_image_with_explicit_skill_reports_sources(tmp_path: Path):
-    from nanobot.agent.context import ContextBuilder
+    from nujinagent.agent.context import ContextBuilder
 
     skill = tmp_path / "skills" / "example"
     skill.mkdir(parents=True)

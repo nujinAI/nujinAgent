@@ -8,15 +8,15 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from nanobot.agent.tools.context import ToolContext
-from nanobot.agent.tools.exec_session import ExecSessionManager
-from nanobot.agent.tools.loader import ToolLoader
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.agent.tools.rg import RgTool
-from nanobot.agent.tools.search import FindFilesTool, GrepTool
-from nanobot.agent.tools.shell import ExecTool, _PreparedCommand
-from nanobot.config.schema import ToolsConfig
-from nanobot.execution import processes
+from nujinagent.agent.tools.context import ToolContext
+from nujinagent.agent.tools.exec_session import ExecSessionManager
+from nujinagent.agent.tools.loader import ToolLoader
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.agent.tools.rg import RgTool
+from nujinagent.agent.tools.search import FindFilesTool, GrepTool
+from nujinagent.agent.tools.shell import ExecTool, _PreparedCommand
+from nujinagent.config.schema import ToolsConfig
+from nujinagent.execution import processes
 
 
 @pytest.mark.parametrize("installed", [True, False])
@@ -27,7 +27,7 @@ from nanobot.execution import processes
     [RgTool, GrepTool, FindFilesTool], [GrepTool, FindFilesTool, RgTool],
 ])
 def test_loader_selects_one_search_backend(tmp_path, monkeypatch, installed, exec_enabled, file_enabled, scope, classes):
-    monkeypatch.setattr("nanobot.agent.tools.rg.shutil.which", lambda *a, **kw: "rg" if installed else None)
+    monkeypatch.setattr("nujinagent.agent.tools.rg.shutil.which", lambda *a, **kw: "rg" if installed else None)
     config = ToolsConfig()
     config.exec.enable = exec_enabled
     config.file.enable = file_enabled
@@ -84,7 +84,7 @@ def test_detection_uses_exec_path_configuration(tmp_path, monkeypatch):
         captured.update(command=command, path=path)
         return "rg"
 
-    monkeypatch.setattr("nanobot.agent.tools.rg.shutil.which", which)
+    monkeypatch.setattr("nujinagent.agent.tools.rg.shutil.which", which)
     assert RgTool.enabled(ToolContext(config=config, workspace=str(tmp_path)))
     assert captured["path"] == os.pathsep.join([
         config.exec.path_prepend, os.environ.get("PATH", ""), config.exec.path_append,
@@ -225,8 +225,8 @@ async def test_direct_search_uses_configured_path(tmp_path, monkeypatch):
 @pytest.mark.parametrize("backend", ["bwrap", "seatbelt"])
 def test_direct_search_preserves_sandbox_and_arguments(tmp_path, monkeypatch, backend):
     trusted_bin = tmp_path / "trusted-bin"
-    monkeypatch.setattr("nanobot.agent.tools.shell._IS_WINDOWS", False)
-    monkeypatch.setattr("nanobot.agent.tools.shell.shutil.which", lambda name, **_kwargs: str(trusted_bin / os.path.basename(name)))
+    monkeypatch.setattr("nujinagent.agent.tools.shell._IS_WINDOWS", False)
+    monkeypatch.setattr("nujinagent.agent.tools.shell.shutil.which", lambda name, **_kwargs: str(trusted_bin / os.path.basename(name)))
     args = ["rg", "-F", "hello | $HOME; 'world'", "."]
     prepared = RgTool(working_dir=str(tmp_path), sandbox=backend)._prepare_command(args)
     assert isinstance(prepared, _PreparedCommand)

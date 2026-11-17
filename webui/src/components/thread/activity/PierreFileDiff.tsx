@@ -68,7 +68,7 @@ export function getDiffMetadata(text: string, language: string): FileDiffMetadat
       pool?.evictDiffFromCache(oldMetadata.cacheKey!);
       grammarPool?.evictDiffFromCache(oldMetadata.cacheKey!);
     }
-    metadata.cacheKey = `nanobot-diff-${++revision}`;
+    metadata.cacheKey = `nujinagent-diff-${++revision}`;
     metadataCache.set(key, metadata);
     sourceBytes += bytes;
   }
@@ -156,5 +156,5 @@ export function PierreFileDiff({ text, language, diff, lineLimit }: DiffSyntaxHi
     };
   }, [diff, lineLimit, metadata, options, viewport]);
 
-  return <div ref={wrapperRef} className="nanobot-file-diff font-mono text-code-dense" data-testid="syntax-highlighted-diff-hunk" data-language={language} />;
+  return <div ref={wrapperRef} className="nujinagent-file-diff font-mono text-code-dense" data-testid="syntax-highlighted-diff-hunk" data-language={language} />;
 }

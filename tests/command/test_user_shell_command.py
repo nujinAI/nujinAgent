@@ -4,12 +4,12 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.tools.context import current_request_context
-from nanobot.agent.tools.shell import ExecTool
-from nanobot.bus.events import INBOUND_META_USER_SHELL, InboundMessage
-from nanobot.command.router import CommandContext
-from nanobot.command.user_shell import cmd_user_shell
-from nanobot.session.manager import Session, SessionPolicy
+from nujinagent.agent.tools.context import current_request_context
+from nujinagent.agent.tools.shell import ExecTool
+from nujinagent.bus.events import INBOUND_META_USER_SHELL, InboundMessage
+from nujinagent.command.router import CommandContext
+from nujinagent.command.user_shell import cmd_user_shell
+from nujinagent.session.manager import Session, SessionPolicy
 
 
 def _context(loop: MagicMock, *, trusted: bool, command: str = "pwd") -> CommandContext:
@@ -92,10 +92,10 @@ async def test_user_command_keeps_waiting_for_full_result_while_model_observatio
     import shlex
     import sys
 
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.agent.tools.exec_session import ExecSessionManager
-    from nanobot.bus.queue import MessageBus
-    from nanobot.security.workspace_access import default_workspace_scope
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.agent.tools.exec_session import ExecSessionManager
+    from nujinagent.bus.queue import MessageBus
+    from nujinagent.security.workspace_access import default_workspace_scope
 
     manager = ExecSessionManager()
     tool = ExecTool(working_dir=str(tmp_path), session_manager=manager)
@@ -124,7 +124,7 @@ async def test_user_command_keeps_waiting_for_full_result_while_model_observatio
 async def test_shell_cancellation_unwinds_workspace_and_request_context(tmp_path):
     import asyncio
 
-    from nanobot.security.workspace_access import current_workspace_scope, default_workspace_scope
+    from nujinagent.security.workspace_access import current_workspace_scope, default_workspace_scope
 
     entered, release = asyncio.Event(), asyncio.Event()
     scope = default_workspace_scope(tmp_path, False, source_channel="websocket")

@@ -235,7 +235,7 @@ describe("SessionInfoPopover", () => {
             payload: {
               kind: "local_trigger",
               message: "Review PR #4591",
-              command: 'nanobot trigger trg_123 "message"',
+              command: 'nujinagent trigger trg_123 "message"',
             },
             state: { pending: false },
           },
@@ -260,7 +260,7 @@ describe("SessionInfoPopover", () => {
     await screen.findByText("Command");
     const detail = screen.getByRole("dialog", { name: "PR monitor" });
     expect(within(detail).getByText("Command")).toBeInTheDocument();
-    expect(within(detail).getByText('nanobot trigger trg_123 "message"')).toBeInTheDocument();
+    expect(within(detail).getByText('nujinagent trigger trg_123 "message"')).toBeInTheDocument();
   });
 
   it("refreshes while open so completed one-shot automations disappear", async () => {

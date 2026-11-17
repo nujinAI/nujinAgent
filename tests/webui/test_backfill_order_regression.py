@@ -1,6 +1,6 @@
 import pytest
 
-from nanobot.webui.transcript import TranscriptReplayStats
+from nujinagent.webui.transcript import TranscriptReplayStats
 
 
 def _paged_events(history, key, messages):
@@ -16,7 +16,7 @@ def _paged_events(history, key, messages):
 
 
 def test_grouped_backfill_keeps_response_input_order_in_page_and_index(history, tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     key = "websocket:backfill-order"
     ids = ["input:first", "input:second", "input:third"]
     messages = [
@@ -39,7 +39,7 @@ def test_grouped_backfill_keeps_response_input_order_in_page_and_index(history, 
 
 
 def test_identity_backfill_is_not_repeated_by_legacy_answer_matching(history, tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     key = "websocket:backfill-duplicate"
     messages = [
         {"role": "user", "content": "question", "input_id": "input:one"},
@@ -64,7 +64,7 @@ def test_identity_backfill_is_not_repeated_by_legacy_answer_matching(history, tm
 
 
 def test_empty_response_inputs_do_not_use_legacy_answer_matching(history, tmp_path, monkeypatch):
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     key = "websocket:empty-response-inputs"
     messages = [
         {"role": "user", "content": "question", "input_id": "input:one"},
@@ -91,8 +91,8 @@ def test_empty_response_inputs_do_not_use_legacy_answer_matching(history, tmp_pa
 
 @pytest.mark.parametrize("budget", [1, 5])
 def test_fragmented_turn_preserves_backfill_order_across_reference_anchors(history, tmp_path, monkeypatch, budget):
-    from nanobot.webui import transcript
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    from nujinagent.webui import transcript
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     monkeypatch.setattr(transcript, "_MAX_TRANSCRIPT_PAGE_RECORDS", budget)
     key = "websocket:truncated-backfill"
     ids = ["input:a", "input:b", "input:c"]
@@ -115,8 +115,8 @@ def test_fragmented_turn_preserves_backfill_order_across_reference_anchors(histo
 
 
 def test_older_pages_recover_inputs_whose_references_are_outside_latest_page(history, tmp_path, monkeypatch):
-    from nanobot.webui import transcript
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    from nujinagent.webui import transcript
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     monkeypatch.setattr(transcript, "_MAX_TRANSCRIPT_PAGE_RECORDS", 4)
     key = "websocket:truncated-no-reference"
     messages = [{"role": "user", "content": "A", "input_id": "a"}]
@@ -134,9 +134,9 @@ def test_older_pages_recover_inputs_whose_references_are_outside_latest_page(his
 
 
 def test_completed_stream_compaction_and_record_pages_keep_shared_backfill_anchor(history, tmp_path, monkeypatch):
-    from nanobot.webui import transcript
+    from nujinagent.webui import transcript
 
-    monkeypatch.setattr("nanobot.config.paths.get_data_dir", lambda: tmp_path)
+    monkeypatch.setattr("nujinagent.config.paths.get_data_dir", lambda: tmp_path)
     key = "websocket:stream-anchor"
     ids = ["input:a", "input:b", "input:c"]
     messages = [{"role": "user", "content": text, "input_id": ident}

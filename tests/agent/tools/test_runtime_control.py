@@ -7,28 +7,28 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.context import TranscriptInput
-from nanobot.agent.loop import AgentLoop
-from nanobot.agent.tools.context import RequestContext, request_context
-from nanobot.agent.tools.runtime_control import (
+from nujinagent.agent.context import TranscriptInput
+from nujinagent.agent.loop import AgentLoop
+from nujinagent.agent.tools.context import RequestContext, request_context
+from nujinagent.agent.tools.runtime_control import (
     RUNTIME_COMMAND_KEYS,
     RUNTIME_SNAPSHOT_KEYS,
     AgentRuntimeControl,
     RuntimeControl,
 )
-from nanobot.agent.tools.self import MyTool, MyToolConfig
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.config.schema import ToolsConfig
-from nanobot.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.runtime_context import RUNTIME_CONTEXT_END, RUNTIME_CONTEXT_TAG
-from nanobot.security.workspace_access import (
+from nujinagent.agent.tools.self import MyTool, MyToolConfig
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.schema import ToolsConfig
+from nujinagent.providers.base import GenerationSettings, LLMProvider, LLMResponse, ToolCallRequest
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.runtime_context import RUNTIME_CONTEXT_END, RUNTIME_CONTEXT_TAG
+from nujinagent.security.workspace_access import (
     bind_workspace_scope,
     build_workspace_scope,
     reset_workspace_scope,
 )
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 def _make_loop(
@@ -283,8 +283,8 @@ async def test_workspace_inspection_matches_registered_file_tool(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mode: str, sandbox: str, restricted: bool,
 ) -> None:
     # A configured shell backend is not proof that an external sandbox is running.
-    monkeypatch.delenv("NANOBOT_WORKSPACE_SANDBOX_ENFORCED", raising=False)
-    monkeypatch.delenv("NANOBOT_SANDBOX_ENFORCED", raising=False)
+    monkeypatch.delenv("NUJINAGENT_WORKSPACE_SANDBOX_ENFORCED", raising=False)
+    monkeypatch.delenv("NUJINAGENT_SANDBOX_ENFORCED", raising=False)
     agent = tmp_path / "agent"
     project = tmp_path / "project"
     project.mkdir()
@@ -706,7 +706,7 @@ async def test_subagent_check_without_session_cannot_enumerate_tasks(tmp_path, s
 
 
 async def test_subagent_check_retained_results_and_receipts_are_scoped_and_detached(tmp_path, runtime):
-    from nanobot.agent.runner import AgentRunResult
+    from nujinagent.agent.runner import AgentRunResult
 
     loop = _make_loop(tmp_path)
     manager = loop.subagents

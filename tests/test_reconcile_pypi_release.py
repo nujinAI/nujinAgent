@@ -4,14 +4,14 @@ from urllib.error import HTTPError
 
 import pytest
 
-from nanobot.releases import PLATFORMS
+from nujinagent.releases import PLATFORMS
 from scripts import reconcile_pypi_release as reconcile
 
 
 @pytest.fixture
 def staged(tmp_path):
-    names = {f"nanobot_ai-1.2.3-py3-none-{platform}.whl" for platform in PLATFORMS.values()}
-    names.add("nanobot_ai-1.2.3.tar.gz")
+    names = {f"nujinagent_ai-1.2.3-py3-none-{platform}.whl" for platform in PLATFORMS.values()}
+    names.add("nujinagent_ai-1.2.3.tar.gz")
     for name in names:
         (tmp_path / name).write_bytes(name.encode())
     return tmp_path
@@ -24,7 +24,7 @@ def index_entry(path):
 
 
 def serve(monkeypatch, entries):
-    payload = json.dumps({"info": {"name": "nanobot-ai", "version": "1.2.3"}, "urls": entries}).encode()
+    payload = json.dumps({"info": {"name": "nujinagent", "version": "1.2.3"}, "urls": entries}).encode()
     class Response:
         def __enter__(self):
             return self

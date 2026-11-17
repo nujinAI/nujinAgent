@@ -49,7 +49,7 @@ if (!selected.length) throw new Error("Browser shard is empty");
 if (values.list) {
   console.log(JSON.stringify({ shard: index, count, files: selected }, null, 2));
 } else {
-  const directory = mkdtempSync(path.join(tmpdir(), "nanobot-browser-shard-"));
+  const directory = mkdtempSync(path.join(tmpdir(), "nujinagent-browser-shard-"));
   try {
     const list = path.join(directory, "tests.txt");
     writeFileSync(list, selected.map((file) => path.relative(rootDir, path.resolve(file)).replaceAll("\\", "/")).join("\n"));

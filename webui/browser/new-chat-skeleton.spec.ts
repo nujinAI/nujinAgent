@@ -27,7 +27,7 @@ for (const c of cases) for (const locale of ["en", "zh-CN"]) {
     test.use({ viewport: { width: c.width, height: c.height }, hasTouch: c.touch, reducedMotion: "reduce" });
     test("aligns the document skeleton with the real composer and header", async ({ page }) => {
       await page.addInitScript((language) => {
-        localStorage.setItem("nanobot.locale", language);
+        localStorage.setItem("nujinagent.locale", language);
       }, locale);
       await page.route("**/api/commands", (route) => route.fulfill({ json: { commands: [] } }));
       const url = `/browser/fixture.html?case=new-chat-skeleton${c.extra}${locale === "zh-CN" ? "&dark" : ""}`;
@@ -50,8 +50,8 @@ for (const c of cases) for (const locale of ["en", "zh-CN"]) {
       await expect(page.getByTestId("thread-empty-region").getByRole("heading", {
         level: 1, name: locale === "en" ? "New topic" : "新建话题",
       })).toHaveClass("sr-only");
-      await expect(page.getByTestId("thread-welcome-mark").locator(".thread-welcome-mark__focus")).toHaveCSS("mask-image", /nanobot_mark_outline\.svg/);
-      await expect(page.getByTestId("thread-welcome-mark").locator(".thread-welcome-mark__fill")).toHaveCSS("background-image", /nanobot_mark\.svg/);
+      await expect(page.getByTestId("thread-welcome-mark").locator(".thread-welcome-mark__focus")).toHaveCSS("mask-image", /nujinagent_mark_outline\.svg/);
+      await expect(page.getByTestId("thread-welcome-mark").locator(".thread-welcome-mark__fill")).toHaveCSS("background-image", /nujinagent_mark\.svg/);
       await expect(page.getByTestId("thread-welcome-mark").locator(".thread-welcome-mark__fill")).toHaveCSS("filter", "grayscale(1)");
       expect(Math.abs(loaded.mark.x + loaded.mark.width / 2 - loaded.composer.x - loaded.composer.width / 2)).toBeLessThanOrEqual(1);
       expect(loaded.mark.y).toBeLessThan(loaded.composer.y);
@@ -68,7 +68,7 @@ for (const c of cases) for (const locale of ["en", "zh-CN"]) {
       await expect(controls).toHaveCount(loaded.controls.length);
       for (let i = 0; i < loaded.controls.length; i++) sameBox(await box(controls.nth(i)), loaded.controls[i]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-      await expect(page.getByRole("status")).toHaveText("Loading nanobot…");
+      await expect(page.getByRole("status")).toHaveText("Loading nujinagent…");
     });
   });
 }
@@ -98,7 +98,7 @@ test("draws the nose bridge and the original cheek lines", async ({ page }) => {
   await expect(page.getByTestId("thread-welcome-mark")).toBeVisible();
   const pixels = await page.evaluate(async () => {
     const image = new Image();
-    image.src = "/brand/nanobot_mark_outline.svg";
+    image.src = "/brand/nujinagent_mark_outline.svg";
     await image.decode();
     const canvas = document.createElement("canvas");
     canvas.width = 783;

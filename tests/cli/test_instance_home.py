@@ -7,11 +7,11 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from nanobot.cli.commands import app
-from nanobot.config import home as instance_home
-from nanobot.config import loader
-from nanobot.config.paths import get_cli_history_path, get_legacy_sessions_dir, get_media_dir
-from nanobot.config.schema import Config
+from nujinagent.cli.commands import app
+from nujinagent.config import home as instance_home
+from nujinagent.config import loader
+from nujinagent.config.paths import get_cli_history_path, get_legacy_sessions_dir, get_media_dir
+from nujinagent.config.schema import Config
 
 
 @pytest.fixture(autouse=True)
@@ -66,7 +66,7 @@ def test_installed_entry_dispatch_and_help(tmp_path):
     root = Path(__file__).parents[2]
     for args in (["--home", str(tmp_path), "onboard"], ["-h"], ["--home", str(tmp_path), "status"]):
         result = subprocess.run(
-            [sys.executable, "-m", "nanobot", *args], cwd=root,
+            [sys.executable, "-m", "nujinagent", *args], cwd=root,
             capture_output=True, text=True, encoding="utf-8", check=False,
         )
         assert result.returncode == 0, result.stderr
@@ -84,22 +84,22 @@ def test_home_rejects_file(tmp_path):
 def test_retired_serve_prints_migration_hint_without_initializing(tmp_path, legacy_args):
     instance = tmp_path / "old API instance"
     result = subprocess.run(
-        [sys.executable, "-m", "nanobot", "--home", str(instance), "serve", *legacy_args],
+        [sys.executable, "-m", "nujinagent", "--home", str(instance), "serve", *legacy_args],
         cwd=Path(__file__).parents[2],
         env=dict(os.environ, HOME=str(tmp_path), USERPROFILE=str(tmp_path)),
         capture_output=True, text=True, encoding="utf-8", check=False, timeout=20,
     )
     assert result.returncode == 2, result.stderr
     assert result.stdout == ""
-    assert "'nanobot serve' has been removed" in result.stderr
-    assert "'nanobot webui'" in result.stderr
+    assert "'nujinagent serve' has been removed" in result.stderr
+    assert "'nujinagent webui'" in result.stderr
     assert "/v1 endpoints have no drop-in replacement" in result.stderr
     assert "old-config.json" not in result.stderr
     assert not instance.exists()
 
 
 def test_home_bare_command_starts_agent_and_restores_selection(monkeypatch, tmp_path):
-    from nanobot.cli import entry
+    from nujinagent.cli import entry
 
     selected = tmp_path / "selected"
     observed = []
@@ -115,7 +115,7 @@ def test_home_bare_command_starts_agent_and_restores_selection(monkeypatch, tmp_
 
 
 def test_gateway_child_receives_home_after_cli_selection_ends(tmp_path):
-    from nanobot.gateway import GatewayInstance, build_gateway_command
+    from nujinagent.gateway import GatewayInstance, build_gateway_command
 
     home = tmp_path / "instance with spaces"
     instance_home.set_home_path(home)
@@ -123,6 +123,6 @@ def test_gateway_child_receives_home_after_cli_selection_ends(tmp_path):
     instance_home.set_home_path(None)
     options = instance.start_options(port=18791)
     command = build_gateway_command(sys.executable, options)
-    assert command[:5] == [sys.executable, "-m", "nanobot", "--home", str(home)]
+    assert command[:5] == [sys.executable, "-m", "nujinagent", "--home", str(home)]
     assert command[5] == "gateway"
     assert options.config_path == str(home / "config.json")

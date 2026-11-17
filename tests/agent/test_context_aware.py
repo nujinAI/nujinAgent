@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from nanobot.agent.tools.base import Tool
-from nanobot.agent.tools.context import ContextAware, RequestContext, request_context
-from nanobot.agent.tools.registry import ToolRegistry
+from nujinagent.agent.tools.base import Tool
+from nujinagent.agent.tools.context import ContextAware, RequestContext, request_context
+from nujinagent.agent.tools.registry import ToolRegistry
 
 
 class _ContextTool(Tool):

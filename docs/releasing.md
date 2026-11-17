@@ -4,7 +4,7 @@ Use this checklist with the [Release Packaging Contract](../CONTRIBUTING.md#rele
 
 ## Release cadence
 
-Stable is the default feed; Preview is opt-in. Both use one update flow and require confirmation before installation. Neither a faster cadence nor a subscription permits stopping tasks or restarting a gateway automatically. See [Updating nanobot](./updating.md) for user instructions.
+Stable is the default feed; Preview is opt-in. Both use one update flow and require confirmation before installation. Neither a faster cadence nor a subscription permits stopping tasks or restarting a gateway automatically. See [Updating nujinagent](./updating.md) for user instructions.
 
 | Release | Trigger | Public destination | Documentation |
 | --- | --- | --- | --- |
@@ -24,7 +24,7 @@ Run **Verify Release Candidate** at the chosen source ref with the existing `nex
 
 Stable notes start at the preceding final release on the selected source line, ignoring Preview tags. Preview notes can start at the preceding Preview's source. Neither uses an unrelated branch's newest tag. The planned source is the event SHA throughout the run; preparation does not follow a moving branch.
 
-For daily preparation, maintainers can later set `NANOBOT_PREVIEW_BASE` to the next unreleased final version and explicitly enable `NANOBOT_DAILY_CANDIDATES_ENABLED=true`. The schedule is currently 00:17 UTC. Only the official repository's `main` can use it. It requires successful latest push CI for that exact SHA and skips a source/base already accepted by this workflow. Failed candidates can run again; manual dispatch remains available to retain a new handoff. Both paths share the existing workflow run number for `.devN`. Update the base after its final release; an already tagged base is refused.
+For daily preparation, maintainers can later set `NUJINAGENT_PREVIEW_BASE` to the next unreleased final version and explicitly enable `NUJINAGENT_DAILY_CANDIDATES_ENABLED=true`. The schedule is currently 00:17 UTC. Only the official repository's `main` can use it. It requires successful latest push CI for that exact SHA and skips a source/base already accepted by this workflow. Failed candidates can run again; manual dispatch remains available to retain a new handoff. Both paths share the existing workflow run number for `.devN`. Update the base after its final release; an already tagged base is refused.
 
 Daily runs retain small reports only, not the optional installable handoff. They still use the existing five native runners and temporary wheel transfers, so review the runner and storage cost before enabling the variable. This is a preparation switch, not permission to sign or publish. No repository variable or protection setting is changed by adding this workflow code.
 
@@ -55,22 +55,22 @@ Stable releases remain manual. Daily Preview preparation requires the explicit o
 ## Prepare a candidate
 
 1. Choose the previous release and exact candidate commit. Use a clean worktree without local configuration, sessions, credentials or unrelated changes.
-2. Update `project.version` in `pyproject.toml` and the final source-only fallback in `nanobot/__init__.py`. Private WebUI/TUI versions are not the Python release version.
+2. Update `project.version` in `pyproject.toml` and the final source-only fallback in `nujinagent/__init__.py`. Private WebUI/TUI versions are not the Python release version.
 3. Review the generated change notes and add required upgrade/rollback instructions. Feature releases can add highlights and acknowledgements; ordinary patches do not need a full announcement. Verify counts: commits are not merged PRs. Coordinate security disclosures separately.
 4. Run Python, WebUI and TUI CI checks against the final commit, not an earlier PR head. Review installation, configuration, session and API changes.
-5. Run `uv build --out-dir <artifact-directory>` in a clean output directory without `NANOBOT_SKIP_WEBUI_BUILD`. The build hook bundles WebUI in sdist and wheel; the wheel is built from the sdist.
+5. Run `uv build --out-dir <artifact-directory>` in a clean output directory without `NUJINAGENT_SKIP_WEBUI_BUILD`. The build hook bundles WebUI in sdist and wheel; the wheel is built from the sdist.
 6. Run `twine check` on intermediates, inspect contents and record SHA-256 hashes. Test installation in an isolated environment outside the checkout and upgrade from previous stable with disposable configuration/sessions, never a maintainer's live workspace.
-7. For feature releases, prepare the version documentation in `Re-bin/nanobot-web` under its `MAINTAINING.md`. For patches, update only affected instructions and translations; do not require a new complete manual or promotional page when the existing documentation still applies. Preserve existing URLs and previous versions, and verify affected site routes. Pin source references where applicable and never advertise an unpublished package. Preview notes cover development changes without creating a documentation edition each day.
+7. For feature releases, prepare the version documentation in `Re-bin/nujinagent-web` under its `MAINTAINING.md`. For patches, update only affected instructions and translations; do not require a new complete manual or promotional page when the existing documentation still applies. Preserve existing URLs and previous versions, and verify affected site routes. Pin source references where applicable and never advertise an unpublished package. Preview notes cover development changes without creating a documentation edition each day.
 8. Review pinned Bun/OpenTUI licenses, corresponding source and relinking instructions. Check upstream revision availability and runtime/lockfile/notice agreement. Obtain the maintainer's commitment to the [source offer](../tui/SOURCE_OFFER.md) for its full stated period, at least three years after release; tests cannot grant it.
 9. Build all five native targets with publication scripts, ad-hoc signing macOS before packaging.
    - Verify archive checksums, manifests, architecture, licenses/notices and embedded source, including checkout-matching bytes for `tui/scripts/targets.ts` and `tui/scripts/target-bindings.ts`. Run supported native smoke tests, record coverage and exact-head CI evidence, and label cross-compiled-only targets.
    - Build platform wheels below, check them with `twine check`, validate RECORDs/tags/permissions and test pip selection on all five platforms.
-   - Test first launch with an empty cache and `NANOBOT_TUI_NO_DOWNLOAD=1`; the executable must come from `site-packages/nanobot/tui/bin/`, not checkout or cache.
+   - Test first launch with an empty cache and `NUJINAGENT_TUI_NO_DOWNLOAD=1`; the executable must come from `site-packages/nujinagent/tui/bin/`, not checkout or cache.
 10. Merge release preparation only after current checks/reviews pass. Compare the merged source tree with the tested candidate; rebuild/recheck changes. Reconcile changelog and documentation links, then tag the verified commit, not an unchecked later `main` tip.
 
 ### Protected updater handoff compatibility
 
-Restart-capable packages include `nanobot/update_contract.json`: schema version 1, with `handoff_protocols` listing positive integer protocol IDs. Protocol 1's request, protected startup and activation requirements are defined in the [update protocol](./update-protocol.md), independently of package and WebUI versions.
+Restart-capable packages include `nujinagent/update_contract.json`: schema version 1, with `handoff_protocols` listing positive integer protocol IDs. Protocol 1's request, protected startup and activation requirements are defined in the [update protocol](./update-protocol.md), independently of package and WebUI versions.
 
 Before advertising protocol 1, run preparation, frozen-worker and actual-gateway restart tests against packaged code; verify the declaration is in both sdist and wheel. Retain an ID only while its entire contract is supported; incompatible request, startup or activation behavior needs a new ID. Older updaters may install a future package only if protocols overlap. Missing, malformed or non-overlapping declarations must be refused before shutdown and require the installation owner's external update route.
 
@@ -93,7 +93,7 @@ cd tui
 bun install --frozen-lockfile
 bun scripts/prepare-target.ts <target>
 bun run build -- <target>
-# For darwin-* only: ad-hoc sign dist/nanobot-tui-<target> before the next steps.
+# For darwin-* only: ad-hoc sign dist/nujinagent-tui-<target> before the next steps.
 bun scripts/release-notices.ts <target>
 python3 scripts/package-release.py <target>
 ```
@@ -114,7 +114,7 @@ After `uv build` and native archive checks, from the exact release checkout:
 
 ```bash
 uv run python -m scripts.build_tui_wheels \
-  --wheel <intermediates>/nanobot_ai-X.Y.Z-py3-none-any.whl \
+  --wheel <intermediates>/nujinagent_ai-X.Y.Z-py3-none-any.whl \
   --tui-dir <verified-tui-archives> \
   --out-dir <final-wheels>
 ```
@@ -131,9 +131,9 @@ For same-build candidate acceptance on all five native targets, run **Verify Rel
 
 ### Release approval proof
 
-Both Stable and Preview automatic installs require `release-manifest.json.sigstore.json` beside the manifest on the exact GitHub release. Clients verify Sigstore's production certificate chain/transparency proof and accept only `HKUDS/nanobot`'s manual `release-approve.yml` on `main`. The signed manifest must match version, wheel size/digest and, for Preview, catalogue commit/manifest binding. Verification runs before download and before shutdown, with no unsigned fallback. Unsigned historical releases remain discoverable but cannot be automatically installed; existing installations keep running.
+Both Stable and Preview automatic installs require `release-manifest.json.sigstore.json` beside the manifest on the exact GitHub release. Clients verify Sigstore's production certificate chain/transparency proof and accept only `HKUDS/nujinagent`'s manual `release-approve.yml` on `main`. The signed manifest must match version, wheel size/digest and, for Preview, catalogue commit/manifest binding. Verification runs before download and before shutdown, with no unsigned fallback. Unsigned historical releases remain discoverable but cannot be automatically installed; existing installations keep running.
 
-Before setting the repository variable `NANOBOT_RELEASE_SIGNING_ENABLED=true`, an administrator must protect `main` and the `release-approval` environment: require independent review, prevent self-review, allow deployment only from `main`, and restrict bypass and changes to the workflow/signing requirements. Signing is disabled without that variable. No long-lived signing key or Apple Developer ID is required.
+Before setting the repository variable `NUJINAGENT_RELEASE_SIGNING_ENABLED=true`, an administrator must protect `main` and the `release-approval` environment: require independent review, prevent self-review, allow deployment only from `main`, and restrict bypass and changes to the workflow/signing requirements. Signing is disabled without that variable. No long-lived signing key or Apple Developer ID is required.
 
 After candidate tests and dependency review, take version, manifest SHA-256, source SHA and candidate SHA from retained acceptance evidence, not public downloads. Upload the proposed manifest through the separately authorized release handoff, then manually run **Approve Exact Release** from `main` with those values and obtain environment review. The hash-locked job checks/signs the exact manifest without installing candidate code or writing releases, PyPI or the catalogue. Separately authorize attaching its proof, verify the public proof before advancing either channel, and preserve it with candidate evidence before its three-day CI expiry.
 
@@ -160,7 +160,7 @@ The proof authenticates release approval, not reproducible builds or harmless co
 
 ### Configure trusted publishing
 
-An administrator must protect the `pypi` GitHub environment so only `main` can deploy. Require a second maintainer, prevent self-review, and disable administrator bypass. Protect changes to `main` and both publication workflows. Keep independent review on the separate release-approval workflow. The publisher checks the original Release actor from GitHub's workflow event; an approval by that actor is rejected. In the `nanobot-ai` PyPI project's **Publishing** settings, add a GitHub trusted publisher for owner `HKUDS`, repository `nanobot`, workflow `publish-pypi.yml` and environment `pypi`. These names must match exactly. No long-lived PyPI token is needed by the workflow. Before using the production workflow, test the default `testpypi` destination with a separately registered `nanobot-ai` TestPyPI project and its own trusted publisher using environment `testpypi`; protect that environment in GitHub too. TestPyPI registration does not grant production access. The test still requires a complete signed public release of an unused TestPyPI version.
+An administrator must protect the `pypi` GitHub environment so only `main` can deploy. Require a second maintainer, prevent self-review, and disable administrator bypass. Protect changes to `main` and both publication workflows. Keep independent review on the separate release-approval workflow. The publisher checks the original Release actor from GitHub's workflow event; an approval by that actor is rejected. In the `nujinagent` PyPI project's **Publishing** settings, add a GitHub trusted publisher for owner `HKUDS`, repository `nujinagent`, workflow `publish-pypi.yml` and environment `pypi`. These names must match exactly. No long-lived PyPI token is needed by the workflow. Before using the production workflow, test the default `testpypi` destination with a separately registered `nujinagent` TestPyPI project and its own trusted publisher using environment `testpypi`; protect that environment in GitHub too. TestPyPI registration does not grant production access. The test still requires a complete signed public release of an unused TestPyPI version.
 
 If an upload only partially succeeds, preserve the original approved bytes. Choose **Run workflow** from `main` with the same version and destination to start a new run. Do not use **Re-run jobs**: GitHub can reuse outputs from an earlier attempt, and review history is scoped to the whole run. The new run compares existing index files with the signed release and uploads only missing files. A production run that uploads files needs a new independent approval. A mismatch, yanked file, unexpected file or unavailable index stops the run for investigation. Published versions cannot be replaced; do not rebuild or upload a different file under the same version. The approval proof and verification cannot establish historical upgrade or interactive acceptance, which remain separate release gates.
 
@@ -170,7 +170,7 @@ Do not publish to PyPI with missing TUI artifacts or verification. Keep public d
 
 ## Installer identity checks
 
-Fresh base-package installs use the official installer's dedicated venv regardless of optional managers on PATH. `nanobot-install.json` is written before venv/download work so failed first installs retain their owner; it is not readiness proof. Existing venv/uv/pipx installations are not adopted or moved. The receipt records extras for update planning and opts `webui` into persistent background launch; unrecorded installs retain their lifecycle. Include this distinction and the instance-specific stop command in release notes.
+Fresh base-package installs use the official installer's dedicated venv regardless of optional managers on PATH. `nujinagent-install.json` is written before venv/download work so failed first installs retain their owner; it is not readiness proof. Existing venv/uv/pipx installations are not adopted or moved. The receipt records extras for update planning and opts `webui` into persistent background launch; unrecorded installs retain their lifecycle. Include this distinction and the instance-specific stop command in release notes.
 
 Linux/Windows native CI builds a platform wheel and runs the public installer in a private home without Bun/Node/Git on PATH, then checks the managed receipt, installed WebUI, native TUI and gateway. Python/WebUI changes also require these jobs. CI retains small reports, not candidate binaries. Startup probes and offline installer fixtures do not replace packaged upgrade/recovery or public-download acceptance.
 
@@ -182,7 +182,7 @@ Run `pytest tests/test_install_scripts.py` with `uv` and `pipx` available. It us
 
 Verify the exact-handoff options against the pinned installer, not an older script: `install.sh --wheel <path> --sha256 <published-hash>` / `install.ps1 -Wheel <path> -Sha256 <published-hash>`, or `install.sh --release <version> --manifest-sha256 <trusted-manifest-hash>` / `install.ps1 -Release <version> -ManifestSha256 <trusted-manifest-hash>`. Wheel mode verifies checksum/package/version; release mode selects one of five native tags for the target Python and verifies size/hash/identity before invoking the original owner. No frontend toolchain or extra selector package is installed; the manager still checks Python/dependencies. Hashes must come from trusted metadata, not an unknown publisher.
 
-Release downloads use official GitHub HTTPS hosts and configured HTTPS proxy; retain wheel sources at their recorded paths, including `~/.nanobot/downloads/releases` or `NANOBOT_RELEASE_CACHE`. Failed partial downloads are removed. Wheel-mode `--dry-run` / `-DryRun` verifies without installation/setup; release-mode dry-run checks only the manifest, creating no wheel/cache/environment/setup and proving neither wheel bytes nor dependency resolution.
+Release downloads use official GitHub HTTPS hosts and configured HTTPS proxy; retain wheel sources at their recorded paths, including `~/.nujinagent/downloads/releases` or `NUJINAGENT_RELEASE_CACHE`. Failed partial downloads are removed. Wheel-mode `--dry-run` / `-DryRun` verifies without installation/setup; release-mode dry-run checks only the manifest, creating no wheel/cache/environment/setup and proving neither wheel bytes nor dependency resolution.
 
 These exact-version handoffs do not discover Preview, change subscriptions, stop gateways or back up data. Require stopped writers and backup first. Review extras and recorded options for plain pip, suffixed/custom installs and external owners; see the [user guide](./updating.md) and [update protocol](./update-protocol.md). Installer fixtures alone do not establish live maintenance, backup or restart safety.
 
@@ -198,7 +198,7 @@ Linux/Windows native CI runs `scripts/verify_packaged_update.py` against its whe
 
 Build tools need project Python dependencies. The probe creates disposable venv/account/configuration/workspace and loopback gateways, without maintainer data, models or credentials. It records the unchanged healthy target's SHA-256 and candidate commit; faulted private wheels must never be uploaded.
 
-On a local macOS desktop, add `--dock` to verify the real AppKit helper alongside these journeys. The managed receipt must make `nanobot webui --yes --no-open` detach automatically; each applicable running version must have one helper, preserve desktop intent through upgrade/recovery and a second start, and remove its helper on stop. Historical packages without Dock support gain the icon only after their first healthy upgrade and an explicit WebUI launch. This is process/lifecycle acceptance, not a visual Dock-click test; do not enable it on headless CI or claim native Windows/Linux icon coverage.
+On a local macOS desktop, add `--dock` to verify the real AppKit helper alongside these journeys. The managed receipt must make `nujinagent webui --yes --no-open` detach automatically; each applicable running version must have one helper, preserve desktop intent through upgrade/recovery and a second start, and remove its helper on stop. Historical packages without Dock support gain the icon only after their first healthy upgrade and an explicit WebUI launch. This is process/lifecycle acceptance, not a visual Dock-click test; do not enable it on headless CI or claim native Windows/Linux icon coverage.
 
 Require normal and consecutive upgrades, skipped Preview, import/startup failure, backup failure after shutdown, worker termination, partial metadata loss and interruption between program-restoration renames. Each successful journey must show the expected version in a new gateway run, a retained verified backup, authenticated history reads, continued writes and a second ordinary start. Each recovered service must then update to the healthy target with the same account/conversations. Faults affect the first job; backup failure must survive its automatic retry, while a separately confirmed next update can make a healthy backup. The instrumented intermediate Preview's second hop installs the unchanged final wheel.
 
@@ -214,7 +214,7 @@ Keep private evidence until review; it can contain program generations/backups a
 
 ## Stable and Preview subscriptions
 
-Use [Updating nanobot](./updating.md) for Settings → About and CLI instructions. Release acceptance must preserve opt-in consent: Preview is off even on development builds; switching saves/checks a feed, not installation approval. Require separate exact-version confirmation and a Preview risk warning. Profiles sharing an environment/account share its subscription; other installations/accounts do not. Environment replacement may require reselection; browser storage is not authoritative.
+Use [Updating nujinagent](./updating.md) for Settings → About and CLI instructions. Release acceptance must preserve opt-in consent: Preview is off even on development builds; switching saves/checks a feed, not installation approval. Require separate exact-version confirmation and a Preview risk warning. Profiles sharing an environment/account share its subscription; other installations/accounts do not. Environment replacement may require reselection; browser storage is not authoritative.
 
 | Current install / requested channel | Required acceptance result |
 | --- | --- |
@@ -264,8 +264,8 @@ Preparation leaves the checkout untouched and deterministically creates a versio
 
 ```bash
 python -m scripts.release_candidate assemble --source-commit <original-source-sha> \
-  --wheel <intermediates>/nanobot_ai-0.3.6.dev42-py3-none-any.whl \
-  --sdist <intermediates>/nanobot_ai-0.3.6.dev42.tar.gz \
+  --wheel <intermediates>/nujinagent_ai-0.3.6.dev42-py3-none-any.whl \
+  --sdist <intermediates>/nujinagent_ai-0.3.6.dev42.tar.gz \
   --tui-dir tui/dist --output <new-artifact-directory>
 ```
 

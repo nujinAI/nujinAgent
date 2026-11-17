@@ -188,13 +188,13 @@ export function Sidebar(props: SidebarProps) {
           )}
         >
           <img
-            src="/brand/nanobot_mark.svg"
+            src="/brand/nujinagent_mark.svg"
             alt=""
             className="theme-art h-8 w-8 select-none object-contain dark:opacity-0"
             draggable={false}
           />
           <img
-            src="/brand/nanobot_mark_night.svg"
+            src="/brand/nujinagent_mark_night.svg"
             alt=""
             className="theme-art absolute inset-0 h-8 w-8 select-none object-contain opacity-0 dark:opacity-100"
             draggable={false}

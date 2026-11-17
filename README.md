@@ -1,47 +1,47 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./images/readme-cover-dark.svg">
-  <img alt="nanobot README cover" src="./images/readme-cover-light.svg">
+  <img alt="nujinagent README cover" src="./images/readme-cover-light.svg">
 </picture>
 
 <div align="center">
   <p>
-    <a href="https://nanobot.wiki/docs/latest/getting-started/nanobot-overview">English</a> |
-    <a href="https://nanobot.wiki/cn/docs/latest/getting-started/nanobot-overview">简体中文</a> |
-    <a href="https://nanobot.wiki/zh-Hant/docs/latest/getting-started/nanobot-overview">繁體中文</a> |
-    <a href="https://nanobot.wiki/es/docs/latest/getting-started/nanobot-overview">Español</a> |
-    <a href="https://nanobot.wiki/fr/docs/latest/getting-started/nanobot-overview">Français</a> |
-    <a href="https://nanobot.wiki/id/docs/latest/getting-started/nanobot-overview">Bahasa Indonesia</a> |
-    <a href="https://nanobot.wiki/ja/docs/latest/getting-started/nanobot-overview">日本語</a> |
-    <a href="https://nanobot.wiki/ko/docs/latest/getting-started/nanobot-overview">한국어</a> |
-    <a href="https://nanobot.wiki/ru/docs/latest/getting-started/nanobot-overview">Русский</a> |
-    <a href="https://nanobot.wiki/vi/docs/latest/getting-started/nanobot-overview">Tiếng Việt</a>
+    <a href="https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview">English</a> |
+    <a href="https://nujinagent.wiki/cn/docs/latest/getting-started/nujinagent-overview">简体中文</a> |
+    <a href="https://nujinagent.wiki/zh-Hant/docs/latest/getting-started/nujinagent-overview">繁體中文</a> |
+    <a href="https://nujinagent.wiki/es/docs/latest/getting-started/nujinagent-overview">Español</a> |
+    <a href="https://nujinagent.wiki/fr/docs/latest/getting-started/nujinagent-overview">Français</a> |
+    <a href="https://nujinagent.wiki/id/docs/latest/getting-started/nujinagent-overview">Bahasa Indonesia</a> |
+    <a href="https://nujinagent.wiki/ja/docs/latest/getting-started/nujinagent-overview">日本語</a> |
+    <a href="https://nujinagent.wiki/ko/docs/latest/getting-started/nujinagent-overview">한국어</a> |
+    <a href="https://nujinagent.wiki/ru/docs/latest/getting-started/nujinagent-overview">Русский</a> |
+    <a href="https://nujinagent.wiki/vi/docs/latest/getting-started/nujinagent-overview">Tiếng Việt</a>
   </p>
   <p>
-    <a href="https://github.com/HKUDS/nanobot"><img src="https://img.shields.io/github/stars/HKUDS/nanobot?style=flat&logo=github" alt="GitHub stars"></a>
-    <a href="https://pypi.org/project/nanobot-ai/"><img src="https://img.shields.io/pypi/v/nanobot-ai" alt="PyPI version"></a>
-    <a href="https://pepy.tech/project/nanobot-ai"><img src="https://static.pepy.tech/badge/nanobot-ai" alt="PyPI downloads"></a>
-    <a href="https://github.com/HKUDS/nanobot/actions/workflows/ci.yml"><img src="https://github.com/HKUDS/nanobot/actions/workflows/ci.yml/badge.svg?branch=main" alt="Test Suite"></a>
-    <a href="https://pypi.org/project/nanobot-ai/"><img src="https://img.shields.io/badge/python-%3E%3D3.11-blue" alt="Python 3.11 or newer"></a>
-    <a href="./LICENSE"><img src="https://img.shields.io/github/license/HKUDS/nanobot" alt="MIT License"></a>
-    <a href="https://nanobot.wiki/docs/latest/getting-started/nanobot-overview"><img src="https://img.shields.io/badge/docs-nanobot.wiki-blue" alt="nanobot documentation"></a>
+    <a href="https://github.com/HKUDS/nujinagent"><img src="https://img.shields.io/github/stars/HKUDS/nujinagent?style=flat&logo=github" alt="GitHub stars"></a>
+    <a href="https://pypi.org/project/nujinagent/"><img src="https://img.shields.io/pypi/v/nujinagent" alt="PyPI version"></a>
+    <a href="https://pepy.tech/project/nujinagent"><img src="https://static.pepy.tech/badge/nujinagent" alt="PyPI downloads"></a>
+    <a href="https://github.com/HKUDS/nujinagent/actions/workflows/ci.yml"><img src="https://github.com/HKUDS/nujinagent/actions/workflows/ci.yml/badge.svg?branch=main" alt="Test Suite"></a>
+    <a href="https://pypi.org/project/nujinagent/"><img src="https://img.shields.io/badge/python-%3E%3D3.11-blue" alt="Python 3.11 or newer"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/github/license/HKUDS/nujinagent" alt="MIT License"></a>
+    <a href="https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview"><img src="https://img.shields.io/badge/docs-nujinagent.wiki-blue" alt="nujinagent documentation"></a>
   </p>
   <p>
     <a href="https://discord.gg/MnCvHqpUGB">Discord</a> ·
-    <a href="https://x.com/nanobot_project">X</a> ·
+    <a href="https://x.com/nujinagent_project">X</a> ·
     <a href="./COMMUNICATION.md#wechat">WeChat 微信交流群</a> ·
     <a href="./COMMUNICATION.md#hkuds-community">Feishu</a>
   </p>
 </div>
 
-# nanobot
+# nujinagent
 
-🐈 **nanobot** is an ultra-lightweight, open-source, self-hosted personal AI agent framework written in Python. Use it in a browser, terminal, or chat app to work with files, remember preferences, and schedule tasks. Connect a supported model provider or local model server to supply the AI.
+🐈 **nujinagent** is an ultra-lightweight, open-source, self-hosted personal AI agent framework written in Python. Use it in a browser, terminal, or chat app to work with files, remember preferences, and schedule tasks. Connect a supported model provider or local model server to supply the AI.
 
 ## Start Here
 
 | You want to... | Go to |
 |---|---|
-| Install nanobot with no terminal/config background | [Start Without Technical Background](./docs/start-without-technical-background.md) |
+| Install nujinagent with no terminal/config background | [Start Without Technical Background](./docs/start-without-technical-background.md) |
 | Install quickly and get your first reply | [Install](#-install) and [Quick Start](#-quick-start) |
 | Open the bundled browser UI | [WebUI](#-webui) |
 | Connect Telegram, Discord, WeChat, Slack, Email, Mattermost, Linear, or another channel | [Chat app guide](./docs/guides/chat-app-ai-agent.md) |
@@ -49,11 +49,11 @@
 | Develop the browser UI | [Install current source](#-install), then [WebUI development](./webui/README.md) and [Contributing](./CONTRIBUTING.md) |
 | Integrate from Python | [Python SDK](./docs/python-sdk.md) |
 | Understand or extend the internals | [Architecture](./docs/architecture.md), [Contributing](./CONTRIBUTING.md), and [Provider extensions](./docs/development.md) |
-| Deploy to the cloud or keep nanobot running as a service | [Deployment](./docs/deployment.md) |
+| Deploy to the cloud or keep nujinagent running as a service | [Deployment](./docs/deployment.md) |
 
-## What can nanobot do?
+## What can nujinagent do?
 
-nanobot can:
+nujinagent can:
 
 - run in a browser WebUI or terminal
 - connect to Telegram, Discord, Slack, WeChat, Email, Mattermost, Linear, and other channels
@@ -64,7 +64,7 @@ nanobot can:
 - embed the agent with the Python SDK
 - deploy as a long-running local or server-side agent gateway
 
-## 💡 Why nanobot
+## 💡 Why nujinagent
 
 - **Persistent workflows**: keep saved conversations, long-term memory, and task results for later work.
 - **Chat-native reach**: WebUI, Telegram, Feishu, Slack, Discord, Teams, email, Mattermost, and Linear.
@@ -74,9 +74,9 @@ nanobot can:
 
 ## 📦 Install
 
-You need **Python 3.11 or newer** and access to a [supported model provider or local model server](./docs/providers.md). Model fees or local hardware requirements depend on the service you choose; nanobot does not supply a model account.
+You need **Python 3.11 or newer** and access to a [supported model provider or local model server](./docs/providers.md). Model fees or local hardware requirements depend on the service you choose; nujinagent does not supply a model account.
 
-Choose the **stable release** for everyday use or **current source** for development and the latest features. This README describes current source; [published documentation](https://nanobot.wiki/docs/latest/getting-started/nanobot-overview) covers the released version.
+Choose the **stable release** for everyday use or **current source** for development and the latest features. This README describes current source; [published documentation](https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview) covers the released version.
 
 New to terminals or model credentials? Follow [Start Without Technical Background](./docs/start-without-technical-background.md). Updating an existing instance? Follow [updates and recovery](./docs/updating.md) for your installation method, backup steps and restart checks.
 
@@ -93,7 +93,7 @@ The installer chooses an isolated Python environment and opens setup for you. Th
 <summary>macOS / Linux</summary>
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/HKUDS/nujinagent/main/scripts/install.sh | sh
 ```
 
 </details>
@@ -102,7 +102,7 @@ curl -fsSL https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.
 <summary>Windows PowerShell</summary>
 
 ```powershell
-irm https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/HKUDS/nujinagent/main/scripts/install.ps1 | iex
 ```
 
 </details>
@@ -110,18 +110,18 @@ irm https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.ps1 | i
 <details>
 <summary>Installer details, preview, and script review</summary>
 
-The default command installs or upgrades the stable PyPI release. Fresh installations use a dedicated environment under `~/.nanobot/venv`. On a fresh local desktop it opens the WebUI for model setup. That gateway keeps running after the browser or terminal closes; use the printed `gateway stop` command to stop it. SSH, headless, existing-config and older-release installs use terminal setup when an interactive terminal is available; otherwise the installer prints the command to run later.
+The default command installs or upgrades the stable PyPI release. Fresh installations use a dedicated environment under `~/.nujinagent/venv`. On a fresh local desktop it opens the WebUI for model setup. That gateway keeps running after the browser or terminal closes; use the printed `gateway stop` command to stop it. SSH, headless, existing-config and older-release installs use terminal setup when an interactive terminal is available; otherwise the installer prints the command to run later.
 
-The installer uses the detected installation method when safe, or stops for manual review. Check existing extras and constraints with the original package manager. An active venv remains an explicit target, not an installer-managed environment. The installer avoids system-wide pip and prints the command to reuse if `nanobot` is not on `PATH`.
+The installer uses the detected installation method when safe, or stops for manual review. Check existing extras and constraints with the original package manager. An active venv remains an explicit target, not an installer-managed environment. The installer avoids system-wide pip and prints the command to reuse if `nujinagent` is not on `PATH`.
 
 To preview the plan without changing your environment, pass `--dry-run`.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.sh | sh -s -- --dry-run
+curl -fsSL https://raw.githubusercontent.com/HKUDS/nujinagent/main/scripts/install.sh | sh -s -- --dry-run
 ```
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/HKUDS/nanobot/main/scripts/install.ps1))) --dry-run
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/HKUDS/nujinagent/main/scripts/install.ps1))) --dry-run
 ```
 
 If you prefer to inspect the script first, open [`scripts/install.sh`](./scripts/install.sh) or [`scripts/install.ps1`](./scripts/install.ps1).
@@ -131,23 +131,23 @@ If you prefer to inspect the script first, open [`scripts/install.sh`](./scripts
 <details>
 <summary>Already use uv or pip? Install the stable package yourself</summary>
 
-Use this instead of the recommended installer when you already manage your own Python environment. These commands install the same stable `nanobot-ai` package; they do not launch setup.
+Use this instead of the recommended installer when you already manage your own Python environment. These commands install the same stable `nujinagent` package; they do not launch setup.
 
 **uv: isolated CLI installation**
 
 ```bash
-uv tool install nanobot-ai
+uv tool install nujinagent
 ```
 
 **pip: activate your virtual environment first**
 
 ```bash
-python -m pip install nanobot-ai
+python -m pip install nujinagent
 ```
 
-Then run `nanobot webui` for browser setup, or `nanobot onboard --wizard` for terminal-only setup. For the [Python SDK](./docs/python-sdk.md), install `nanobot-ai` in your application's virtual environment so the application can import it; a separate `uv tool` environment does not make the SDK importable there.
+Then run `nujinagent webui` for browser setup, or `nujinagent onboard --wizard` for terminal-only setup. For the [Python SDK](./docs/python-sdk.md), install `nujinagent` in your application's virtual environment so the application can import it; a separate `uv tool` environment does not make the SDK importable there.
 
-If pip reports `externally-managed-environment`, use the recommended installer, `uv tool install nanobot-ai`, `pipx install nanobot-ai`, or an activated virtual environment. Upgrade with the same method; for uv use `uv tool upgrade nanobot-ai`, and for pip use `python -m pip install -U nanobot-ai`.
+If pip reports `externally-managed-environment`, use the recommended installer, `uv tool install nujinagent`, `pipx install nujinagent`, or an activated virtual environment. Upgrade with the same method; for uv use `uv tool upgrade nujinagent`, and for pip use `python -m pip install -U nujinagent`.
 
 </details>
 
@@ -159,8 +159,8 @@ If pip reports `externally-managed-environment`, use the recommended installer, 
 Clone the repository and install it in editable mode. A source install requires Git and [Bun](https://bun.sh/); Bun runs the matching TUI directly from the checkout instead of downloading an older release binary.
 
 ```bash
-git clone https://github.com/HKUDS/nanobot.git
-cd nanobot
+git clone https://github.com/HKUDS/nujinagent.git
+cd nujinagent
 python3 -m venv .venv
 ```
 
@@ -170,7 +170,7 @@ On Windows, use `py -3 -m venv .venv` instead of `python3`. Activate it with `so
 python -m pip install -e .
 ```
 
-After that, the normal commands are identical to a stable install. `nanobot` runs the TUI from this checkout, and `nanobot webui` prompts to rebuild stale frontend assets, or warns in non-interactive sessions; `--yes` builds automatically. After stopping the old instance, `git pull --ff-only` updates the Python, TUI, and WebUI source together; rerun `python -m pip install -e .` when Python dependencies change, then restart the instance. Contributors should also read [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+After that, the normal commands are identical to a stable install. `nujinagent` runs the TUI from this checkout, and `nujinagent webui` prompts to rebuild stale frontend assets, or warns in non-interactive sessions; `--yes` builds automatically. After stopping the old instance, `git pull --ff-only` updates the Python, TUI, and WebUI source together; rerun `python -m pip install -e .` when Python dependencies change, then restart the instance. Contributors should also read [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 </details>
 
@@ -179,33 +179,33 @@ After that, the normal commands are identical to a stable install. `nanobot` run
 
 Published packages include the WebUI, and supported platform wheels also include the native TUI. A source-distribution install can fetch a checksummed, version-matched TUI archive—with its licenses, notices, corresponding application source, source offer, and relinking instructions—on first use.
 
-Platform wheels include both the WebUI and the native terminal UI: macOS 13+ (Apple Silicon and Intel), glibc 2.17+ Linux (ARM64 and x64), and Windows x64. The x64 runtime requires SSE4.2. Pip selects the matching wheel; opening the TUI does not need a separate GitHub download or Bun installation. A source-distribution install on a supported target can use the matching checksummed GitHub release archive. On other platforms, use `nanobot --classic` or the WebUI.
+Platform wheels include both the WebUI and the native terminal UI: macOS 13+ (Apple Silicon and Intel), glibc 2.17+ Linux (ARM64 and x64), and Windows x64. The x64 runtime requires SSE4.2. Pip selects the matching wheel; opening the TUI does not need a separate GitHub download or Bun installation. A source-distribution install on a supported target can use the matching checksummed GitHub release archive. On other platforms, use `nujinagent --classic` or the WebUI.
 
 </details>
 
 <details>
-<summary>Verify the installation or locate the nanobot command</summary>
+<summary>Verify the installation or locate the nujinagent command</summary>
 
 Verify the install:
 
 ```bash
-nanobot --version
+nujinagent --version
 ```
 
-If `nanobot` is not on `PATH`, reuse the installer's printed command or run the Python executable from the existing installation with `-I -m nanobot`. For uv/pipx, locate that environment with the original manager. Do not use a temporary tool environment to manage an existing installation.
+If `nujinagent` is not on `PATH`, reuse the installer's printed command or run the Python executable from the existing installation with `-I -m nujinagent`. For uv/pipx, locate that environment with the original manager. Do not use a temporary tool environment to manage an existing installation.
 
 </details>
 
-After installation, continue with [Quick Start](#-quick-start). Use the exact command printed by the installer if `nanobot` is not on `PATH`.
+After installation, continue with [Quick Start](#-quick-start). Use the exact command printed by the installer if `nujinagent` is not on `PATH`.
 
 ## 🚀 Quick Start
 
-**Open nanobot in your browser**
+**Open nujinagent in your browser**
 
 If the installer already opened the WebUI, continue there. Otherwise run:
 
 ```bash
-nanobot webui
+nujinagent webui
 ```
 
 Keep the launcher terminal open while using the browser. It starts or joins the shared local gateway and binds the first-run WebUI to localhost. If the browser does not open, copy the complete login link printed in the terminal, including everything after `#`; keep this credential private. For SSH or a headless host, use the remote-browser or terminal-only instructions below.
@@ -218,15 +218,15 @@ Keep the launcher terminal open while using the browser. It starts or joins the 
 
 A normal reply verifies the provider/model and browser connection. The file task separately checks the selected project and its file permissions. Attaching a file sends it to the conversation; it does not change the selected project folder.
 
-Then describe your next goal in the same chat, for example: "I am already using the WebUI. Help me connect Telegram and allow only my account." An enabled `nanobot-document` skill can consult the documentation bundled with your installation; see [Continue with nanobot](./docs/quick-start.md#continue-with-nanobot) for examples, explicit invocation, and availability.
+Then describe your next goal in the same chat, for example: "I am already using the WebUI. Help me connect Telegram and allow only my account." An enabled `nujinagent-document` skill can consult the documentation bundled with your installation; see [Continue with nujinagent](./docs/quick-start.md#continue-with-nujinagent) for examples, explicit invocation, and availability.
 
 <details>
 <summary>Open the WebUI on a remote server through SSH</summary>
 
-After installing nanobot on the server, start its WebUI without opening a server-side browser:
+After installing nujinagent on the server, start its WebUI without opening a server-side browser:
 
 ```bash
-nanobot webui --no-open
+nujinagent webui --no-open
 ```
 
 Keep that server terminal running. In a second terminal on your own computer, forward the default WebUI port through SSH:
@@ -245,27 +245,27 @@ Replace `user@SERVER` with your SSH login and leave the tunnel open. In your loc
 If a model is not configured yet, use the terminal wizard:
 
 ```bash
-nanobot onboard --wizard
+nujinagent onboard --wizard
 ```
 
 Check one reply without opening the browser:
 
 ```bash
-nanobot -m "Hello!"
+nujinagent -m "Hello!"
 ```
 
 For interactive work, open the terminal client:
 
 ```bash
-nanobot
+nujinagent
 ```
 
-The native TUI uses the launch directory as its project workspace and shares saved conversations and the local gateway with the WebUI. The explicit `nanobot agent` form remains available for compatibility.
+The native TUI uses the launch directory as its project workspace and shares saved conversations and the local gateway with the WebUI. The explicit `nujinagent agent` form remains available for compatibility.
 
 - Type `/` to discover commands, `/sessions` to switch conversations, or `@` to mention an app, MCP server, or saved session.
 - Paste clipboard images with `Ctrl+V` or `Alt+V`, and use `$` to complete skill references.
 - Use `/diff` to inspect file changes, `/context` to inspect session context, or `/branch` to continue from a completed reply in a new session.
-- Press `Enter` to send. While nanobot is working, `Enter` sends now and `Tab` sends after the current response. Press `Shift+Enter` to add a newline (`Ctrl+J` works in terminals that cannot distinguish modified Enter keys).
+- Press `Enter` to send. While nujinagent is working, `Enter` sends now and `Tab` sends after the current response. Press `Shift+Enter` to add a newline (`Ctrl+J` works in terminals that cannot distinguish modified Enter keys).
 - Use `/detach` to promote the gateway to background mode and close the TUI while work continues.
 
 Each launch starts a new session by default. Use `--session` to resume one and `--workspace` to choose another project workspace. See the [CLI reference](./docs/cli-reference.md#agent-cli) for session branching, diffs, history, shortcuts, gateway lifecycle, and compatibility options.
@@ -288,7 +288,7 @@ Use a regular topic for a bounded objective with a clear completion condition, f
 /goal Review this project's tests and list the smallest missing test case.
 ```
 
-An active goal keeps nanobot working beyond the ordinary iteration limit until it records completion, cancellation, or a blocked state. This can use more model tokens; `/stop` interrupts the current work, while asking nanobot to cancel the goal abandons the objective. Execution errors can also stop the work. A scheduled automation instead starts work at specified times. Keep the gateway running for unattended work using the background or service options below.
+An active goal keeps nujinagent working beyond the ordinary iteration limit until it records completion, cancellation, or a blocked state. This can use more model tokens; `/stop` interrupts the current work, while asking nujinagent to cancel the goal abandons the objective. Execution errors can also stop the work. A scheduled automation instead starts work at specified times. Keep the gateway running for unattended work using the background or service options below.
 
 After a gateway restart, reopen the original topic and review saved results before explicitly continuing any interrupted work. Recovery does not blindly replay uncertain tool actions. See the [long-running agent guide](./docs/guides/long-running-ai-agent.md) for starting conditions and related automation options.
 
@@ -300,23 +300,23 @@ After a gateway restart, reopen the original topic and review saved results befo
 After model setup, keep channels and automations running when interactive launchers close:
 
 ```bash
-nanobot gateway --background
+nujinagent gateway --background
 ```
 
-This starts or promotes the shared gateway to persistent background mode. Fresh official-installer environments already use that lifetime when you open `nanobot webui`; other Python installations can explicitly use `nanobot webui --detach`. Channels and automations remain active after local clients exit. Complete first-time model setup in the WebUI, and use the gateway commands below to manage the same instance.
+This starts or promotes the shared gateway to persistent background mode. Fresh official-installer environments already use that lifetime when you open `nujinagent webui`; other Python installations can explicitly use `nujinagent webui --detach`. Channels and automations remain active after local clients exit. Complete first-time model setup in the WebUI, and use the gateway commands below to manage the same instance.
 
 From the TUI, `/detach` does the same before closing that client. Background mode does not configure startup after a machine reboot or restart after a crash; use an [OS-managed service](./docs/deployment.md#switch-an-existing-gateway-to-a-service) for that. Interrupted subagent tasks are not automatically relaunched after a restart, and missed scheduled times are not replayed; see [subagent recovery](./docs/concepts.md#subagents) and [automation delivery](./docs/automations.md#delivery-and-reliability).
 
 Manage the background gateway with:
 
 ```bash
-nanobot gateway status
-nanobot gateway logs
-nanobot gateway restart
-nanobot gateway stop
+nujinagent gateway status
+nujinagent gateway logs
+nujinagent gateway restart
+nujinagent gateway stop
 ```
 
-To reopen the browser, run `nanobot webui` against the same instance and use its complete printed login link.
+To reopen the browser, run `nujinagent webui` against the same instance and use its complete printed login link.
 
 </details>
 
@@ -326,10 +326,10 @@ To reopen the browser, run `nanobot webui` against the same instance and use its
 Use this once a model is configured and you want to run the gateway directly in the current terminal:
 
 ```bash
-nanobot gateway
+nujinagent gateway
 ```
 
-It skips guided WebUI setup and browser opening. The WebUI remains available when its channel is configured. Use `nanobot gateway --background` for a detached process, or follow [Deployment](./docs/deployment.md) for startup and supervision by the operating system.
+It skips guided WebUI setup and browser opening. The WebUI remains available when its channel is configured. Use `nujinagent gateway --background` for a detached process, or follow [Deployment](./docs/deployment.md) for startup and supervision by the operating system.
 
 </details>
 
@@ -345,7 +345,7 @@ It skips guided WebUI setup and browser opening. The WebUI remains available whe
 
 </details>
 
-If nanobot worked for you, a star on GitHub is the simplest way to support the project.
+If nujinagent worked for you, a star on GitHub is the simplest way to support the project.
 
 <a id="deploy-to-render"></a>
 
@@ -353,11 +353,11 @@ If nanobot worked for you, a star on GitHub is the simplest way to support the p
 
 **Render — one click**
 
-Deploy nanobot's gateway and bundled WebUI from the repository's ready-to-use Blueprint:
+Deploy nujinagent's gateway and bundled WebUI from the repository's ready-to-use Blueprint:
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/HKUDS/nanobot)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/HKUDS/nujinagent)
 
-Render will ask for `ANTHROPIC_API_KEY` and a private `NANOBOT_WEB_TOKEN`, then provision persistent storage for sessions, memory, and WebUI history. Persistent disks require a paid Render service. Existing disk configuration is preserved on redeploy; check it when changing credentials.
+Render will ask for `ANTHROPIC_API_KEY` and a private `NUJINAGENT_WEB_TOKEN`, then provision persistent storage for sessions, memory, and WebUI history. Persistent disks require a paid Render service. Existing disk configuration is preserved on redeploy; check it when changing credentials.
 
 **Self-host**
 
@@ -365,19 +365,19 @@ Prefer your own infrastructure? Follow the [deployment guide](./docs/deployment.
 
 ## 🌐 WebUI
 
-The WebUI ships **inside the published wheel** with no separate frontend build. It is the browser workbench for persistent topics, temporary chats, visible agent activity, workspace controls, Apps, Skills, Automations, and settings. Start it with `nanobot webui`. WebUI access grants administration of the same agent instance; share it only with trusted operators. See [Sharing access](./docs/webui.md#sharing-access).
+The WebUI ships **inside the published wheel** with no separate frontend build. It is the browser workbench for persistent topics, temporary chats, visible agent activity, workspace controls, Apps, Skills, Automations, and settings. Start it with `nujinagent webui`. WebUI access grants administration of the same agent instance; share it only with trusted operators. See [Sharing access](./docs/webui.md#sharing-access).
 
 The screenshots show example conversations, illustrative token counts, and paused schedules; the interface may change.
 
 <p align="center">
-  <img src="./images/nanobot-workbench.png" alt="Three conversations in one WebUI workbench" width="900">
+  <img src="./images/nujinagent-workbench.png" alt="Three conversations in one WebUI workbench" width="900">
 </p>
 
 <details>
 <summary>Mobile WebUI · dark theme</summary>
 
 <p align="center">
-  <img src="./images/nanobot-mobile.png" alt="Mobile WebUI in dark theme with a saved conversation, model controls, context usage, and Default Permission" width="390">
+  <img src="./images/nujinagent-mobile.png" alt="Mobile WebUI in dark theme with a saved conversation, model controls, context usage, and Default Permission" width="390">
 </p>
 
 </details>
@@ -404,7 +404,7 @@ Choose a project, access mode, and model for each task. Topics separate conversa
 Expand agent activity to see reasoning, tool calls, and file changes. Switch **Settings → Appearance → Edit preview** to **Diff** for inline patches. The composer's context indicator shows the current context size, input tokens by round, and cache reuse when the provider reports it.
 
 <p align="center">
-  <img src="./images/nanobot-context.png" alt="An expanded file-edit diff above the context usage chart, with input tokens and cache reuse shown across four rounds" width="900">
+  <img src="./images/nujinagent-context.png" alt="An expanded file-edit diff above the context usage chart, with input tokens and cache reuse shown across four rounds" width="900">
 </p>
 
 Context compaction also appears in the conversation timeline. [Explore activity and context →](./docs/webui.md#activity-and-context-usage)
@@ -414,7 +414,7 @@ Context compaction also appears in the conversation timeline. [Explore activity 
 Use Apps to connect MCP servers, enable Agent Plugins, and manage local CLI App adapters. Add a preset or a custom server, then attach an available tool with `@`. Skills provide reusable instructions. **Settings** holds model, voice, image, and web setup; **Channels** handles chat-platform connections.
 
 <p align="center">
-  <img src="./images/nanobot-apps.png" alt="The Apps MCP catalog with searchable integration presets and Connect actions" width="900">
+  <img src="./images/nujinagent-apps.png" alt="The Apps MCP catalog with searchable integration presets and Connect actions" width="900">
 </p>
 
 [Explore Apps →](./docs/webui.md#apps) · [Discover Skills →](./docs/webui.md#skills) · [Connect chat apps →](./docs/guides/chat-app-ai-agent.md)
@@ -426,7 +426,7 @@ Before connecting a personal bot to shared channels, check the platform's DM pai
 Ask for an automation from the topic that should receive its results. Use **Tasks** to review and manage schedules, or **Calendar** to scan completed and upcoming runs by date. Local triggers let a script start a saved task on demand.
 
 <p align="center">
-  <img src="./images/nanobot-automations.png" alt="The Automations calendar with example completed runs arranged by date" width="900">
+  <img src="./images/nujinagent-automations.png" alt="The Automations calendar with example completed runs arranged by date" width="900">
 </p>
 
 Keep the gateway running and the host awake for scheduled delivery. Missed scheduled times are not replayed after a gateway restart. See [delivery and recovery rules](./docs/automations.md#delivery-and-reliability). [Explore Automations →](./docs/automations.md)
@@ -438,7 +438,7 @@ See the [WebUI guide](./docs/webui.md) for LAN access, background operation, wor
 ## Architecture
 
 <p align="center">
-  <img src="images/nanobot_arch.png" alt="nanobot architecture" width="800">
+  <img src="images/nujinagent_arch.png" alt="nujinagent architecture" width="800">
 </p>
 
 The Python gateway owns agent execution, sessions, tools, memory, and security policy for the WebUI, TUI, and chat apps. The clients share that runtime; the core agent loop builds context, calls the model, executes requested tools, and returns the result. Memory, skills, channels, and MCP integrations extend that loop.
@@ -449,7 +449,7 @@ See [Architecture](./docs/architecture.md) for source ownership and extension po
 
 ## Docs
 
-Browse the [repo docs](./docs/README.md) for current source documentation, or visit [nanobot.wiki](https://nanobot.wiki/docs/latest/getting-started/nanobot-overview) for the stable release. The [task guide index](./docs/guides/README.md) groups walkthroughs by outcome.
+Browse the [repo docs](./docs/README.md) for current source documentation, or visit [nujinagent.wiki](https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview) for the stable release. The [task guide index](./docs/guides/README.md) groups walkthroughs by outcome.
 
 - Get started: [Beginner walkthrough](./docs/start-without-technical-background.md) or [Install and Quick Start](./docs/quick-start.md).
 - Choose and configure a model: [Providers and Models](./docs/providers.md) and [Provider Cookbook](./docs/provider-cookbook.md).
@@ -462,24 +462,24 @@ Browse the [repo docs](./docs/README.md) for current source documentation, or vi
 
 ## Releases
 
-**Latest release: [v0.4.1](https://github.com/HKUDS/nanobot/releases/tag/v0.4.1)**
+**Latest release: [v0.4.1](https://github.com/HKUDS/nujinagent/releases/tag/v0.4.1)**
 
 v0.4.1 improves workspace permissions, sandboxed commands, connection recovery, file-context previews, and navigation. It retains legacy history and proxy migration through 0.4.x.
 
-Back up the stopped instance and upgrade through its original installation method. v0.3.5 can upgrade directly to v0.4.1; in-app automatic installation is not enabled for this release. See [upgrade notes](https://github.com/HKUDS/nanobot/releases/tag/v0.4.1) and [Updating nanobot](./docs/updating.md).
+Back up the stopped instance and upgrade through its original installation method. v0.3.5 can upgrade directly to v0.4.1; in-app automatic installation is not enabled for this release. See [upgrade notes](https://github.com/HKUDS/nujinagent/releases/tag/v0.4.1) and [Updating nujinagent](./docs/updating.md).
 
-For other changes, see [GitHub releases](https://github.com/HKUDS/nanobot/releases) and the [release archive](./docs/release-archive.md).
+For other changes, see [GitHub releases](https://github.com/HKUDS/nujinagent/releases) and the [release archive](./docs/release-archive.md).
 
 ## Open Source Partners
 
 <p align="center">
-  <a href="https://platform.kimi.com?aff=nanobot"><picture><source media="(prefers-color-scheme: dark)" srcset="https://kimi-file.moonshot.cn/prod-chat-kimi/kfs/4/1/2026-06-05/1d8h69mt3v89kkekg24gg"><img alt="Kimi Open Source Friends" height="44" src="https://kimi-file.moonshot.cn/prod-chat-kimi/kfs/4/1/2026-06-05/1d8h69fudcmosb3pipls0"></picture></a>
+  <a href="https://platform.kimi.com?aff=nujinagent"><picture><source media="(prefers-color-scheme: dark)" srcset="https://kimi-file.moonshot.cn/prod-chat-kimi/kfs/4/1/2026-06-05/1d8h69mt3v89kkekg24gg"><img alt="Kimi Open Source Friends" height="44" src="https://kimi-file.moonshot.cn/prod-chat-kimi/kfs/4/1/2026-06-05/1d8h69fudcmosb3pipls0"></picture></a>
   <a href="https://platform.minimaxi.com/subscribe/token-plan?code=GILTJpMTqZ&source=link"><img alt="MiniMax" height="40" src="https://mintcdn.com/minimax-zh/1UjvBcdoC6r0UeyA/logo/light.svg?fit=max&auto=format&n=1UjvBcdoC6r0UeyA&q=85&s=672d724b639b2d88d0702fae329ea4f8"></a>
 </p>
 
 ## 🤝 Contribute
 
-Everyone is welcome to [open an issue](https://github.com/HKUDS/nanobot/issues) with a bug, reproduction, use case, or suggestion. Discuss the problem first; pull requests are currently limited to repository collaborators. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contribution process and recognition.
+Everyone is welcome to [open an issue](https://github.com/HKUDS/nujinagent/issues) with a bug, reproduction, use case, or suggestion. Discuss the problem first; pull requests are currently limited to repository collaborators. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contribution process and recognition.
 
 ## Maintainers
 
@@ -890,6 +890,6 @@ Everyone is welcome to [open an issue](https://github.com/HKUDS/nanobot/issues) 
 <!-- contributors:end -->
 
 <p align="center">
-  <em> Thanks for visiting ✨ nanobot!</em><br><br>
-  <img src="https://visitor-badge.laobi.icu/badge?page_id=HKUDS.nanobot&style=for-the-badge&color=00d4ff" alt="Views">
+  <em> Thanks for visiting ✨ nujinagent!</em><br><br>
+  <img src="https://visitor-badge.laobi.icu/badge?page_id=HKUDS.nujinagent&style=for-the-badge&color=00d4ff" alt="Views">
 </p>

@@ -3,15 +3,15 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.agent.tools.apply_patch import ApplyPatchTool
-from nanobot.agent.tools.file_state import file_read_context
-from nanobot.agent.tools.filesystem import (
+from nujinagent.agent.tools.apply_patch import ApplyPatchTool
+from nujinagent.agent.tools.file_state import file_read_context
+from nujinagent.agent.tools.filesystem import (
     EditFileTool,
     ListDirTool,
     ReadFileTool,
     WriteFileTool,
 )
-from nanobot.execution.files import WorkspaceFiles
+from nujinagent.execution.files import WorkspaceFiles
 
 
 @pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="requires a POSIX named pipe")
@@ -497,7 +497,7 @@ class TestWorkspaceRestriction:
         media_file = media_dir / "photo.txt"
         media_file.write_text("shared media", encoding="utf-8")
 
-        monkeypatch.setattr("nanobot.config.loader._current_config_path", tmp_path / "config.json")
+        monkeypatch.setattr("nujinagent.config.loader._current_config_path", tmp_path / "config.json")
 
         tool = ReadFileTool(workspace=workspace, allowed_dir=workspace)
         result = await tool.execute(path=str(media_file))
@@ -511,7 +511,7 @@ class TestWorkspaceRestriction:
         media_dir = tmp_path / "media"
         media_dir.mkdir()
 
-        monkeypatch.setattr("nanobot.config.loader._current_config_path", tmp_path / "config.json")
+        monkeypatch.setattr("nujinagent.config.loader._current_config_path", tmp_path / "config.json")
 
         tool = WriteFileTool(workspace=workspace, allowed_dir=workspace)
         result = await tool.execute(path=str(media_dir / "hack.txt"), content="pwned")
@@ -661,7 +661,7 @@ class TestWorkspaceRestriction:
 
 @pytest.mark.parametrize("offset, limit", [(2.0, 1), (2, 1.0)])
 async def test_read_file_accepts_json_integers_without_changing_arguments(tmp_path, offset, limit):
-    from nanobot.agent.tools.registry import ToolRegistry, is_tool_error_result
+    from nujinagent.agent.tools.registry import ToolRegistry, is_tool_error_result
 
     path = tmp_path / "integer-offset.txt"
     path.write_text("first\nsecond\nthird\n", encoding="utf-8")
@@ -679,7 +679,7 @@ async def test_read_file_accepts_json_integers_without_changing_arguments(tmp_pa
 
 
 async def test_edit_file_accepts_json_integer_occurrence(tmp_path):
-    from nanobot.agent.tools.registry import ToolRegistry, is_tool_error_result
+    from nujinagent.agent.tools.registry import ToolRegistry, is_tool_error_result
 
     path = tmp_path / "integer-occurrence.txt"
     path.write_text("first first", encoding="utf-8")

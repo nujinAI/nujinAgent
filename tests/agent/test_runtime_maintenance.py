@@ -8,18 +8,18 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from nanobot.agent.runner import AgentRunResult
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.runtime_events import RuntimeModelChanged
-from nanobot.cron.service import CronService
-from nanobot.cron.types import CronSchedule
-from nanobot.execution import processes
-from nanobot.providers.base import LLMResponse
-from nanobot.runtime_admission import RuntimeBusyError, RuntimeMaintenanceError
-from nanobot.session.sqlite_store import SessionConflictError
-from nanobot.triggers.local_runner import run_local_trigger_queue
-from nanobot.triggers.local_store import LocalTriggerStore
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.runner import AgentRunResult
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.runtime_events import RuntimeModelChanged
+from nujinagent.cron.service import CronService
+from nujinagent.cron.types import CronSchedule
+from nujinagent.execution import processes
+from nujinagent.providers.base import LLMResponse
+from nujinagent.runtime_admission import RuntimeBusyError, RuntimeMaintenanceError
+from nujinagent.session.sqlite_store import SessionConflictError
+from nujinagent.triggers.local_runner import run_local_trigger_queue
+from nujinagent.triggers.local_store import LocalTriggerStore
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 
 @pytest.fixture

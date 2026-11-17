@@ -419,7 +419,7 @@ describe("Settings system domains", () => {
     const input = screen.getByRole("textbox", { name: "Describe an automation" });
     expect(input).toHaveAttribute(
       "placeholder",
-      "What should nanobot automate?",
+      "What should nujinagent automate?",
     );
     fireEvent.change(input, { target: { value: "Summarize updates every weekday at 9" } });
     fireEvent.click(screen.getByRole("button", { name: "Send message" }));
@@ -636,7 +636,7 @@ describe("Settings system domains", () => {
       if (url === "/api/settings/mcp-presets") {
         return jsonResponse({ presets: [], installed_count: 0 });
       }
-      if (url === "/api/settings/nanobot-features") {
+      if (url === "/api/settings/nujinagent-features") {
         return jsonResponse({
           features: [
             {
@@ -672,7 +672,7 @@ describe("Settings system domains", () => {
       if (url === "/api/settings") return jsonResponse(settingsPayload());
       if (url === "/api/settings/cli-apps") return jsonResponse({ apps: [], installed_count: 0 });
       if (url === "/api/settings/mcp-presets") return jsonResponse({ presets: [], installed_count: 0 });
-      if (url === "/api/settings/nanobot-features") {
+      if (url === "/api/settings/nujinagent-features") {
         return jsonResponse({
           features: [{
             name: "matrix",

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from nanobot.utils.media_decode import (
+from nujinagent.utils.media_decode import (
     FileSizeExceededError,
     save_base64_data_url,
 )

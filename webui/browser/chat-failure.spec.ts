@@ -7,7 +7,7 @@ for (const locale of ["en", "zh-CN", "zh-TW", "fr", "ja", "ko", "es", "pt-BR", "
       const copy = JSON.parse(readFileSync(new URL(`../src/i18n/locales/${locale}/common.json`, import.meta.url), "utf8")).settings.sandbox;
       const executable = gateway === "bwrap" ? "bwrap" : "sandbox-exec";
       await page.setViewportSize({ width: 390, height: 1000 });
-      await page.addInitScript((locale) => localStorage.setItem("nanobot.locale", locale), locale);
+      await page.addInitScript((locale) => localStorage.setItem("nujinagent.locale", locale), locale);
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(`/browser/fixture.html?case=chat-failure&notice=sandbox&gateway=${gateway}`);
       const notice = page.locator(".thread-composer-notice");
@@ -42,8 +42,8 @@ for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: 1000 });
         await page.emulateMedia({ reducedMotion: "reduce" });
         await page.addInitScript(({ dark, locale }) => {
-          localStorage.setItem("nanobot.locale", locale);
-          localStorage.setItem("nanobot-webui.settings-preferences", JSON.stringify({ schemaVersion: 1, readingTextSize: "large" }));
+          localStorage.setItem("nujinagent.locale", locale);
+          localStorage.setItem("nujinagent-webui.settings-preferences", JSON.stringify({ schemaVersion: 1, readingTextSize: "large" }));
           document.addEventListener("DOMContentLoaded", () => {
             document.documentElement.classList.toggle("dark", dark);
           });
@@ -97,8 +97,8 @@ for (const width of [1440, 390]) {
     test(`image and quote retain the responsive message actions: ${size}, ${width}px`, async ({ page }, info) => {
       await page.setViewportSize({ width, height: 1000 });
       await page.addInitScript(({ size, locale }) => {
-        localStorage.setItem("nanobot.locale", locale);
-        localStorage.setItem("nanobot-webui.settings-preferences", JSON.stringify({ schemaVersion: 1, readingTextSize: size }));
+        localStorage.setItem("nujinagent.locale", locale);
+        localStorage.setItem("nujinagent-webui.settings-preferences", JSON.stringify({ schemaVersion: 1, readingTextSize: size }));
       }, { size, locale: width === 390 ? "zh-CN" : "en" });
       await page.goto("/browser/fixture.html?case=chat-failure");
       const image = page.getByAltText("Failure screenshot");

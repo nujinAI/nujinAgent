@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
-from nanobot.releases import PLATFORMS
+from nujinagent.releases import PLATFORMS
 
 INDEXES = {"pypi": "https://pypi.org", "testpypi": "https://test.pypi.org"}
 
@@ -19,11 +19,11 @@ def remove_uploaded_files(directory: Path, *, version: str, destination: str) ->
     """Check the complete remote release before removing any identical local files."""
     if not re.fullmatch(r"\d+\.\d+\.\d+", version) or destination not in INDEXES:
         raise ValueError("Expected a final stable version and supported package index")
-    expected = {f"nanobot_ai-{version}-py3-none-{platform}.whl" for platform in PLATFORMS.values()}
-    expected.add(f"nanobot_ai-{version}.tar.gz")
+    expected = {f"nujinagent_ai-{version}-py3-none-{platform}.whl" for platform in PLATFORMS.values()}
+    expected.add(f"nujinagent_ai-{version}.tar.gz")
     if {item.name for item in directory.iterdir()} != expected:
         raise ValueError("Staged files do not match the complete release")
-    url = f"{INDEXES[destination]}/pypi/nanobot-ai/{version}/json"
+    url = f"{INDEXES[destination]}/pypi/nujinagent/{version}/json"
     try:
         with urlopen(url, timeout=30) as response:
             payload = response.read(4 * 1024 * 1024 + 1)
@@ -34,7 +34,7 @@ def remove_uploaded_files(directory: Path, *, version: str, destination: str) ->
     if len(payload) > 4 * 1024 * 1024:
         raise ValueError("Package index response is too large")
     data = json.loads(payload)
-    if data["info"]["name"] != "nanobot-ai" or data["info"]["version"] != version:
+    if data["info"]["name"] != "nujinagent" or data["info"]["version"] != version:
         raise ValueError("Package index returned a different project or version")
     uploaded: set[str] = set()
     for entry in data["urls"]:

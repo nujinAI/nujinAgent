@@ -1,10 +1,10 @@
 import sys
 
-from nanobot.agent.tools.apply_patch import ApplyPatchTool
-from nanobot.agent.tools.exec_session import ExecSessionTool, ListExecSessionsTool
-from nanobot.agent.tools.filesystem import EditFileTool, ReadFileTool, WriteFileTool
-from nanobot.agent.tools.search import FindFilesTool, GrepTool
-from nanobot.agent.tools.shell import ExecTool
+from nujinagent.agent.tools.apply_patch import ApplyPatchTool
+from nujinagent.agent.tools.exec_session import ExecSessionTool, ListExecSessionsTool
+from nujinagent.agent.tools.filesystem import EditFileTool, ReadFileTool, WriteFileTool
+from nujinagent.agent.tools.search import FindFilesTool, GrepTool
+from nujinagent.agent.tools.shell import ExecTool
 
 
 def test_coding_tool_descriptions_steer_editing_priority() -> None:

@@ -8,11 +8,11 @@ import httpx
 import pytest
 from openai import AsyncOpenAI
 
-from nanobot.providers.azure_openai_provider import (
+from nujinagent.providers.azure_openai_provider import (
     AzureOpenAIProvider,
     _AzureTokenProvider,
 )
-from nanobot.providers.base import LLMResponse, ProviderCallContext
+from nujinagent.providers.base import LLMResponse, ProviderCallContext
 
 
 def test_init_creates_sdk_client():
@@ -91,7 +91,7 @@ async def azure_wire_requests(monkeypatch):
         def create_client(**kwargs):
             return AsyncOpenAI(http_client=http_client, **kwargs)
 
-        monkeypatch.setattr("nanobot.providers.azure_openai_provider.AsyncOpenAI", create_client)
+        monkeypatch.setattr("nujinagent.providers.azure_openai_provider.AsyncOpenAI", create_client)
         yield requests
 
 
@@ -171,7 +171,7 @@ def test_init_missing_key_without_azure_identity_raises(monkeypatch):
         return real_import(name, *args, **kwargs)
 
     with patch("builtins.__import__", side_effect=fake_import):
-        with pytest.raises(RuntimeError, match=r"nanobot plugins enable azure"):
+        with pytest.raises(RuntimeError, match=r"nujinagent plugins enable azure"):
             AzureOpenAIProvider(api_key="", api_base="https://res.openai.azure.com")
 
 

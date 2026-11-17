@@ -1,6 +1,6 @@
 import pytest
 
-from nanobot.webui.client_contract import assess_webui_contract, compatibility_error, webui_contract
+from nujinagent.webui.client_contract import assess_webui_contract, compatibility_error, webui_contract
 
 
 def test_initial_host_declaration_is_an_independent_wire_fixture():

@@ -1,6 +1,6 @@
 # WebUI turn synchronization: bounded TLC models
 
-These models check the missed-completion/stuck-busy ordering in [PR #6683](https://github.com/HKUDS/nanobot/pull/6683): a terminal frame is lost, a newer turn starts, and recovery history explicitly completes the older turn. Completing that turn must not stop the newer one or discard content that history has not covered.
+These models check the missed-completion/stuck-busy ordering in [PR #6683](https://github.com/HKUDS/nujinagent/pull/6683): a terminal frame is lost, a newer turn starts, and recovery history explicitly completes the older turn. Completing that turn must not stop the newer one or discard content that history has not covered.
 
 **These are handwritten abstractions of selected current-implementation transitions, not mechanical verification of TypeScript or proof of all WebUI/Gateway behavior.** The default runner checks twelve positive configurations. Two current-policy missing-evidence cases run separately and retain temporal counterexamples; they are never counted as positive passes.
 
@@ -15,7 +15,7 @@ These models check the missed-completion/stuck-busy ordering in [PR #6683](https
 | `SharedRequests.tla` | Per-key request sharing, consumer cancellation, invalidation/replacement, reconnect and stale/late delivery. |
 | `CompletionAuthority.tla` | Exact-ID ledger closure, coverage-dependent content fencing, anonymous recovery and another-chat isolation. |
 
-The source owners are `client-run-ledger.ts`, `nanobot-client.ts`, `canonical-run-snapshot.ts`, `latest-thread-request.ts`, `thread-transcript.ts`, `webui-thread-cache.ts`, `useReconnectRuns.ts`, `useNanobotStream.ts` and `ThreadShell.tsx`. The runner can record their hashes; the mapping still requires human review. [`USAGE-LIFECYCLE.md`](USAGE-LIFECYCLE.md) details the dynamic full-page mapping.
+The source owners are `client-run-ledger.ts`, `nujinagent-client.ts`, `canonical-run-snapshot.ts`, `latest-thread-request.ts`, `thread-transcript.ts`, `webui-thread-cache.ts`, `useReconnectRuns.ts`, `useNujinAgentStream.ts` and `ThreadShell.tsx`. The runner can record their hashes; the mapping still requires human review. [`USAGE-LIFECYCLE.md`](USAGE-LIFECYCLE.md) details the dynamic full-page mapping.
 
 The Gateway owns execution. The request registry owns cancellation and stale-response eligibility; `ThreadTranscript` owns content admission/coverage; `ClientRunLedger` alone owns the client's observed run state. Fresh full pages supply explicit completion facts even when mount/cache eligibility prevents content adoption. Eligible history is cached before completion notifications. The mounted transcript alone adopts whole snapshots; only an unmounted reader can perform background adoption, and only for an eligible idle page. Lifecycle-only closure preserves uncovered content and independent anonymous recovery. Initial cached seeds are not fresh evidence. Mounted fragments hand off completed IDs only when their gap/admission rules expose them.
 

@@ -8,17 +8,17 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from agent.runner_helpers import make_run_spec
-from nanobot.agent.hook import AgentHook, AgentHookContext
-from nanobot.agent.runner import AgentRunner
-from nanobot.agent.tools.base import Tool, ToolResult
-from nanobot.agent.tools.context import ToolContext
-from nanobot.agent.tools.execution import execute_tool_calls
-from nanobot.agent.tools.loader import ToolLoader
-from nanobot.agent.tools.registry import ToolRegistry
-from nanobot.config.schema import AgentDefaults
-from nanobot.providers.base import LLMResponse, ToolCallRequest
-from nanobot.providers.openai_compat_provider import OpenAICompatProvider
-from nanobot.providers.openai_responses.parsing import parse_response_output
+from nujinagent.agent.hook import AgentHook, AgentHookContext
+from nujinagent.agent.runner import AgentRunner
+from nujinagent.agent.tools.base import Tool, ToolResult
+from nujinagent.agent.tools.context import ToolContext
+from nujinagent.agent.tools.execution import execute_tool_calls
+from nujinagent.agent.tools.loader import ToolLoader
+from nujinagent.agent.tools.registry import ToolRegistry
+from nujinagent.config.schema import AgentDefaults
+from nujinagent.providers.base import LLMResponse, ToolCallRequest
+from nujinagent.providers.openai_compat_provider import OpenAICompatProvider
+from nujinagent.providers.openai_responses.parsing import parse_response_output
 
 _MAX_TOOL_RESULT_CHARS = AgentDefaults().max_tool_result_chars
 
@@ -37,9 +37,9 @@ async def test_mcp_arguments_can_be_corrected_without_rewriting_model_history(sc
     from mcp.types import TextContent
     from mcp.types import Tool as MCPTool
 
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.agent.tools.mcp import MCPToolWrapper
-    from nanobot.session.manager import Session
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.agent.tools.mcp import MCPToolWrapper
+    from nujinagent.session.manager import Session
 
     server = Server("nested-arguments-test")
     received = []
@@ -207,7 +207,7 @@ def _load_entry_point_plugin(tool_cls: type[Tool], tmp_path) -> ToolRegistry:
     mock_ep.load.return_value = tool_cls
 
     registry = ToolRegistry()
-    with patch("nanobot.agent.tools.loader.entry_points", return_value=[mock_ep]):
+    with patch("nujinagent.agent.tools.loader.entry_points", return_value=[mock_ep]):
         ToolLoader(test_classes=[]).load(
             ToolContext(config=None, workspace=str(tmp_path)),
             registry,
@@ -420,7 +420,7 @@ async def test_runner_rejects_near_miss_tool_name_without_executing():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("arguments", ['{path:"notes.txt"}', "null"])
 async def test_runner_rejects_openai_compat_invalid_arguments_without_executing(arguments):
-    with patch("nanobot.providers.openai_compat_provider.AsyncOpenAI"):
+    with patch("nujinagent.providers.openai_compat_provider.AsyncOpenAI"):
         parsed = OpenAICompatProvider()._parse({
             "choices": [{
                 "message": {

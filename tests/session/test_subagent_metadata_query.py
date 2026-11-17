@@ -2,9 +2,9 @@ import json
 import sqlite3
 from datetime import datetime
 
-import nanobot.session.sqlite_store as sqlite_store
-from nanobot.session.manager import Session, SessionManager
-from nanobot.session.types import PARENT_SESSION_KEY, SESSION_TYPE_KEY
+import nujinagent.session.sqlite_store as sqlite_store
+from nujinagent.session.manager import Session, SessionManager
+from nujinagent.session.types import PARENT_SESSION_KEY, SESSION_TYPE_KEY
 
 
 def test_subagent_metadata_matches_only_requested_turns(tmp_path, monkeypatch):

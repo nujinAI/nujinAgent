@@ -4,24 +4,24 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from agent.session_helpers import stop_loop
-from nanobot.agent.goal_permission import goal_mutation_allowed, goal_mutation_permission
-from nanobot.agent.loop import AgentLoop as CoreAgentLoop
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.outbound_events import GoalStatusEvent, TurnEndEvent
-from nanobot.bus.queue import MessageBus
-from nanobot.goal.assembly import install_goal
-from nanobot.providers.base import (
+from nujinagent.agent.goal_permission import goal_mutation_allowed, goal_mutation_permission
+from nujinagent.agent.loop import AgentLoop as CoreAgentLoop
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.outbound_events import GoalStatusEvent, TurnEndEvent
+from nujinagent.bus.queue import MessageBus
+from nujinagent.goal.assembly import install_goal
+from nujinagent.providers.base import (
     GenerationSettings,
     LLMResponse,
     LLMUsage,
     ProviderConversationState,
     ToolCallRequest,
 )
-from nanobot.runtime_context import public_history_messages
-from nanobot.session.goal_state import GOAL_STATE_KEY
-from nanobot.session.history_visibility import is_hidden_history_message
-from nanobot.session.manager import SessionManager
-from nanobot.session.webui_turns import WebuiTurnCoordinator
+from nujinagent.runtime_context import public_history_messages
+from nujinagent.session.goal_state import GOAL_STATE_KEY
+from nujinagent.session.history_visibility import is_hidden_history_message
+from nujinagent.session.manager import SessionManager
+from nujinagent.session.webui_turns import WebuiTurnCoordinator
 
 
 def _assembled_loop(*args, **kwargs):
@@ -30,7 +30,7 @@ def _assembled_loop(*args, **kwargs):
 
 @pytest.mark.parametrize("command", [
     "/goal execute the agreed plan",
-    "/GOAL@nanobot execute the agreed plan",
+    "/GOAL@nujinagent execute the agreed plan",
     "/goal /tmp/project: execute the agreed plan",
 ])
 async def test_goal_input_enters_running_turn_with_scoped_permission(tmp_path, command):
@@ -183,8 +183,8 @@ async def test_goal_at_iteration_limit_stays_queued_for_a_tool_capable_turn(tmp_
 
 
 async def test_generated_goal_input_survives_pending_followup_recovery(tmp_path):
-    from nanobot.command.router import CommandContext, CommandExpansion
-    from nanobot.session.recovery import pending_followups
+    from nujinagent.command.router import CommandContext, CommandExpansion
+    from nujinagent.session.recovery import pending_followups
 
     provider = MagicMock(aclose=AsyncMock())
     provider.get_default_model.return_value = "test-model"
@@ -536,7 +536,7 @@ async def test_failed_goal_completion_keeps_running_until_a_successful_block(tmp
 
 @pytest.mark.parametrize("operation", ["reset", "delete"])
 async def test_queued_goal_command_does_not_write_to_an_obsolete_generation(tmp_path, operation):
-    from nanobot.session.sqlite_store import SessionConflictError
+    from nujinagent.session.sqlite_store import SessionConflictError
 
     provider = MagicMock(aclose=AsyncMock())
     provider.get_default_model.return_value = "test-model"

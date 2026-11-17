@@ -5,16 +5,16 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.context import TranscriptInput
-from nanobot.agent.loop import AgentLoop, TurnContext, TurnKind
-from nanobot.agent.tools.context import RequestContext
-from nanobot.agent.tools.filesystem import ReadFileTool
-from nanobot.bus.events import InboundMessage
-from nanobot.bus.queue import MessageBus
-from nanobot.config.schema import ChannelsConfig
-from nanobot.providers.base import LLMResponse
-from nanobot.runtime_context import public_history_message
-from nanobot.utils.document import reference_non_image_attachments
+from nujinagent.agent.context import TranscriptInput
+from nujinagent.agent.loop import AgentLoop, TurnContext, TurnKind
+from nujinagent.agent.tools.context import RequestContext
+from nujinagent.agent.tools.filesystem import ReadFileTool
+from nujinagent.bus.events import InboundMessage
+from nujinagent.bus.queue import MessageBus
+from nujinagent.config.schema import ChannelsConfig
+from nujinagent.providers.base import LLMResponse
+from nujinagent.runtime_context import public_history_message
+from nujinagent.utils.document import reference_non_image_attachments
 
 
 def _make_loop(
@@ -56,8 +56,8 @@ async def test_document_attachment_is_referenced_and_read_on_demand(
     media_dir = tmp_path / "media"
     media_dir.mkdir()
     csv_path = media_dir / "report.csv"
-    csv_path.write_text("name,value\nnanobot,1", encoding="utf-8")
-    monkeypatch.setattr("nanobot.config.loader._current_config_path", tmp_path / "config.json")
+    csv_path.write_text("name,value\nnujinagent,1", encoding="utf-8")
+    monkeypatch.setattr("nujinagent.config.loader._current_config_path", tmp_path / "config.json")
 
     loop = _make_loop(
         workspace,
@@ -82,7 +82,7 @@ async def test_document_attachment_is_referenced_and_read_on_demand(
     result = await read_tool.execute(path=str(csv_path))
 
     assert "1| name,value" in result
-    assert "2| nanobot,1" in result
+    assert "2| nujinagent,1" in result
 
 
 @pytest.mark.asyncio
@@ -217,7 +217,7 @@ def test_attachment_references_canonicalize_existing_relative_paths(
 
 @pytest.mark.asyncio
 async def test_borrowed_image_origin_survives_canonical_reload(tmp_path: Path) -> None:
-    from nanobot.webui.transcript import build_session_thread_response
+    from nujinagent.webui.transcript import build_session_thread_response
 
     source = tmp_path / "borrowed.png"
     source.write_bytes(base64.b64decode(

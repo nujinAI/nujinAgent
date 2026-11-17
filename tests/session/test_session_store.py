@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from nanobot.providers.base import ProviderConversationState
-from nanobot.session.manager import Session, SessionManager
-from nanobot.session.model_selection import SESSION_MODEL_PRESET_METADATA_KEY
-from nanobot.session.types import PARENT_SESSION_KEY, SESSION_TYPE_KEY
+from nujinagent.providers.base import ProviderConversationState
+from nujinagent.session.manager import Session, SessionManager
+from nujinagent.session.model_selection import SESSION_MODEL_PRESET_METADATA_KEY
+from nujinagent.session.types import PARENT_SESSION_KEY, SESSION_TYPE_KEY
 
 
 def test_manager_roundtrips_full_history_and_private_state(tmp_path):

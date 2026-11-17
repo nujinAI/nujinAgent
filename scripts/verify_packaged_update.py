@@ -35,7 +35,7 @@ from urllib.parse import quote
 from zipfile import ZIP_DEFLATED, ZipFile
 
 if TYPE_CHECKING:
-    from nanobot.execution._windows_job import WindowsJob
+    from nujinagent.execution._windows_job import WindowsJob
 
 SCENARIOS = ("upgrade", "upgrade-again", "skipped-preview", "import-failure", "restart-failure",
              "backup-failure", "worker-exit", "metadata-loss", "restore-interruption")
@@ -148,7 +148,7 @@ def fixture_wheel(source: Path, output: Path, version: str, *, feed: Path | None
     from packaging.utils import parse_wheel_filename
 
     _, previous, _, _ = parse_wheel_filename(source.name)
-    prefix, replacement = f"nanobot_ai-{previous}.dist-info/", f"nanobot_ai-{version}.dist-info/"
+    prefix, replacement = f"nujinagent_ai-{previous}.dist-info/", f"nujinagent_ai-{version}.dist-info/"
     with ZipFile(source) as archive:
         entries = [(item, archive.read(item)) for item in archive.infolist() if not item.filename.endswith("/RECORD")]
     files = {item.filename.replace(prefix, replacement): data for item, data in entries}
@@ -159,7 +159,7 @@ def fixture_wheel(source: Path, output: Path, version: str, *, feed: Path | None
         # processes. It cannot reach external hosts. These private packages are
         # not approved public releases: signature admission is exercised by the
         # separate trust tests, not this installation/recovery fixture.
-        files["nanobot/_acceptance_feed.py"] = f'''import json
+        files["nujinagent/_acceptance_feed.py"] = f'''import json
 from pathlib import Path
 import httpx
 def transport():
@@ -171,16 +171,16 @@ def transport():
         return httpx.Response(200, content=Path(item["file"]).read_bytes() if "file" in item else json.dumps(item["json"]).encode())
     return httpx.MockTransport(respond)
 '''.encode()
-        files["nanobot/release_feed.py"] = replace_once(
-            files["nanobot/release_feed.py"], b"transport=transport or PinnedDNSAsyncTransport(),",
-            b'transport=transport or __import__("nanobot._acceptance_feed", fromlist=["transport"]).transport(),')
-        if b"await self._authorize(target)" in files["nanobot/release_feed.py"]:
-            files["nanobot/release_feed.py"] = replace_once(
-                files["nanobot/release_feed.py"], b"await self._authorize(target)",
+        files["nujinagent/release_feed.py"] = replace_once(
+            files["nujinagent/release_feed.py"], b"transport=transport or PinnedDNSAsyncTransport(),",
+            b'transport=transport or __import__("nujinagent._acceptance_feed", fromlist=["transport"]).transport(),')
+        if b"await self._authorize(target)" in files["nujinagent/release_feed.py"]:
+            files["nujinagent/release_feed.py"] = replace_once(
+                files["nujinagent/release_feed.py"], b"await self._authorize(target)",
                 b"pass  # Private unsigned acceptance fixture, never a distributable wheel.")
         # Windows source archives can contain CRLF. Normalize only the private
         # instrumentation copy; the final target's bytes remain untouched.
-        worker = files["nanobot/update_worker.py"].replace(b"\r\n", b"\n")
+        worker = files["nujinagent/update_worker.py"].replace(b"\r\n", b"\n")
         # Inject into the first job in this disposable account. The recovered
         # updater must subsequently install a release without re-injecting it.
         fault = f"__import__('pathlib').Path({str(feed.parent / 'injected-fault')!r})"
@@ -197,7 +197,7 @@ def transport():
             if not {fault}.exists():
                 {fault}.touch()
                 (directory / 'fault-fired').write_text('metadata loss')
-                next(Path(spec.baseline.environment).rglob('nanobot_ai-' + spec.version + '.dist-info/METADATA')).unlink()
+                next(Path(spec.baseline.environment).rglob('nujinagent_ai-' + spec.version + '.dist-info/METADATA')).unlink()
                 os._exit(92)
 '''.encode() + needle)
         elif scenario == "backup-failure":
@@ -207,12 +207,12 @@ def transport():
                 if {fault}.read_text() == str(directory):
                     raise OSError('Injected backup write failure')
 '''.encode() + needle)
-        files["nanobot/update_worker.py"] = worker
+        files["nujinagent/update_worker.py"] = worker
         # Observe an old-runtime preflight refusal without changing its decision,
         # shutdown, worker or recovery semantics. Never export exception values.
-        handoff = files["nanobot/update_handoff.py"].replace(b"\r\n", b"\n")
-        files["nanobot/update_handoff.py"] = replace_once(handoff, b"    except Exception:\n", f'''    except Exception as acceptance_error:
-        from nanobot.update_worker import read_record, write_record
+        handoff = files["nujinagent/update_handoff.py"].replace(b"\r\n", b"\n")
+        files["nujinagent/update_handoff.py"] = replace_once(handoff, b"    except Exception:\n", f'''    except Exception as acceptance_error:
+        from nujinagent.update_worker import read_record, write_record
         acceptance_trace = acceptance_error.__traceback__
         acceptance_frames = []
         while acceptance_trace is not None:
@@ -228,11 +228,11 @@ def transport():
 '''.encode())
         # Diagnose a real idle-admission refusal in the disposable old gateway.
         # Observe booleans only, after the original guard has already refused.
-        stop = files.get("nanobot/update_stop.py")
+        stop = files.get("nujinagent/update_stop.py")
         if stop is not None:
             needle = b"        except (RuntimeBusyError, RuntimeMaintenanceError):\n"
-            files["nanobot/update_stop.py"] = replace_once(stop.replace(b"\r\n", b"\n"), needle, needle + b'''            try:
-                from nanobot.update_worker import write_record
+            files["nujinagent/update_stop.py"] = replace_once(stop.replace(b"\r\n", b"\n"), needle, needle + b'''            try:
+                from nujinagent.update_worker import write_record
                 acceptance_owner = maintenance.__self__
                 acceptance_bus = acceptance_owner.bus
                 acceptance_flags = {
@@ -252,14 +252,14 @@ def transport():
 ''')
         if scenario == "restore-interruption":
             needle = b"    os.rename(original, environment)\n"
-            files["nanobot/update_fallback.py"] = replace_once(files["nanobot/update_fallback.py"].replace(b"\r\n", b"\n"), needle, b'''    if not (directory / 'restore-fault-fired').exists():
+            files["nujinagent/update_fallback.py"] = replace_once(files["nujinagent/update_fallback.py"].replace(b"\r\n", b"\n"), needle, b'''    if not (directory / 'restore-fault-fired').exists():
         (directory / 'restore-fault-fired').write_text('interrupted between renames')
         raise OSError('Injected rename interruption')
 ''' + needle)
     elif scenario in {"import-failure", "restore-interruption"}:
-        files["nanobot/__init__.py"] = b"raise RuntimeError('Injected candidate import failure')\n"
+        files["nujinagent/__init__.py"] = b"raise RuntimeError('Injected candidate import failure')\n"
     elif scenario == "restart-failure":
-        files["nanobot/update_restart.py"] = b"raise RuntimeError('Injected candidate startup failure')\n"
+        files["nujinagent/update_restart.py"] = b"raise RuntimeError('Injected candidate startup failure')\n"
     record = replacement + "RECORD"
     rows = io.StringIO()
     writer = csv.writer(rows, lineterminator="\n")
@@ -285,8 +285,8 @@ def feed_records(wheel: Path, commit: str, *, generation: int = 1) -> dict:
     from packaging.utils import parse_wheel_filename
     from packaging.version import Version
 
-    from nanobot.release_feed import CATALOGUE_URL
-    from nanobot.releases import (
+    from nujinagent.release_feed import CATALOGUE_URL
+    from nujinagent.releases import (
         ReleaseArtifact,
         ReleaseCatalogue,
         ReleaseManifest,
@@ -300,20 +300,20 @@ def feed_records(wheel: Path, commit: str, *, generation: int = 1) -> dict:
                  for name in sorted(release_filenames(version))]
     if not Version(version).is_prerelease:
         base = "https://files.pythonhosted.org/packages/"
-        metadata = {"info": {"name": "nanobot-ai", "version": version, "requires_python": ">=3.11"},
+        metadata = {"info": {"name": "nujinagent", "version": version, "requires_python": ">=3.11"},
                     "urls": [{"filename": item.filename, "size": item.size, "url": base + item.filename,
                               "digests": {"sha256": item.sha256}, "yanked": False}
                              for item in artifacts if item.filename.endswith((".whl", ".tar.gz"))]}
         return {base + wheel.name: {"file": str(wheel)},
-                "https://pypi.org/pypi/nanobot-ai/json": {"json": metadata},
-                f"https://pypi.org/pypi/nanobot-ai/{version}/json": {"json": metadata}}
+                "https://pypi.org/pypi/nujinagent/json": {"json": metadata},
+                f"https://pypi.org/pypi/nujinagent/{version}/json": {"json": metadata}}
     manifest = ReleaseManifest(version=version, source_commit=commit, candidate_commit=commit,
                                requires_python=">=3.11", artifacts=artifacts)
     data = manifest.model_dump(mode="json")
     pointer = ReleasePointer(version=version, candidate_commit=commit,
                              manifest_sha256=hashlib.sha256(json.dumps(data).encode()).hexdigest())
     catalogue = ReleaseCatalogue(generation=generation, preview=pointer)
-    base = f"https://github.com/HKUDS/nanobot/releases/download/v{version}/"
+    base = f"https://github.com/HKUDS/nujinagent/releases/download/v{version}/"
     return {CATALOGUE_URL: {"json": catalogue.model_dump(mode="json")},
             base + "release-manifest.json": {"json": data}, base + wheel.name: {"file": str(wheel)}}
 
@@ -325,27 +325,27 @@ def free_port() -> int:
 
 
 def gateway(root: Path, *arguments: str) -> None:
-    subprocess.run([sys.executable, "-I", "-m", "nanobot", "gateway", *arguments,
-                    "--config", str(root / "account/.nanobot/config.json")], check=True, timeout=60)
+    subprocess.run([sys.executable, "-I", "-m", "nujinagent", "gateway", *arguments,
+                    "--config", str(root / "account/.nujinagent/config.json")], check=True, timeout=60)
 
 
 def _dock_supported(root: Path) -> bool:
     return bool(read(root / "case.json").get("dock")
-                and importlib.util.find_spec("nanobot.cli.dock") is not None)
+                and importlib.util.find_spec("nujinagent.cli.dock") is not None)
 
 
 def _desktop_webui(root: Path) -> None:
-    subprocess.run([sys.executable, "-I", "-m", "nanobot", "webui", "--yes", "--no-open",
-                    "--config", str(root / "account/.nanobot/config.json")], check=True, timeout=60)
+    subprocess.run([sys.executable, "-I", "-m", "nujinagent", "webui", "--yes", "--no-open",
+                    "--config", str(root / "account/.nujinagent/config.json")], check=True, timeout=60)
 
 
 def _dock_socket(root: Path) -> Path:
-    from nanobot.cli.dock import _directory
-    from nanobot.cli.webui_support import _webui_browser_url
-    from nanobot.config.loader import load_config
-    from nanobot.gateway.runtime import GatewayInstance
+    from nujinagent.cli.dock import _directory
+    from nujinagent.cli.webui_support import _webui_browser_url
+    from nujinagent.config.loader import load_config
+    from nujinagent.gateway.runtime import GatewayInstance
 
-    config = root / "account/.nanobot/config.json"
+    config = root / "account/.nujinagent/config.json"
     instance = GatewayInstance.resolve(config_path=config)
     return _directory(instance.paths.state_path, _webui_browser_url(load_config(config))) / "s"
 
@@ -365,15 +365,15 @@ def _wait_dock(address: Path, *, present: bool) -> None:
 def request(root: Path, path: str):
     import httpx
 
-    config = read(root / "account/.nanobot/config.json")
+    config = read(root / "account/.nujinagent/config.json")
     web = config["channels"]["websocket"]
     base = f'http://127.0.0.1:{web["port"]}'
     with httpx.Client(timeout=10, trust_env=False) as client:
-        bootstrap = client.get(base + "/webui/bootstrap", headers={"X-Nanobot-Auth": web["tokenIssueSecret"]})
+        bootstrap = client.get(base + "/webui/bootstrap", headers={"X-NujinAgent-Auth": web["tokenIssueSecret"]})
         bootstrap.raise_for_status()
         if path == "/webui/bootstrap":
             return bootstrap.json()
-        headers = ({"X-Nanobot-Auth": web["tokenIssueSecret"]} if path == "/webui/terminal"
+        headers = ({"X-NujinAgent-Auth": web["tokenIssueSecret"]} if path == "/webui/terminal"
                    else {"Authorization": "Bearer " + bootstrap.json()["api_token"]})
         response = client.get(base + path, headers=headers)
         response.raise_for_status()
@@ -465,8 +465,8 @@ async def chat(root: Path, chat_id: str | None = None) -> str:
 
 
 def ready(root: Path, version: str):
-    from nanobot.gateway.runtime import GatewayRuntime
-    from nanobot.update_profiles import inspect_profiles
+    from nujinagent.gateway.runtime import GatewayRuntime
+    from nujinagent.update_profiles import inspect_profiles
 
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
@@ -482,12 +482,12 @@ def ready(root: Path, version: str):
 
 
 def seed(root: Path) -> None:
-    import nanobot
-    from nanobot.config.loader import load_config, save_config, set_config_path
-    from nanobot.config.paths import get_webui_dir
+    import nujinagent
+    from nujinagent.config.loader import load_config, save_config, set_config_path
+    from nujinagent.config.paths import get_webui_dir
 
-    assert Path(nanobot.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
-    config_path = root / "account/.nanobot/config.json"
+    assert Path(nujinagent.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
+    config_path = root / "account/.nujinagent/config.json"
     config_path.parent.mkdir(parents=True, exist_ok=True)
     set_config_path(config_path)
     config = load_config(config_path)
@@ -505,13 +505,13 @@ def seed(root: Path) -> None:
     save_config(config, config_path)
     # Real historical canonical files are imported by the installed SQLite owner,
     # not generated by a new-store round trip. Existing source bytes stay readable.
-    if importlib.util.find_spec("nanobot.session.location") is not None:
-        from nanobot.session.location import SessionLocation
+    if importlib.util.find_spec("nujinagent.session.location") is not None:
+        from nujinagent.session.location import SessionLocation
         location = SessionLocation(root / "workspace")
     else:
         # The retained pre-SQLite package owns the same namespace here. This is
         # acceptance-fixture compatibility, not a fallback in the application.
-        from nanobot.session.manager import JsonlSessionStore
+        from nujinagent.session.manager import JsonlSessionStore
         location = JsonlSessionStore(root / "workspace")
     sessions = location.sessions_dir
     key = "websocket:legacy-acceptance"
@@ -537,30 +537,30 @@ def seed(root: Path) -> None:
 
 
 def snapshot(root: Path) -> None:
-    from nanobot.config.loader import set_config_path
-    from nanobot.config.paths import get_webui_dir
+    from nujinagent.config.loader import set_config_path
+    from nujinagent.config.paths import get_webui_dir
 
     case = read(root / "case.json")
-    config_path = root / "account/.nanobot/config.json"
+    config_path = root / "account/.nujinagent/config.json"
     set_config_path(config_path)
     delivery = config_path.parent / "delivery/outbox.sqlite3"
-    if not delivery.exists() and importlib.util.find_spec("nanobot.channels.outbox") is not None:
-        from nanobot.bus.delivery import DeliveryRequest
-        from nanobot.bus.events import OutboundMessage
-        from nanobot.channels.outbox import DeliveryOutbox
+    if not delivery.exists() and importlib.util.find_spec("nujinagent.channels.outbox") is not None:
+        from nujinagent.bus.delivery import DeliveryRequest
+        from nujinagent.bus.events import OutboundMessage
+        from nujinagent.channels.outbox import DeliveryOutbox
 
         # Keep a real durable result pending through the private journey without
         # attempting an external send. Older retained code has no outbox owner.
-        with patch("nanobot.channels.outbox.time.time", return_value=time.time() + 3600):
+        with patch("nujinagent.channels.outbox.time.time", return_value=time.time() + 3600):
             DeliveryOutbox(delivery).record(OutboundMessage(
                 "whatsapp", "acceptance-offline", "Retain this scheduled result",
                 delivery=DeliveryRequest("acceptance-run", "websocket:legacy-acceptance", None),
             ))
-    if importlib.util.find_spec("nanobot.session.location") is not None:
-        from nanobot.session.location import SessionLocation
+    if importlib.util.find_spec("nujinagent.session.location") is not None:
+        from nujinagent.session.location import SessionLocation
         location = SessionLocation(root / "workspace")
     else:
-        from nanobot.session.manager import JsonlSessionStore
+        from nujinagent.session.manager import JsonlSessionStore
         location = JsonlSessionStore(root / "workspace")
     sessions, webui_dir = location.sessions_dir, get_webui_dir()
     key = "websocket:legacy-acceptance"
@@ -592,12 +592,12 @@ def snapshot(root: Path) -> None:
 def prepare(root: Path) -> None:
     from packaging.version import Version
 
-    from nanobot.installation_lock import installation_state_dir
-    from nanobot.release_feed import ReleaseFeed
-    from nanobot.update_channel import UpdateChannelRequest, read_update_channel
-    from nanobot.update_jobs import prepare_job, start_handoff
-    from nanobot.update_plan import preview_release_update
-    from nanobot.update_service import UpdateJobService
+    from nujinagent.installation_lock import installation_state_dir
+    from nujinagent.release_feed import ReleaseFeed
+    from nujinagent.update_channel import UpdateChannelRequest, read_update_channel
+    from nujinagent.update_jobs import prepare_job, start_handoff
+    from nujinagent.update_plan import preview_release_update
+    from nujinagent.update_service import UpdateJobService
 
     if not (root / "before.json").exists():
         seed(root)
@@ -616,19 +616,19 @@ def prepare(root: Path) -> None:
     # Capture the production launch, then let the outer, stdlib-only controller
     # execute it after this process exits. Otherwise Windows DLL locks from the
     # *test controller* prevent restoring the live venv directory.
-    with patch("nanobot.update_jobs.subprocess.Popen") as spawn:
+    with patch("nujinagent.update_jobs.subprocess.Popen") as spawn:
         start_handoff(directory, once=True)
         command = spawn.call_args.args[0]
     write(root / "launch.json", {"command": command, "directory": str(directory)})
 
 
 def verify(root: Path) -> dict:
-    import nanobot
-    from nanobot.build_info import COMMIT
-    from nanobot.config.loader import set_config_path
-    from nanobot.update_worker import JobStatus, Phase
+    import nujinagent
+    from nujinagent.build_info import COMMIT
+    from nujinagent.config.loader import set_config_path
+    from nujinagent.update_worker import JobStatus, Phase
 
-    set_config_path(root / "account/.nanobot/config.json")
+    set_config_path(root / "account/.nujinagent/config.json")
     case, before, launch = read(root / "case.json"), read(root / "before.json"), read(root / "launch.json")
     directory = Path(launch["directory"])
     restored = case["scenario"] not in {"upgrade", "upgrade-again", "skipped-preview", "worker-exit"}
@@ -637,7 +637,7 @@ def verify(root: Path) -> dict:
     expected = case["baseline_version"] if restored else case["target_version"]
     receipt = ready(root, expected)
     assert receipt.run_id != before["run_id"], "Update did not restart the gateway"
-    assert nanobot.__version__ == expected
+    assert nujinagent.__version__ == expected
     if not restored:
         assert COMMIT == case["commit"]
         assert digest(Path(case["target_wheel"])) == case["target_sha256"]
@@ -659,16 +659,16 @@ def verify(root: Path) -> dict:
 
 def verify_data(root: Path, expected: str) -> bool:
     """Public reads and subsequent writes, shared by inline and owner-driven updates."""
-    from nanobot.config.loader import set_config_path
+    from nujinagent.config.loader import set_config_path
 
-    set_config_path(root / "account/.nanobot/config.json")
+    set_config_path(root / "account/.nujinagent/config.json")
     before = read(root / "before.json")
     receipt = ready(root, expected)
     assert receipt.run_id != before["run_id"], "Update did not restart the gateway"
     if _dock_supported(root):
-        from nanobot.gateway.runtime import GatewayInstance
+        from nujinagent.gateway.runtime import GatewayInstance
 
-        instance = GatewayInstance.resolve(config_path=root / "account/.nanobot/config.json")
+        instance = GatewayInstance.resolve(config_path=root / "account/.nujinagent/config.json")
         if not instance.paths.state_path.with_suffix(".dock").exists():
             _desktop_webui(root)
         _wait_dock(_dock_socket(root), present=True)
@@ -679,11 +679,11 @@ def verify_data(root: Path, expected: str) -> bool:
     assert_history_preserved(before["display_only"], history(root, "websocket:display-only"))
     assert canonical_context(root) == before["canonical_only"], (canonical_context(root), before["canonical_only"])
     database = Path(before["database"])
-    sqlite_expected = importlib.util.find_spec("nanobot.session.location") is not None
+    sqlite_expected = importlib.util.find_spec("nujinagent.session.location") is not None
     canonical = canonical_records(database) if sqlite_expected else None
     if before["canonical"] is not None:
         assert_canonical_preserved(before["canonical"], canonical)
-    delivery = root / "account/.nanobot/delivery/outbox.sqlite3"
+    delivery = root / "account/.nujinagent/delivery/outbox.sqlite3"
     if before.get("delivery") is not None:
         assert canonical_records(delivery, ("deliveries",)) == before["delivery"]
     if canonical is not None:
@@ -726,7 +726,7 @@ def isolated_environment(root: Path) -> dict[str, str]:
                   XDG_CACHE_HOME=str(root / "cache"), XDG_DATA_HOME=str(root / "data"),
                   TMPDIR=str(root), TMP=str(root), TEMP=str(root),
                   PIP_CONFIG_FILE=os.devnull, PIP_NO_INPUT="1", PIP_DISABLE_PIP_VERSION_CHECK="1", PYTHONUTF8="1",
-                  NANOBOT_TUI_NO_DOWNLOAD="1", NO_COLOR="1", PATH=os.defpath)
+                  NUJINAGENT_TUI_NO_DOWNLOAD="1", NO_COLOR="1", PATH=os.defpath)
     if os.name == "nt":
         system["PATH"] = str(Path(system["SYSTEMROOT"]) / "System32")
     return system
@@ -773,13 +773,13 @@ def cleanup_lane(output: Path, scenarios: list[str]) -> None:
     with (output.parent / "cleanup.log").open("w", encoding="utf-8") as log:
         for scenario in scenarios:
             case_root = output / scenario
-            config_file = case_root / "account/.nanobot/config.json"
+            config_file = case_root / "account/.nujinagent/config.json"
             if not config_file.exists():
                 continue
             try:
                 env = isolated_environment(case_root / "account")
                 env.update(TMPDIR=str(case_root), TMP=str(case_root), TEMP=str(case_root))
-                subprocess.run([sys.executable, "-I", "-B", "-m", "nanobot", "gateway", "stop", "--config",
+                subprocess.run([sys.executable, "-I", "-B", "-m", "nujinagent", "gateway", "stop", "--config",
                                 str(config_file)], env=env, cwd=case_root, stdout=log, stderr=log,
                                timeout=60, check=True)
                 config = read(config_file)
@@ -819,7 +819,7 @@ def run_parallel(args, root: Path, target: Path, version: str, original_hash: st
                 owner = None
                 flags = 0
                 if os.name == "nt":
-                    from nanobot.execution._windows_job import WindowsJob
+                    from nujinagent.execution._windows_job import WindowsJob
 
                     owner = stack.enter_context(closing(WindowsJob.create()))
                     flags = subprocess.CREATE_NEW_PROCESS_GROUP | owner.creation_flags
@@ -904,7 +904,7 @@ def run_serial(args, root: Path, target: Path, version: str, original_hash: str,
         with timings.measure("initial_dependency_install"):
             subprocess.run([str(python), "-I", "-m", "pip", "install", "--only-binary=:all:", str(target)],
                            check=True, env=system, timeout=600, stdout=subprocess.DEVNULL)
-    write(environment / "nanobot-install.json", {"schema_version": 1, "owner": "nanobot-installer",
+    write(environment / "nujinagent-install.json", {"schema_version": 1, "owner": "nujinagent-installer",
                                                "environment": str(environment), "extras": []})
     for scenario in scenarios:
         with timings.measure("scenario_total", scenario=scenario):
@@ -985,10 +985,10 @@ def run_serial(args, root: Path, target: Path, version: str, original_hash: str,
                     results.append(result)
                 finally:
                     with timings.measure("cleanup", scenario=scenario):
-                        subprocess.run([str(python), "-I", "-m", "nanobot", "gateway", "stop", "--config",
-                                        str(account / ".nanobot/config.json")], env=env, cwd=case_root,
+                        subprocess.run([str(python), "-I", "-m", "nujinagent", "gateway", "stop", "--config",
+                                        str(account / ".nujinagent/config.json")], env=env, cwd=case_root,
                                        stdout=log, stderr=log, timeout=60, check=True)
-                        config_file = account / ".nanobot/config.json"
+                        config_file = account / ".nujinagent/config.json"
                         if config_file.exists():
                             config = read(config_file)
                             _wait_for_closed_listeners((config["gateway"]["port"], config["channels"]["websocket"]["port"]))
@@ -1018,7 +1018,7 @@ def run(args) -> dict:
     if len(tags) != 1 or any(tag.platform == "any" for tag in tags):
         raise ValueError("Acceptance requires the final native wheel, not an intermediate universal wheel")
     files, _, _ = wheel_files(target, version, platform=next(iter(tags)).platform)
-    if files["nanobot/_build_commit.txt"].decode().strip() != args.commit:
+    if files["nujinagent/_build_commit.txt"].decode().strip() != args.commit:
         raise ValueError("Target wheel does not contain the requested candidate commit")
     original_hash = digest(target)
     scenarios = list(args.scenario or SCENARIOS)

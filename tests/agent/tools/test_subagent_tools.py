@@ -4,14 +4,14 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from nanobot.agent.context import TranscriptInput
-from nanobot.agent.memory import Consolidator
-from nanobot.agent.runner import AgentRunResult
-from nanobot.agent.tools.context import RequestContext
-from nanobot.agent.tools.registry import is_tool_error_result
-from nanobot.config.schema import AgentDefaults
-from nanobot.providers.base import GenerationSettings
-from nanobot.utils.llm_runtime import LLMRuntime
+from nujinagent.agent.context import TranscriptInput
+from nujinagent.agent.memory import Consolidator
+from nujinagent.agent.runner import AgentRunResult
+from nujinagent.agent.tools.context import RequestContext
+from nujinagent.agent.tools.registry import is_tool_error_result
+from nujinagent.config.schema import AgentDefaults
+from nujinagent.providers.base import GenerationSettings
+from nujinagent.utils.llm_runtime import LLMRuntime
 
 _MAX_TOOL_RESULT_CHARS = AgentDefaults().max_tool_result_chars
 
@@ -23,8 +23,8 @@ def _runtime(provider: MagicMock, model: str = "test-model") -> LLMRuntime:
 
 @pytest.mark.asyncio
 async def test_run_inline_returns_result_without_announcement(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.bus.queue import MessageBus
 
     provider = MagicMock()
     manager = SubagentManager(
@@ -56,9 +56,9 @@ async def test_run_inline_returns_result_without_announcement(tmp_path):
 
 @pytest.mark.asyncio
 async def test_run_inline_returns_structured_error(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.agent.tools.registry import is_tool_error_result
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.agent.tools.registry import is_tool_error_result
+    from nujinagent.bus.queue import MessageBus
 
     manager = SubagentManager(
         consolidator=MagicMock(spec=Consolidator),
@@ -88,10 +88,10 @@ async def test_run_inline_returns_structured_error(tmp_path):
 
 @pytest.mark.asyncio
 async def test_subagent_exec_tool_receives_allowed_env_keys(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.agent.tools.shell import ExecToolConfig
-    from nanobot.bus.queue import MessageBus
-    from nanobot.config.schema import ToolsConfig
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.agent.tools.shell import ExecToolConfig
+    from nujinagent.bus.queue import MessageBus
+    from nujinagent.config.schema import ToolsConfig
 
     bus = MessageBus()
     provider = MagicMock()
@@ -132,8 +132,8 @@ async def test_subagent_exec_tool_receives_allowed_env_keys(tmp_path):
 
 @pytest.mark.asyncio
 async def test_subagent_uses_configured_max_iterations(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     provider = MagicMock()
@@ -172,8 +172,8 @@ async def test_subagent_uses_configured_max_iterations(tmp_path):
 
 @pytest.mark.asyncio
 async def test_subagent_checkpoint_updates_status_and_preserves_omitted_fields(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.bus.queue import MessageBus
 
     mgr = SubagentManager(
         consolidator=MagicMock(spec=Consolidator),
@@ -217,8 +217,8 @@ async def test_subagent_checkpoint_updates_status_and_preserves_omitted_fields(t
 
 @pytest.mark.asyncio
 async def test_spawn_forwards_temperature_to_run_spec(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     provider = MagicMock()
@@ -254,9 +254,9 @@ async def test_spawn_forwards_temperature_to_run_spec(tmp_path):
 
 @pytest.mark.asyncio
 async def test_background_spawn_waits_for_concurrency_capacity(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.agent.tools.subagent import SubagentTool
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.agent.tools.subagent import SubagentTool
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     provider = MagicMock()
@@ -293,7 +293,7 @@ async def test_background_spawn_waits_for_concurrency_capacity(tmp_path):
 
     mgr.runner.run = AsyncMock(side_effect=fake_run)
 
-    from nanobot.agent.tools.context import RequestContext, request_context
+    from nujinagent.agent.tools.context import RequestContext, request_context
 
     tool = SubagentTool(mgr)
     with request_context(RequestContext(
@@ -326,8 +326,8 @@ async def test_background_spawn_waits_for_concurrency_capacity(tmp_path):
 
 @pytest.mark.asyncio
 async def test_subagent_tool_waits_for_inline_result():
-    from nanobot.agent.tools.context import RequestContext, request_context
-    from nanobot.agent.tools.subagent import SubagentTool
+    from nujinagent.agent.tools.context import RequestContext, request_context
+    from nujinagent.agent.tools.subagent import SubagentTool
 
     class Manager:
         max_concurrent_subagents = 1
@@ -360,10 +360,10 @@ async def test_subagent_tool_waits_for_inline_result():
 
 @pytest.mark.asyncio
 async def test_inline_spawn_waits_for_concurrency_capacity(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.agent.tools.context import RequestContext, request_context
-    from nanobot.agent.tools.subagent import SubagentTool
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.agent.tools.context import RequestContext, request_context
+    from nujinagent.agent.tools.subagent import SubagentTool
+    from nujinagent.bus.queue import MessageBus
 
     manager = SubagentManager(
         consolidator=MagicMock(spec=Consolidator),
@@ -422,14 +422,14 @@ async def test_inline_spawn_waits_for_concurrency_capacity(tmp_path):
 
 @pytest.mark.asyncio
 async def test_runner_executes_inline_spawn_batch_concurrently(tmp_path):
-    from nanobot.agent.hook import AgentHook, AgentHookContext
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.agent.tools.context import RequestContext, request_context
-    from nanobot.agent.tools.execution import execute_tool_calls
-    from nanobot.agent.tools.registry import ToolRegistry
-    from nanobot.agent.tools.subagent import SubagentTool
-    from nanobot.bus.queue import MessageBus
-    from nanobot.providers.base import ToolCallRequest
+    from nujinagent.agent.hook import AgentHook, AgentHookContext
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.agent.tools.context import RequestContext, request_context
+    from nujinagent.agent.tools.execution import execute_tool_calls
+    from nujinagent.agent.tools.registry import ToolRegistry
+    from nujinagent.agent.tools.subagent import SubagentTool
+    from nujinagent.bus.queue import MessageBus
+    from nujinagent.providers.base import ToolCallRequest
 
     manager = SubagentManager(
         consolidator=MagicMock(spec=Consolidator),
@@ -501,8 +501,8 @@ async def test_runner_executes_inline_spawn_batch_concurrently(tmp_path):
 
 @pytest.mark.asyncio
 async def test_cancel_by_session_cancels_inline_subagent(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.bus.queue import MessageBus
 
     manager = SubagentManager(
         consolidator=MagicMock(spec=Consolidator),
@@ -533,8 +533,8 @@ async def test_cancel_by_session_cancels_inline_subagent(tmp_path):
 
 
 def test_subagent_default_max_concurrent_matches_agent_defaults(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     mgr = SubagentManager(
@@ -549,8 +549,8 @@ def test_subagent_default_max_concurrent_matches_agent_defaults(tmp_path):
 
 
 def test_subagent_default_max_iterations_matches_agent_defaults(tmp_path):
-    from nanobot.agent.subagent import SubagentManager
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.subagent import SubagentManager
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     mgr = SubagentManager(
@@ -564,8 +564,8 @@ def test_subagent_default_max_iterations_matches_agent_defaults(tmp_path):
 
 
 def test_agent_loop_passes_max_iterations_to_subagents(tmp_path):
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     provider = MagicMock()
@@ -584,8 +584,8 @@ def test_agent_loop_passes_max_iterations_to_subagents(tmp_path):
 
 @pytest.mark.asyncio
 async def test_agent_loop_syncs_updated_max_iterations_before_run(tmp_path):
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     provider = MagicMock()
@@ -626,8 +626,8 @@ async def test_agent_loop_syncs_updated_max_iterations_before_run(tmp_path):
 
 @pytest.mark.asyncio
 async def test_drain_pending_no_block_when_no_subagents(tmp_path):
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.bus.queue import MessageBus
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.bus.queue import MessageBus
 
     bus = MessageBus()
     provider = MagicMock()
@@ -674,9 +674,9 @@ async def test_drain_pending_no_block_when_no_subagents(tmp_path):
 
 @pytest.mark.asyncio
 async def test_terminal_drain_timeout(tmp_path):
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.bus.queue import MessageBus
-    from nanobot.session.manager import Session
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.bus.queue import MessageBus
+    from nujinagent.session.manager import Session
 
     bus = MessageBus()
     provider = MagicMock()
@@ -730,7 +730,7 @@ async def test_terminal_drain_timeout(tmp_path):
         awaitable.close()
         raise asyncio.TimeoutError
 
-    with patch("nanobot.agent.pending_inputs.asyncio.wait_for", side_effect=_timeout):
+    with patch("nujinagent.agent.pending_inputs.asyncio.wait_for", side_effect=_timeout):
         results = await terminal_injection_callback()
         assert results == []
 
@@ -739,10 +739,10 @@ async def test_terminal_drain_timeout(tmp_path):
 
 @pytest.mark.asyncio
 async def test_terminal_drain_reuses_one_timeout_budget(tmp_path):
-    from nanobot.agent.loop import AgentLoop
-    from nanobot.bus.events import InboundMessage
-    from nanobot.bus.queue import MessageBus
-    from nanobot.session.manager import Session
+    from nujinagent.agent.loop import AgentLoop
+    from nujinagent.bus.events import InboundMessage
+    from nujinagent.bus.queue import MessageBus
+    from nujinagent.session.manager import Session
 
     loop = AgentLoop(
         bus=MessageBus(),
@@ -803,7 +803,7 @@ async def test_terminal_drain_reuses_one_timeout_budget(tmp_path):
     pending_asyncio = SimpleNamespace(**vars(asyncio))
     pending_asyncio.get_running_loop = lambda: fake_loop
     pending_asyncio.wait_for = _deliver
-    with patch("nanobot.agent.pending_inputs.asyncio", pending_asyncio):
+    with patch("nujinagent.agent.pending_inputs.asyncio", pending_asyncio):
         assert await terminal_injection_callback()
         assert await terminal_injection_callback()
 

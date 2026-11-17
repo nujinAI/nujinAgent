@@ -3,10 +3,10 @@ from typing import Any
 
 import pytest
 
-from nanobot.cron.types import CronJob, CronPayload
-from nanobot.session.manager import SessionManager
-from nanobot.triggers.local_types import LocalTrigger
-from nanobot.webui.session_automations import serialize_automation_jobs
+from nujinagent.cron.types import CronJob, CronPayload
+from nujinagent.session.manager import SessionManager
+from nujinagent.triggers.local_types import LocalTrigger
+from nujinagent.webui.session_automations import serialize_automation_jobs
 
 
 @pytest.mark.parametrize(

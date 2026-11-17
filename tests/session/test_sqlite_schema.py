@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-import nanobot.session.sqlite_store as sqlite_store
-from nanobot.providers.base import ProviderConversationState
-from nanobot.session.manager import Session
-from nanobot.session.sqlite_store import SqliteSessionStore
+import nujinagent.session.sqlite_store as sqlite_store
+from nujinagent.providers.base import ProviderConversationState
+from nujinagent.session.manager import Session
+from nujinagent.session.sqlite_store import SqliteSessionStore
 
 
 def _session() -> Session:

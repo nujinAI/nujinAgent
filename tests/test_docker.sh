@@ -3,9 +3,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
 RUN_ID="$$-${RANDOM}"
-IMAGE_NAME="nanobot-test-${RUN_ID}"
-CONTAINER_NAME="nanobot-test-run-${RUN_ID}"
-ONBOARDED_IMAGE="nanobot-test-onboarded-${RUN_ID}"
+IMAGE_NAME="nujinagent-test-${RUN_ID}"
+CONTAINER_NAME="nujinagent-test-run-${RUN_ID}"
+ONBOARDED_IMAGE="nujinagent-test-onboarded-${RUN_ID}"
 
 cleanup() {
     result=$?
@@ -22,11 +22,11 @@ echo "=== Building Docker image ==="
 docker build -t "$IMAGE_NAME" .
 
 echo ""
-echo "=== Running 'nanobot onboard' ==="
+echo "=== Running 'nujinagent onboard' ==="
 docker run --name "$CONTAINER_NAME" "$IMAGE_NAME" onboard
 
 echo ""
-echo "=== Running 'nanobot status' ==="
+echo "=== Running 'nujinagent status' ==="
 docker commit "$CONTAINER_NAME" "$ONBOARDED_IMAGE" > /dev/null
 if STATUS_OUTPUT=$(docker run --rm "$ONBOARDED_IMAGE" status 2>&1); then
     echo "$STATUS_OUTPUT"
@@ -49,7 +49,7 @@ check() {
     fi
 }
 
-check "nanobot Status"
+check "nujinagent Status"
 check "Config:"
 check "Workspace:"
 check "Model:"

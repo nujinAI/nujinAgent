@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from nanobot.agent.autocompact import AutoCompact
-from nanobot.events import NO_EVENTS, ContextCompactionEvent, EventSink
-from nanobot.session.manager import Session, SessionManager
+from nujinagent.agent.autocompact import AutoCompact
+from nujinagent.events import NO_EVENTS, ContextCompactionEvent, EventSink
+from nujinagent.session.manager import Session, SessionManager
 
 
 def _mock_sessions():

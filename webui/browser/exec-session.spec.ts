@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 for (const width of [1280, 360]) {
   test(`shows command activity and keeps long check histories inspectable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 720 });
-    await page.addInitScript(() => localStorage.setItem("nanobot.locale", "en"));
+    await page.addInitScript(() => localStorage.setItem("nujinagent.locale", "en"));
     await page.goto("/browser/fixture.html?case=exec-session");
     const activity = page.getByRole("region", { name: "Command activity" });
     await expect(activity).toContainText("Waiting for command curl -u •••• https://example.invalid");

@@ -58,7 +58,7 @@ import { useSidebarState } from "@/hooks/useSidebarState";
 import { useSkills } from "@/hooks/useSkills";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAppViewport } from "@/hooks/useAppViewport";
-import type { SendAttachment, SendOptions } from "@/hooks/useNanobotStream";
+import type { SendAttachment, SendOptions } from "@/hooks/useNujinAgentStream";
 import { ThemeProvider, useTheme } from "@/hooks/useTheme";
 import { useReadingTypography } from "@/hooks/useReadingTypography";
 import { cn } from "@/lib/utils";
@@ -73,7 +73,7 @@ import {
 } from "@/lib/bootstrap";
 import { displayTitle, sortSessions } from "@/lib/chat-groups";
 import { deriveTitle } from "@/lib/format";
-import { NanobotClient } from "@/lib/nanobot-client";
+import { NujinAgentClient } from "@/lib/nujinagent-client";
 import { BrowserNotifications, useBrowserNotificationLifecycle } from "@/components/BrowserNotifications";
 import { ThreadMessageCache } from "@/lib/thread-message-cache";
 import { FilePreviewStore } from "@/hooks/useFilePreviewState";
@@ -111,7 +111,7 @@ type BootState =
   | { status: "auth"; failed?: boolean }
   | {
       status: "ready";
-      client: NanobotClient;
+      client: NujinAgentClient;
       token: string;
       tokenExpiresAt: number | null;
       modelName: string | null;
@@ -125,14 +125,14 @@ function bootstrapCapabilities(boot: BootstrapResponse): string[] {
   return Array.isArray(capabilities) ? capabilities.filter((entry) => typeof entry === "string") : [];
 }
 
-const SIDEBAR_STORAGE_KEY = "nanobot-webui.sidebar";
-const SESSION_UPDATES_STORAGE_KEY = "nanobot-webui.sidebar.session-updates.v1";
-const LEGACY_COMPLETED_RUNS_STORAGE_KEY = "nanobot-webui.sidebar.completed-runs.v1";
-const RESTART_STARTED_KEY = "nanobot-webui.restartStartedAt";
-const RESTART_ROUTE_KEY = "nanobot-webui.restartRoute";
+const SIDEBAR_STORAGE_KEY = "nujinagent-webui.sidebar";
+const SESSION_UPDATES_STORAGE_KEY = "nujinagent-webui.sidebar.session-updates.v1";
+const LEGACY_COMPLETED_RUNS_STORAGE_KEY = "nujinagent-webui.sidebar.completed-runs.v1";
+const RESTART_STARTED_KEY = "nujinagent-webui.restartStartedAt";
+const RESTART_ROUTE_KEY = "nujinagent-webui.restartRoute";
 const RESTART_ROUTE_TTL_MS = 5 * 60 * 1000;
 const SIDEBAR_WIDTH = 272;
-const SIDEBAR_WIDTH_STORAGE_KEY = "nanobot-webui.sidebar.width";
+const SIDEBAR_WIDTH_STORAGE_KEY = "nujinagent-webui.sidebar.width";
 const SIDEBAR_RAIL_WIDTH = 56;
 const MOBILE_SIDEBAR_WIDTH = `min(${SIDEBAR_WIDTH}px, calc(100vw - 0.75rem))`;
 const TOKEN_REFRESH_MARGIN_MS = 30_000;
@@ -253,7 +253,7 @@ function readShellRoute(): ShellRoute {
   const settingsSection = isSettingsSectionKey(rawSettingsSection)
     ? rawSettingsSection
     : "overview";
-  const saved: unknown = window.history.state?.nanobotReturnChat;
+  const saved: unknown = window.history.state?.nujinagentReturnChat;
   const returnChat = saved && typeof saved === "object" && "hash" in saved
     && saved.hash === window.location.hash ? saved : null;
   const activeKey = params.get("chat")?.trim()
@@ -340,7 +340,7 @@ function writeShellRoute(route: ShellRoute, replace = false): void {
   const nextHash = shellRouteHash(route);
   const state = {
     ...window.history.state,
-    nanobotReturnChat: route.view === "chat" ? null : {
+    nujinagentReturnChat: route.view === "chat" ? null : {
       hash: nextHash,
       key: route.activeKey,
       temporary: route.temporary === true,
@@ -415,7 +415,7 @@ function AuthForm({
         >
           <div className="text-center">
             <img
-              src="/brand/nanobot_mark.svg"
+              src="/brand/nujinagent_mark.svg"
               alt=""
               width={56}
               height={56}
@@ -499,7 +499,7 @@ function AuthForm({
           >
             <p>{t("app.auth.helpConfig")}</p>
             <code className="mt-2 block rounded-compact bg-background px-3 py-2 font-mono text-xs text-foreground [overflow-wrap:anywhere]">
-              ~/.nanobot/config.json
+              ~/.nujinagent/config.json
             </code>
             <p className="mt-4">{t("app.auth.helpSecret")}</p>
             <code className="mt-2 block rounded-compact bg-background px-3 py-2 font-mono text-xs text-foreground [overflow-wrap:anywhere]">
@@ -613,7 +613,7 @@ export default function App() {
   const bootstrapSecretRef = useRef("");
 
   const refreshReadyClient = useCallback(
-    async (client: NanobotClient, fallbackSurface: RuntimeSurface, signal?: AbortSignal) => {
+    async (client: NujinAgentClient, fallbackSurface: RuntimeSurface, signal?: AbortSignal) => {
       const boot = await fetchBootstrap("", bootstrapSecretRef.current);
       signal?.throwIfAborted();
       const url = deriveWsUrl(boot.ws_path, boot.token, boot.ws_url);
@@ -660,7 +660,7 @@ export default function App() {
           activateReloadCache(url);
           const runtimeSurface = resolveRuntimeSurface(boot.runtime_surface, "browser");
           const runtimeHost = createRuntimeHost(runtimeSurface, boot.runtime_capabilities);
-          const client = new NanobotClient({
+          const client = new NujinAgentClient({
             url,
             maxFrameBytes: boot.limits?.transport.max_frame_bytes,
             socketFactory: runtimeHost.socketFactory,
