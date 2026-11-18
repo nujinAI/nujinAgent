@@ -15,7 +15,7 @@ export {
   fetchGatewayHealth,
   sanitizeConnectionFailure,
 } from "./connection"
-export { NujinAgentClient } from "./nujinagent-client"
+export { NujinAgentClient } from "./nanobot-client"
 export type {
   ApiReauthenticator,
   ConnectionStatus,
