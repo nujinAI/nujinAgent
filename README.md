@@ -1,54 +1,19 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./images/readme-cover-dark.svg">
-  <img alt="nujinagent README cover" src="./images/readme-cover-light.svg">
-</picture>
-
-<div align="center">
-  <p>
-    <a href="https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview">English</a> |
-    <a href="https://nujinagent.wiki/cn/docs/latest/getting-started/nujinagent-overview">简体中文</a> |
-    <a href="https://nujinagent.wiki/zh-Hant/docs/latest/getting-started/nujinagent-overview">繁體中文</a> |
-    <a href="https://nujinagent.wiki/es/docs/latest/getting-started/nujinagent-overview">Español</a> |
-    <a href="https://nujinagent.wiki/fr/docs/latest/getting-started/nujinagent-overview">Français</a> |
-    <a href="https://nujinagent.wiki/id/docs/latest/getting-started/nujinagent-overview">Bahasa Indonesia</a> |
-    <a href="https://nujinagent.wiki/ja/docs/latest/getting-started/nujinagent-overview">日本語</a> |
-    <a href="https://nujinagent.wiki/ko/docs/latest/getting-started/nujinagent-overview">한국어</a> |
-    <a href="https://nujinagent.wiki/ru/docs/latest/getting-started/nujinagent-overview">Русский</a> |
-    <a href="https://nujinagent.wiki/vi/docs/latest/getting-started/nujinagent-overview">Tiếng Việt</a>
-  </p>
-  <p>
-    <a href="https://github.com/HKUDS/nujinagent"><img src="https://img.shields.io/github/stars/HKUDS/nujinagent?style=flat&logo=github" alt="GitHub stars"></a>
-    <a href="https://pypi.org/project/nujinagent/"><img src="https://img.shields.io/pypi/v/nujinagent" alt="PyPI version"></a>
-    <a href="https://pepy.tech/project/nujinagent"><img src="https://static.pepy.tech/badge/nujinagent" alt="PyPI downloads"></a>
-    <a href="https://github.com/HKUDS/nujinagent/actions/workflows/ci.yml"><img src="https://github.com/HKUDS/nujinagent/actions/workflows/ci.yml/badge.svg?branch=main" alt="Test Suite"></a>
-    <a href="https://pypi.org/project/nujinagent/"><img src="https://img.shields.io/badge/python-%3E%3D3.11-blue" alt="Python 3.11 or newer"></a>
-    <a href="./LICENSE"><img src="https://img.shields.io/github/license/HKUDS/nujinagent" alt="MIT License"></a>
-    <a href="https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview"><img src="https://img.shields.io/badge/docs-nujinagent.wiki-blue" alt="nujinagent documentation"></a>
-  </p>
-  <p>
-    <a href="https://discord.gg/MnCvHqpUGB">Discord</a> ·
-    <a href="https://x.com/nujinagent_project">X</a> ·
-    <a href="./COMMUNICATION.md#wechat">WeChat 微信交流群</a> ·
-    <a href="./COMMUNICATION.md#hkuds-community">Feishu</a>
-  </p>
-</div>
-
 # ⚡ NujinAgent
 
-**NujinAgent** is the autonomous execution and runtime agent of the **NujinAI** stack—a lightweight, open-source, self-hosted AI agent framework built in Python and specifically designed to host, run, and operate **NujinSkill**.
+**NujinAgent** is the dedicated, isolated execution engine of the **NujinAI** stack—built in Python exclusively to host, run, and operate **NujinSkill** with its own clean workspace, configuration, long-term memory, context window, and dedicated WebUI.
 
 ## 🌐 The NujinAI Stack
 
 **NujinAI** is a complete, end-to-end technology stack for autonomous quantitative research, systematic strategy engineering, and live execution:
 
-- **NujinSkill** — The **quantitative brain**: an open-source, CPU-native mathematical discovery and systematic execution framework (130-coordinate basis grid, 5-slice sub-era invariance, MFE/MAE plateau optimization, and 8-gate cynic auditing).
-- **NujinAgent** — The **autonomous runtime**: the always-on agentic operating layer that connects NujinSkill to your terminal, browser WebUI, chat apps, long-term memory, scheduled automations, and MCP tools—turning quantitative research, strategy generation, and live bot supervision into an autonomous workflow.
+- **NujinSkill** — The **quantitative brain**: an open-source, CPU-native mathematical discovery and systematic execution framework (130-coordinate basis grid, 5-slice sub-era invariance, MFE/MAE plateau optimization, and 8-gate cynic auditing) that can turn any AI agent into a quant engineer.
+- **NujinAgent** — The **dedicated execution runtime**: while general-purpose AI agents share workspaces, configs, skills, and context across everyday tasks, **NujinAgent** gives **NujinSkill** its own isolated, always-on runtime—connecting it to a dedicated WebUI, CLI, chat channels, scheduled automations, and MCP tools without overlapping or cluttering your other agents.
 
 ## Start Here
 
 | You want to... | Go to |
 |---|---|
-| Install nujinagent with no terminal/config background | [Start Without Technical Background](./docs/start-without-technical-background.md) |
+| Install NujinAgent with no terminal/config background | [Start Without Technical Background](./docs/start-without-technical-background.md) |
 | Install quickly and get your first reply | [Install](#-install) and [Quick Start](#-quick-start) |
 | Open the bundled browser UI | [WebUI](#-webui) |
 | Connect Telegram, Discord, WeChat, Slack, Email, Mattermost, Linear, or another channel | [Chat app guide](./docs/guides/chat-app-ai-agent.md) |
@@ -56,11 +21,11 @@
 | Develop the browser UI | [Install current source](#-install), then [WebUI development](./webui/README.md) and [Contributing](./CONTRIBUTING.md) |
 | Integrate from Python | [Python SDK](./docs/python-sdk.md) |
 | Understand or extend the internals | [Architecture](./docs/architecture.md), [Contributing](./CONTRIBUTING.md), and [Provider extensions](./docs/development.md) |
-| Deploy to the cloud or keep nujinagent running as a service | [Deployment](./docs/deployment.md) |
+| Deploy to the cloud or keep NujinAgent running as a service | [Deployment](./docs/deployment.md) |
 
-## What can nujinagent do?
+## What can NujinAgent do?
 
-nujinagent can:
+NujinAgent can:
 
 - run in a browser WebUI or terminal
 - connect to Telegram, Discord, Slack, WeChat, Email, Mattermost, Linear, and other channels
@@ -71,7 +36,7 @@ nujinagent can:
 - embed the agent with the Python SDK
 - deploy as a long-running local or server-side agent gateway
 
-## 💡 Why nujinagent
+## 💡 Why NujinAgent
 
 - **Persistent workflows**: keep saved conversations, long-term memory, and task results for later work.
 - **Chat-native reach**: WebUI, Telegram, Feishu, Slack, Discord, Teams, email, Mattermost, and Linear.
@@ -81,7 +46,7 @@ nujinagent can:
 
 ## 📦 Install
 
-You need **Python 3.11 or newer** and access to a [supported model provider or local model server](./docs/providers.md). Model fees or local hardware requirements depend on the service you choose; nujinagent does not supply a model account.
+You need **Python 3.11 or newer** and access to a [supported model provider or local model server](./docs/providers.md). Model fees or local hardware requirements depend on the service you choose; NujinAgent does not supply a model account.
 
 Choose the **stable release** for everyday use or **current source** for development and the latest features. This README describes current source; [published documentation](https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview) covers the released version.
 
@@ -191,7 +156,7 @@ Platform wheels include both the WebUI and the native terminal UI: macOS 13+ (Ap
 </details>
 
 <details>
-<summary>Verify the installation or locate the nujinagent command</summary>
+<summary>Verify the installation or locate the NujinAgent command</summary>
 
 Verify the install:
 
@@ -207,7 +172,7 @@ After installation, continue with [Quick Start](#-quick-start). Use the exact co
 
 ## 🚀 Quick Start
 
-**Open nujinagent in your browser**
+**Open NujinAgent in your browser**
 
 If the installer already opened the WebUI, continue there. Otherwise run:
 
@@ -225,12 +190,12 @@ Keep the launcher terminal open while using the browser. It starts or joins the 
 
 A normal reply verifies the provider/model and browser connection. The file task separately checks the selected project and its file permissions. Attaching a file sends it to the conversation; it does not change the selected project folder.
 
-Then describe your next goal in the same chat, for example: "I am already using the WebUI. Help me connect Telegram and allow only my account." An enabled `nujinagent-document` skill can consult the documentation bundled with your installation; see [Continue with nujinagent](./docs/quick-start.md#continue-with-nujinagent) for examples, explicit invocation, and availability.
+Then describe your next goal in the same chat, for example: "I am already using the WebUI. Help me connect Telegram and allow only my account." An enabled `nujinagent-document` skill can consult the documentation bundled with your installation; see [Continue with NujinAgent](./docs/quick-start.md#continue-with-nujinagent) for examples, explicit invocation, and availability.
 
 <details>
 <summary>Open the WebUI on a remote server through SSH</summary>
 
-After installing nujinagent on the server, start its WebUI without opening a server-side browser:
+After installing NujinAgent on the server, start its WebUI without opening a server-side browser:
 
 ```bash
 nujinagent webui --no-open
@@ -272,7 +237,7 @@ The native TUI uses the launch directory as its project workspace and shares sav
 - Type `/` to discover commands, `/sessions` to switch conversations, or `@` to mention an app, MCP server, or saved session.
 - Paste clipboard images with `Ctrl+V` or `Alt+V`, and use `$` to complete skill references.
 - Use `/diff` to inspect file changes, `/context` to inspect session context, or `/branch` to continue from a completed reply in a new session.
-- Press `Enter` to send. While nujinagent is working, `Enter` sends now and `Tab` sends after the current response. Press `Shift+Enter` to add a newline (`Ctrl+J` works in terminals that cannot distinguish modified Enter keys).
+- Press `Enter` to send. While NujinAgent is working, `Enter` sends now and `Tab` sends after the current response. Press `Shift+Enter` to add a newline (`Ctrl+J` works in terminals that cannot distinguish modified Enter keys).
 - Use `/detach` to promote the gateway to background mode and close the TUI while work continues.
 
 Each launch starts a new session by default. Use `--session` to resume one and `--workspace` to choose another project workspace. See the [CLI reference](./docs/cli-reference.md#agent-cli) for session branching, diffs, history, shortcuts, gateway lifecycle, and compatibility options.
@@ -295,7 +260,7 @@ Use a regular topic for a bounded objective with a clear completion condition, f
 /goal Review this project's tests and list the smallest missing test case.
 ```
 
-An active goal keeps nujinagent working beyond the ordinary iteration limit until it records completion, cancellation, or a blocked state. This can use more model tokens; `/stop` interrupts the current work, while asking nujinagent to cancel the goal abandons the objective. Execution errors can also stop the work. A scheduled automation instead starts work at specified times. Keep the gateway running for unattended work using the background or service options below.
+An active goal keeps NujinAgent working beyond the ordinary iteration limit until it records completion, cancellation, or a blocked state. This can use more model tokens; `/stop` interrupts the current work, while asking NujinAgent to cancel the goal abandons the objective. Execution errors can also stop the work. A scheduled automation instead starts work at specified times. Keep the gateway running for unattended work using the background or service options below.
 
 After a gateway restart, reopen the original topic and review saved results before explicitly continuing any interrupted work. Recovery does not blindly replay uncertain tool actions. See the [long-running agent guide](./docs/guides/long-running-ai-agent.md) for starting conditions and related automation options.
 
@@ -352,7 +317,7 @@ It skips guided WebUI setup and browser opening. The WebUI remains available whe
 
 </details>
 
-If nujinagent worked for you, a star on GitHub is the simplest way to support the project.
+If NujinAgent worked for you, a star on GitHub is the simplest way to support the project.
 
 <a id="deploy-to-render"></a>
 
@@ -360,7 +325,7 @@ If nujinagent worked for you, a star on GitHub is the simplest way to support th
 
 **Render — one click**
 
-Deploy nujinagent's gateway and bundled WebUI from the repository's ready-to-use Blueprint:
+Deploy NujinAgent's gateway and bundled WebUI from the repository's ready-to-use Blueprint:
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/HKUDS/nujinagent)
 
@@ -445,7 +410,7 @@ See the [WebUI guide](./docs/webui.md) for LAN access, background operation, wor
 ## Architecture
 
 <p align="center">
-  <img src="images/nujinagent_arch.png" alt="nujinagent architecture" width="800">
+  <img src="images/nujinagent_arch.png" alt="NujinAgent architecture" width="800">
 </p>
 
 The Python gateway owns agent execution, sessions, tools, memory, and security policy for the WebUI, TUI, and chat apps. The clients share that runtime; the core agent loop builds context, calls the model, executes requested tools, and returns the result. Memory, skills, channels, and MCP integrations extend that loop.
@@ -456,7 +421,7 @@ See [Architecture](./docs/architecture.md) for source ownership and extension po
 
 ## Docs
 
-Browse the [repo docs](./docs/README.md) for current source documentation, or visit [nujinagent.wiki](https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview) for the stable release. The [task guide index](./docs/guides/README.md) groups walkthroughs by outcome.
+Browse the [repo docs](./docs/README.md) for current source documentation, or visit [NujinAgent.wiki](https://nujinagent.wiki/docs/latest/getting-started/nujinagent-overview) for the stable release. The [task guide index](./docs/guides/README.md) groups walkthroughs by outcome.
 
 - Get started: [Beginner walkthrough](./docs/start-without-technical-background.md) or [Install and Quick Start](./docs/quick-start.md).
 - Choose and configure a model: [Providers and Models](./docs/providers.md) and [Provider Cookbook](./docs/provider-cookbook.md).
@@ -473,7 +438,7 @@ Browse the [repo docs](./docs/README.md) for current source documentation, or vi
 
 v0.4.1 improves workspace permissions, sandboxed commands, connection recovery, file-context previews, and navigation. It retains legacy history and proxy migration through 0.4.x.
 
-Back up the stopped instance and upgrade through its original installation method. v0.3.5 can upgrade directly to v0.4.1; in-app automatic installation is not enabled for this release. See [upgrade notes](https://github.com/HKUDS/nujinagent/releases/tag/v0.4.1) and [Updating nujinagent](./docs/updating.md).
+Back up the stopped instance and upgrade through its original installation method. v0.3.5 can upgrade directly to v0.4.1; in-app automatic installation is not enabled for this release. See [upgrade notes](https://github.com/HKUDS/nujinagent/releases/tag/v0.4.1) and [Updating NujinAgent](./docs/updating.md).
 
 For other changes, see [GitHub releases](https://github.com/HKUDS/nujinagent/releases) and the [release archive](./docs/release-archive.md).
 
@@ -894,6 +859,6 @@ This project is a thankful fork of [**HKUDS/nanobot**](https://github.com/HKUDS/
 <!-- contributors:end -->
 
 <p align="center">
-  <em> Thanks for visiting ✨ nujinagent!</em><br><br>
+  <em> Thanks for visiting ✨ NujinAgent!</em><br><br>
   <img src="https://visitor-badge.laobi.icu/badge?page_id=HKUDS.nujinagent&style=for-the-badge&color=00d4ff" alt="Views">
 </p>
