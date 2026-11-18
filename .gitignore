@@ -78,6 +78,8 @@ Desktop.ini
 nano.*.save
 
 .env.*
+nujinagent/skills/nujinskills/
+nujinagent/skills/nujinskills
 !.env.example
 
 *.log

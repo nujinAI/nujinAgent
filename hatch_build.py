@@ -66,6 +66,31 @@ class WebUIBuildHook(BuildHookInterface):
         build_data.setdefault("artifacts", []).append(
             "nujinagent/skills/nujinagent-document/references/**/*.md"
         )
+
+        # Bundle nujinSkills from pinned GitHub release if not already present (e.g. dev symlink)
+        nujinskills_dir = root / "nujinagent" / "skills" / "nujinskills"
+        if not nujinskills_dir.exists():
+            import os
+            import tarfile
+            import tempfile
+            import urllib.request
+
+            tag = os.environ.get("NUJINSKILLS_VERSION", "v1.0.0")
+            url = f"https://github.com/nujinAI/nujinSkills/archive/refs/tags/{tag}.tar.gz"
+            try:
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    tar_path = Path(tmpdir) / "nujinskills.tar.gz"
+                    urllib.request.urlretrieve(url, tar_path)
+                    with tarfile.open(tar_path, "r:gz") as tar:
+                        tar.extractall(tmpdir)
+                    extracted = next(Path(tmpdir).glob("nujinSkills-*"), None)
+                    if extracted and extracted.is_dir():
+                        shutil.copytree(extracted, nujinskills_dir)
+                        self.app.display_info(f"[nujinskills] bundled {tag} from GitHub")
+            except Exception as exc:
+                self.app.display_warning(f"[nujinskills] skipped remote fetch ({exc})")
+        if nujinskills_dir.exists():
+            build_data.setdefault("artifacts", []).append("nujinagent/skills/nujinskills/**/*")
         webui_dir = root / "webui"
         package_json = webui_dir / "package.json"
         dist_dir = root / "nujinagent" / "web" / "dist"
